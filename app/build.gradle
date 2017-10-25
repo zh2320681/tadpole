@@ -1,0 +1,46 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+
+android {
+    signingConfigs {
+        config {
+            keyAlias 'gcl'
+            keyPassword 'gclpower1'
+            storeFile file('/Users/Shrek/develop/keystone/gcl.keystone')
+            storePassword 'gclpower'
+        }
+    }
+    compileSdkVersion 25
+    buildToolsVersion '25.0.3'
+    defaultConfig {
+        applicationId "com.wellcent.tadpole"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            signingConfig signingConfigs.config
+        }
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+}
+
+dependencies {
+    //compile "org.jetbrains.anko:anko-cardview-v7:$anko_version";
+    compile project(':sweet-alert-dialog')
+    compile project(':klib-ui')
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}

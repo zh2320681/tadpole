@@ -1,0 +1,26 @@
+[
+    {
+        "outputFile": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/incremental/mergeDebugAndroidTestResources/merged.dir/values-w360dp-v13/values-w360dp-v13.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 55,
+                    "endColumn": 54,
+                    "endOffset": 105
+                },
+                "from": {
+                    "file": "/Users/Shrek/.android/build-cache/c8eeefe78ba97d891d7dcd9d8e8b1609c835bbb3/output/res/values-w360dp/values.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 56,
+                        "endColumn": 54,
+                        "endOffset": 106
+                    }
+                }
+            }
+        ]
+    }
+]
