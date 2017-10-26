@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#fd9ccc</color>
+    <color name="colorPrimaryDark">#f96fb5</color>
     <color name="colorAccent">#FF4081</color>
     <color name="window_background">#FFF5F5F5</color>
+
+    <color name="text_black">#343434</color>
+    <color name="text_little_black">#585858</color>
+    <color name="text_light_black">#D2D2D2</color>
+    <color name="cell_title">#666666</color>
+    <color name="hint_title">#8e8e8e</color>
+    
+
+    <color name="gap_line">#dedede</color>
 </resources>

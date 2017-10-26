@@ -2,6 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.wellcent.tadpole">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
     <application
         android:name=".MyApp"
         android:allowBackup="true"
@@ -13,14 +19,14 @@
         android:screenOrientation="portrait"
         tools:replace="android:icon,android:allowBackup">
 
-        <activity android:name=".ui.LaunchActivity">
+        <activity android:name=".ui.AccountActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".ui.GuideActivity"/>
-        <activity android:name=".ui.MainActivity"/>
+        <activity android:name=".ui.LaunchActivity"/>
         
     </application>
 

@@ -1,6 +1,5 @@
 package com.wellcent.tadpole.ui
 
-import android.graphics.Color
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.v4.app.FragmentTransaction
@@ -11,6 +10,7 @@ import com.shrek.klib.extension.getResColor
 import com.shrek.klib.extension.kRandomId
 import com.shrek.klib.extension.onMyClick
 import com.shrek.klib.view.KFragment
+import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
 import com.wellcent.tadpole.ui.Fragment.MainFragment
 import com.wellcent.tadpole.ui.Fragment.MineFragment
@@ -29,11 +29,12 @@ class MainActivity : TadpoleActivity() {
         relativeLayout {
             backgroundColor = getResColor(R.color.window_background)
             val tabLayout = linearLayout { kRandomId()
-                backgroundColor = Color.WHITE
+//                backgroundColor = Color.WHITE
+                backgroundResource = R.drawable.tabbar_bg
                 arrayOf(report,news,mine).forEach { it.layout().invoke(this@linearLayout) }
             }.lparams(MATCH_PARENT, WRAP_CONTENT) { alignParentBottom() }
-            val contentLayout = linearLayout { kRandomId()  }.lparams(MATCH_PARENT, MATCH_PARENT) { above(tabLayout) }
-            arrayOf(report,news,mine).forEach {relation-> fragmentOpt { it.add(contentLayout.id,relation.content)}  }
+            val contentLayout = relativeLayout { kRandomId()  }.lparams(MATCH_PARENT, MATCH_PARENT) { above(tabLayout)}
+            fragmentOpt {opt-> arrayOf(mine,news,report).forEach { opt.add(contentLayout.id,it.content)}  }
         }
         report.select()
         currFragmentRelation = report

@@ -55,6 +55,10 @@ class NavigateBar(context: Context) : RelativeLayout(context) {
         titleView.setBackgroundResource(drawableId)
     }
 
+    fun setNavBg(drawableId: Int) {
+       backgroundResource =  drawableId
+    }
+    
     fun setNavBgColor(colorVal:Int,isElevation: Boolean = true){
         if (!isElevation) {
             backgroundColor = colorVal
@@ -81,13 +85,16 @@ class NavigateBar(context: Context) : RelativeLayout(context) {
         }
 
     }
-
-
+    
     fun setTitle(title: String) {
         titleView.setVisibility(View.VISIBLE)
         titleView.setText(title)
     }
 
+    fun setTitleColor(color: Int) {
+        titleView.setTextColor(color)    
+    }
+    
     fun setVisible(isVisible: Boolean) {
         setVisibility(if (isVisible) View.VISIBLE else View.GONE)
     }

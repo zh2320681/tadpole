@@ -37,6 +37,7 @@ dependencies {
     //compile "org.jetbrains.anko:anko-cardview-v7:$anko_version";
     compile project(':sweet-alert-dialog')
     compile project(':klib-ui')
+    compile 'com.liaoinstan.springview:library:1.2.6'
 }
 
 repositories {
