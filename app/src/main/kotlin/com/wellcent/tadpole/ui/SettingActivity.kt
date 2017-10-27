@@ -12,6 +12,7 @@ import com.shrek.klib.ui.showComfirmCrouton
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
 import org.jetbrains.anko.*
 import java.util.*
 
@@ -24,8 +25,8 @@ class SettingActivity : TadpoleActivity(){
                 setNavBg(R.drawable.tabbar_bg)
                 addLeftDefaultBtn(R.drawable.icon_back_p){ finish() }
             }.lparams(MATCH_PARENT, DimensAdapter.nav_height){ bottomMargin = kIntHeight(0.015f) }
-            addContentCell("个人信息"){}.invoke(this)
-            addContentCell("密码设置"){}.invoke(this)
+            addContentCell("个人信息"){ startActivity<ModifyActivity>() }.invoke(this)
+            addContentCell("密码设置"){ startActivity<ModifyActivity>( ROUTINE_DATA_BINDLE to ModifyType.PASSWORD.code) }.invoke(this)
             addContentCell("清除缓存").invoke(this)
             textView("退出登录"){
                 gravity = Gravity.CENTER
@@ -59,11 +60,11 @@ class SettingActivity : TadpoleActivity(){
                     cacheSize = textView(String.format("%.2fM",Random().nextFloat())) {
                         textColor = getResColor(R.color.text_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
-                        onMyClick { uiThread(1000){ showComfirmCrouton("缓存清理成功!") 
-                            text = "0.0M"
-                        } }
                     }.lparams(WRAP_CONTENT, WRAP_CONTENT) { centerVertically() 
                         alignParentRight()}
+                    this.onMyClick { uiThread(1000){ showComfirmCrouton("缓存清理成功!")
+                        cacheSize!!.text = "0.0M"
+                    } } 
                 }
             }.lparams(MATCH_PARENT, WRAP_CONTENT) { }
             textView { backgroundColor = getResColor(R.color.gap_line) }.lparams(MATCH_PARENT, DimensAdapter.dip1.toInt()) { horizontalMargin = kIntWidth(0.08f) }

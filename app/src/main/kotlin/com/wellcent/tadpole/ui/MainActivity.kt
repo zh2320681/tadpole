@@ -10,7 +10,6 @@ import com.shrek.klib.extension.getResColor
 import com.shrek.klib.extension.kRandomId
 import com.shrek.klib.extension.onMyClick
 import com.shrek.klib.view.KFragment
-import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
 import com.wellcent.tadpole.ui.Fragment.MainFragment
 import com.wellcent.tadpole.ui.Fragment.MineFragment
@@ -36,8 +35,8 @@ class MainActivity : TadpoleActivity() {
             val contentLayout = relativeLayout { kRandomId()  }.lparams(MATCH_PARENT, MATCH_PARENT) { above(tabLayout)}
             fragmentOpt {opt-> arrayOf(mine,news,report).forEach { opt.add(contentLayout.id,it.content)}  }
         }
-        report.select()
         currFragmentRelation = report
+        showFragment(report,news,mine)
     }
 
 
