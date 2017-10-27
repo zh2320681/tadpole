@@ -10,6 +10,9 @@ import com.wellcent.tadpole.presenter.exception.BussinssException
 import com.wellcent.tadpole.presenter.impl.AppDaoImpl
 import java.net.ConnectException
 
+val ROUTINE_DATA_BINDLE = "ROUTINE_DATA"
+val ROUTINE_DATA1_BINDLE = "ROUTINE_DATA1"
+
 private val impl: AppDaoImpl by lazy {
     AppDaoImpl(RestDao::class)
 }

@@ -10,9 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
+import com.shrek.klib.ui.showAlertCrouton
 import com.shrek.klib.view.KFragment
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
@@ -23,9 +25,10 @@ import org.jetbrains.anko.support.v4.UI
 class LoginFragment : KFragment() {
     lateinit var accountView: EditText
     lateinit var pwView: EditText
+    lateinit var parentLayout: LinearLayout
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return UI {
-            verticalLayout {
+            parentLayout = verticalLayout {
                 gravity = Gravity.CENTER_HORIZONTAL
                 accountView = lineInit(R.drawable.icon_user, "手机号码").invoke(this)
                 pwView = lineInit(R.drawable.icon_password, "密码", true).invoke(this)
@@ -34,7 +37,7 @@ class LoginFragment : KFragment() {
                     gravity = Gravity.CENTER
                     backgroundResource = R.drawable.primary_btn
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.MID_BIG)
-                    onMyClick {  }
+                    onMyClick { login() }
                 }.lparams(kIntWidth(0.65f), kIntHeight(0.1f)) {
                     topMargin = kIntHeight(0.025f)
                 }
@@ -84,6 +87,21 @@ class LoginFragment : KFragment() {
             }.lparams(MATCH_PARENT, WRAP_CONTENT) { verticalMargin = kIntHeight(0.012f) }
             textView { backgroundColor = hostAct.getResColor(R.color.gap_line) }.lparams(MATCH_PARENT, DimensAdapter.dip1.toInt())
             editText!!
+        }
+    }
+    
+    fun login() {
+        if(accountView.text.isEmpty()) {
+            hostAct.showAlertCrouton("请您填写手机号",parentLayout)
+            return 
+        }
+        if(pwView.text.isEmpty()) {
+            hostAct.showAlertCrouton("请您填写密码",parentLayout)
+            return
+        }
+        if(!accountView.text.toString().isMobile()) {
+            hostAct.showAlertCrouton("请您填写正确的手机号",parentLayout)
+            return
         }
     }
 }

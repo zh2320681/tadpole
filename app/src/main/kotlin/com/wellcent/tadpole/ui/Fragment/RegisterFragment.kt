@@ -7,10 +7,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
+import com.shrek.klib.ui.showAlertCrouton
 import com.shrek.klib.view.KFragment
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
@@ -22,10 +24,10 @@ class RegisterFragment : KFragment() {
     lateinit var accountView: EditText
     lateinit var codeView: EditText
     lateinit var pwView: EditText
-    
+    lateinit var parentLayout: LinearLayout
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return UI {
-            verticalLayout {
+            parentLayout = verticalLayout {
                 gravity = Gravity.CENTER_HORIZONTAL
                 accountView = lineInit( "手机号码").invoke(this)
                 codeView = lineInit("验证码"){ }.invoke(this)
@@ -83,4 +85,32 @@ class RegisterFragment : KFragment() {
         }
     }
 
+    fun register() {
+        if(!isAccountAvild()) { return }
+        if(pwView.text.isEmpty()) {
+            hostAct.showAlertCrouton("请您填写密码",parentLayout)
+            return
+        }
+        if(codeView.text.isEmpty()) {
+            hostAct.showAlertCrouton("请您填写验证码",parentLayout)
+            return
+        }
+    }
+    
+    fun sendCode() {
+        if(!isAccountAvild()) { return }
+    }
+    
+    fun isAccountAvild() : Boolean {
+        if(accountView.text.isEmpty()) {
+            hostAct.showAlertCrouton("请您填写手机号",parentLayout)
+            return false
+        }
+        if(!accountView.text.toString().isMobile()) {
+            hostAct.showAlertCrouton("请您填写正确的手机号",parentLayout)
+            return false
+        }
+        return true
+    }
+    
 }

@@ -17,6 +17,7 @@ import com.shrek.klib.view.KFragment
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
 import com.wellcent.tadpole.ui.Fragment.LoginFragment
 import com.wellcent.tadpole.ui.Fragment.RegisterFragment
 import org.jetbrains.anko.*
@@ -72,6 +73,7 @@ class AccountActivity : KActivity() {
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
             }.lparams(MATCH_PARENT, 0, 2.5f) { horizontalMargin = kIntWidth(0.05f) }
         }
+        if(intent.getIntExtra(ROUTINE_DATA_BINDLE,AccountProcess.LOGIN.code) == AccountProcess.LOGIN.code){ viewPage.setCurrentItem(1,false) }
     }
 
     fun initLabel(title: String): _LinearLayout.() -> TextView {
@@ -86,6 +88,6 @@ class AccountActivity : KActivity() {
             textView!!
         }
     }
-
-    enum class AccountProcess { LOGIN, REGISTER }
 }
+
+enum class AccountProcess(val code:Int) { LOGIN(999), REGISTER(998) }

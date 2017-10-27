@@ -14,6 +14,9 @@ import com.shrek.klib.view.KFragment
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
+import com.wellcent.tadpole.ui.AccountActivity
+import com.wellcent.tadpole.ui.AccountProcess
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 
@@ -79,6 +82,7 @@ class MainFragment : KFragment() {
                             backgroundResource = R.drawable.icon_btn_nor
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
                             gravity = Gravity.CENTER
+                            onMyClick { startActivity<AccountActivity>() }
                         }.lparams(kIntWidth(0.33f),kIntHeight(0.09f)) { rightMargin = kIntWidth(0.03f) }
 
                         textView("注  册"){
@@ -86,6 +90,7 @@ class MainFragment : KFragment() {
                             backgroundResource = R.drawable.icon_btn_nor
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
                             gravity = Gravity.CENTER
+                            onMyClick { startActivity<AccountActivity>( ROUTINE_DATA_BINDLE to AccountProcess.REGISTER.code ) }
                         }.lparams(kIntWidth(0.33f),kIntHeight(0.09f)) { leftMargin = kIntWidth(0.03f) }
                         
                     }.lparams { centerInParent() }
