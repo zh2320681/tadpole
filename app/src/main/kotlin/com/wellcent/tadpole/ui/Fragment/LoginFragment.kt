@@ -1,5 +1,6 @@
 package com.wellcent.tadpole.ui.Fragment
 
+import android.app.Activity
 import android.graphics.Color
 import android.os.Bundle
 import android.support.annotation.DrawableRes
@@ -23,6 +24,7 @@ import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
 import com.wellcent.tadpole.presenter.VerifyOperable
 import com.wellcent.tadpole.presenter.success
+import com.wellcent.tadpole.ui.GetBackPasswordActivity
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 
@@ -49,7 +51,7 @@ class LoginFragment : KFragment(), VerifyOperable {
                 textView("忘记密码了？") {
                     textColor = hostAct.getResColor(R.color.text_little_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
-                    onMyClick { }
+                    onMyClick { startActivity<GetBackPasswordActivity>() }
                 }.lparams { }
             }
         }.view
@@ -112,6 +114,10 @@ class LoginFragment : KFragment(), VerifyOperable {
         }
         verifyOpt.userLogin(phone, pw).handler(hostAct.kDefaultRestHandler(" 正在验证帐号信息,请稍等... ")).success {
             hostAct.showComfirmCrouton("登录成功!", parentLayout) 
+            uiThread(1000){
+                hostAct.setResult(Activity.RESULT_OK)
+                hostAct.finish()
+            }
         }.excute(hostAct)
 
     }

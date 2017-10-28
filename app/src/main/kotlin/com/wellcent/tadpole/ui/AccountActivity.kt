@@ -31,6 +31,9 @@ class AccountActivity : KActivity() {
     lateinit var viewPage: ViewPager
     lateinit var cententLayout: LinearLayout
 
+    lateinit var loginFragment:LoginFragment
+    lateinit var registerFragment:RegisterFragment
+    
     override fun initialize(savedInstanceState: Bundle?) {
         verticalLayout {
             backgroundColor = Color.WHITE
@@ -56,7 +59,11 @@ class AccountActivity : KActivity() {
                 textView { backgroundColor = getResColor(R.color.gap_line) }.lparams(MATCH_PARENT, DimensAdapter.dip1.toInt())
                 viewPage = viewPager {
                     kRandomId()
-                    adapter = KFragmentPagerAdapter<KFragment>(this@AccountActivity, WeakReference(this), arrayOf(RegisterFragment(), LoginFragment())) { positon, oldFragment, newFragment ->
+                    registerFragment = RegisterFragment().apply { registerProcess = {
+                        viewPage.setCurrentItem(1,true)
+                    } }
+                    loginFragment = LoginFragment()
+                    adapter = KFragmentPagerAdapter<KFragment>(this@AccountActivity, WeakReference(this), arrayOf(registerFragment,loginFragment )) { positon, oldFragment, newFragment ->
                         val opt = if(positon == 0){ registerLabel to loginLabel } else {  loginLabel to registerLabel }
                         opt.first.textColor = getResColor(R.color.colorPrimary )
                         opt.second.textColor = getResColor(R.color.text_black )

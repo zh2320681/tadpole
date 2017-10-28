@@ -14,4 +14,6 @@ interface VerifyDao {
     fun user(): User?
     fun userLogin(phone:String,password:String): RestExcuter<ReqMapping<User>>
     fun getCode( phone:String ): RestExcuter<ReqMapping<String>>
+    fun register(phone:String,code:String,password:String): RestExcuter<ReqMapping<String>>
+    fun getBackPassword(phone:String,code:String,password:String): RestExcuter<ReqMapping<String>>
 }

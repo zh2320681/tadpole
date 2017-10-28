@@ -1,5 +1,6 @@
 package com.wellcent.tadpole.presenter
 
+import com.wellcent.tadpole.bo.Article
 import com.wellcent.tadpole.bo.ReqMapping
 import com.wellcent.tadpole.bo.User
 import retrofit2.http.GET
@@ -17,5 +18,20 @@ interface RestDao {
 
     @GET("/webUser/getCode")
     fun getCode(@Query("phone") phone: String): Observable<ReqMapping<String>>
+    
+    @GET("/webUser/register")
+    fun register(@Query("phone") phone:String,@Query("code") code:String,@Query("password") password: String): Observable<ReqMapping<String>>
+    
+    @GET("/webUser/getPassword")
+    fun getBackPassword(@Query("phone") phone:String,@Query("code") code:String,@Query("newPassword") password: String,
+                        @Query("dupNewPassword")dupNewPassword:String): Observable<ReqMapping<String>>
+    
+    @GET("/webArticle/getArticles")
+    fun articles(@Query("page") page:Int):Observable<ReqMapping<Article>>
 
+    @GET("/webArticle/getArticleById")
+    fun articleDetail(@Query("id") id:String):Observable<ReqMapping<Article>>
+    
+    @GET("/webFeedback/saveFeedback")
+    fun feedback(@Query("phone") phone:String,@Query("content") content:String): Observable<ReqMapping<String>>
 }

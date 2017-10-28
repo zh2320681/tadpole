@@ -7,6 +7,7 @@ import com.shrek.klib.presenter.StringPreDelegate
 import com.shrek.klib.presenter.ZPresenter
 import com.shrek.klib.presenter.ann.Pointcut
 import com.shrek.klib.retrofit.RestExcuter
+import com.wellcent.tadpole.bo.Article
 import com.wellcent.tadpole.bo.ReqMapping
 import com.wellcent.tadpole.bo.User
 import com.wellcent.tadpole.presenter.AppDao
@@ -40,5 +41,27 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun getCode(phone: String): RestExcuter<ReqMapping<String>> {
         return RestExcuter.create(restDao?.getCode(phone))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun register(phone: String, code: String, password: String): RestExcuter<ReqMapping<String>> {
+        return RestExcuter.create(restDao?.register(phone,code,password))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun getBackPassword(phone: String, code: String, password: String): RestExcuter<ReqMapping<String>> {
+        return RestExcuter.create(restDao?.getBackPassword(phone,code,password,password))
+    }
+
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun articles(): RestExcuter<ReqMapping<Article>> {
+        return RestExcuter.create(restDao?.articles(1))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun articleDetail(id: String): RestExcuter<ReqMapping<Article>> {
+        return RestExcuter.create(restDao?.articleDetail(id))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun feedback(content: String): RestExcuter<ReqMapping<String>> {
+         //currOptUser!!.phone
+        return RestExcuter.create(restDao?.feedback("18012778237",content))
     }
 }

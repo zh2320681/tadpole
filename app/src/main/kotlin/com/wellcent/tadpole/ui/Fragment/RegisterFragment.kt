@@ -26,6 +26,9 @@ import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 
 class RegisterFragment : KFragment(),VerifyOperable {
+    //注册成功做什么
+    var registerProcess:((String)->Unit)? = null
+    
     lateinit var accountView: EditText
     lateinit var codeView: EditText
     lateinit var codeBtn: TextView
@@ -58,7 +61,7 @@ class RegisterFragment : KFragment(),VerifyOperable {
                     gravity = Gravity.CENTER
                     backgroundResource = R.drawable.primary_btn
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.MID_BIG)
-                    onMyClick {  }
+                    onMyClick { register() }
                 }.lparams(kIntWidth(0.65f), kIntHeight(0.1f)) {
                     topMargin = kIntHeight(0.025f)
                 }
@@ -118,6 +121,16 @@ class RegisterFragment : KFragment(),VerifyOperable {
             hostAct.showAlertCrouton("请您填写验证码",parentLayout)
             return
         }
+        val account = accountView.text.toString()
+        val code = codeView.text.toString()
+        val pw = pwView.text.toString()
+        verifyOpt.register(account,code,pw).handler(hostAct.kDefaultRestHandler(" 正在提交注册信息,请稍等... ")).success {
+            hostAct.showComfirmCrouton("验证码发送成功",parentLayout)
+            accountView.setText("")
+            codeView.setText("")
+            pwView.setText("")
+            uiThread(1500){ registerProcess?.invoke(account) }
+        }.excute(hostAct)
     }
     
     fun sendCode() {
