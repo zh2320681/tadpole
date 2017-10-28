@@ -89,11 +89,11 @@ class KDefaultRestHandler<Bo>(val context: Context, val msg:String
     }
 
     override fun post(bo: Bo) {
-//        dismiss()
+        dismiss()
     }
 
     override fun error(throwable: Throwable?) {
-//        dismiss()
+        dismiss()
     }
 
     fun dismiss() {

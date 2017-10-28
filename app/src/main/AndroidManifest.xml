@@ -30,6 +30,10 @@
         <activity android:name=".ui.AccountActivity"/>
         <activity android:name=".ui.SettingActivity"/>
         <activity android:name=".ui.ModifyActivity"/>
+        <activity android:name=".ui.ReportActivity"/>
+        <activity android:name=".ui.OrderActivity"/>
+        <activity android:name=".ui.FeedbackActivity"/>
+        <activity android:name=".ui.SystemMsgActivity"/>
         
     </application>
 

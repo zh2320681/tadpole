@@ -12,5 +12,6 @@
     <color name="hint_title">#8e8e8e</color>
 
     <color name="colorPrimary_blue">#9fc7f5</color>
+    <color name="colorPrimary_purple">#9370fb</color>
     <color name="gap_line">#dedede</color>
 </resources>

@@ -6,6 +6,7 @@ class ReqMapping<T> {
     var list:List<T> = arrayListOf<T>()
     var info = ""
     var imagePath = ""
+    var user:T? = null
 }
 
 

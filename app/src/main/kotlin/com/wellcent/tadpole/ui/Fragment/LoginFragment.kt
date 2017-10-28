@@ -14,15 +14,19 @@ import android.widget.LinearLayout
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
+import com.shrek.klib.ui.kDefaultRestHandler
 import com.shrek.klib.ui.showAlertCrouton
+import com.shrek.klib.ui.showComfirmCrouton
 import com.shrek.klib.view.KFragment
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.presenter.VerifyOperable
+import com.wellcent.tadpole.presenter.success
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 
-class LoginFragment : KFragment() {
+class LoginFragment : KFragment(), VerifyOperable {
     lateinit var accountView: EditText
     lateinit var pwView: EditText
     lateinit var parentLayout: LinearLayout
@@ -45,8 +49,8 @@ class LoginFragment : KFragment() {
                 textView("忘记密码了？") {
                     textColor = hostAct.getResColor(R.color.text_little_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
-                    onMyClick {  }
-                }.lparams {  }
+                    onMyClick { }
+                }.lparams { }
             }
         }.view
     }
@@ -76,6 +80,7 @@ class LoginFragment : KFragment() {
                 }
                 editText = editText {
                     hint = hitiTitle
+                    hintTextColor = context.getResColor(R.color.text_light_black)
                     leftDrawable(icon, kIntWidth(0.02f))
                     textColor = hostAct.getResColor(R.color.text_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
@@ -89,20 +94,26 @@ class LoginFragment : KFragment() {
             editText!!
         }
     }
-    
+
     fun login() {
-        if(accountView.text.isEmpty()) {
-            hostAct.showAlertCrouton("请您填写手机号",parentLayout)
-            return 
-        }
-        if(pwView.text.isEmpty()) {
-            hostAct.showAlertCrouton("请您填写密码",parentLayout)
+        val phone = accountView.text.toString()
+        val pw = pwView.text.toString()
+        if (phone.isEmpty()) {
+            hostAct.showAlertCrouton("请您填写手机号", parentLayout)
             return
         }
-        if(!accountView.text.toString().isMobile()) {
-            hostAct.showAlertCrouton("请您填写正确的手机号",parentLayout)
+        if (pw.isEmpty()) {
+            hostAct.showAlertCrouton("请您填写密码", parentLayout)
             return
         }
+        if (!phone.isMobile()) {
+            hostAct.showAlertCrouton("请您填写正确的手机号", parentLayout)
+            return
+        }
+        verifyOpt.userLogin(phone, pw).handler(hostAct.kDefaultRestHandler(" 正在验证帐号信息,请稍等... ")).success {
+            hostAct.showComfirmCrouton("登录成功!", parentLayout) 
+        }.excute(hostAct)
+
     }
 }
 

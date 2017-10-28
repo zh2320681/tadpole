@@ -215,6 +215,14 @@ fun TextView.rightDrawable(resId: Int, paddingVal: Int = 0) {
     compoundDrawablePadding = paddingVal
 }
 
+fun TextView.topDrawable(resId: Int, paddingVal: Int = 0) {
+    val drawable = resources.getDrawable(resId)
+    drawable.setBounds(0, 0, drawable.minimumWidth, drawable.minimumHeight)
+    setCompoundDrawables(null, drawable, null, null)
+
+    compoundDrawablePadding = paddingVal
+}
+
 /**
  * 布局参数
  */

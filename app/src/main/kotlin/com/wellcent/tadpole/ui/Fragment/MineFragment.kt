@@ -7,6 +7,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
@@ -14,23 +15,48 @@ import com.shrek.klib.view.KFragment
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
-import com.wellcent.tadpole.ui.AccountActivity
-import com.wellcent.tadpole.ui.SettingActivity
+import com.wellcent.tadpole.ui.*
 import com.wellcent.tadpole.ui.custom.cardView
 import com.wellcent.tadpole.ui.custom.circleImageView
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 
 class MineFragment : KFragment() {
+    lateinit var nameView:TextView
+    lateinit var timeView:TextView
+    lateinit var msgNoticeView:TextView
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return UI {
             verticalLayout {
                 relativeLayout {
-                    circleImageView {
+                    val faceView = circleImageView {
+                        kRandomId()
                         imageResource = R.drawable.icon_headshot
                         borderColor = Color.WHITE
                         borderWidth = kIntWidth(0.02f)
                     }.lparams { centerVertically() }
+                    
+                    verticalLayout {
+                        nameView = textView("张三") {
+                            textColor = hostAct.getResColor(R.color.text_black)
+                            textSize = DimensAdapter.textSpSize(CustomTSDimens.MID_BIG)
+                        }.lparams(WRAP_CONTENT, WRAP_CONTENT) {  }
+                        timeView = textView("17周+10天") {
+                            textColor = hostAct.getResColor(R.color.text_little_black)
+                            textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
+                        }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
+                    }.lparams{ rightOf( faceView) 
+                        leftMargin = kIntWidth(0.03f)
+                        centerVertically()
+                    }
+                    msgNoticeView = textView("您有29条新消息") {
+                        onMyClick { startActivity<SystemMsgActivity>() }
+                        textColor = hostAct.getResColor(R.color.text_little_black)
+                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
+                    }.lparams(WRAP_CONTENT, WRAP_CONTENT) { 
+                        alignParentRight()
+                        topMargin = kIntHeight(0.05f)
+                    }
                     textView(" 登 录 ") {
                         kRandomId()
                         gravity = Gravity.CENTER
@@ -55,13 +81,13 @@ class MineFragment : KFragment() {
                 }
                 linearLayout {
                     addMidFuntionCell("我的保险", R.drawable.icon_my_claims) { }.invoke(this)
-                    addMidFuntionCell("我的订单", R.drawable.icon_my_order) { }.invoke(this)
+                    addMidFuntionCell("我的订单", R.drawable.icon_my_order) { startActivity<OrderActivity>() }.invoke(this)
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) {
                     horizontalMargin = kIntWidth(0.05f)
                     bottomMargin = kIntHeight(0.01f)
                 }
                 addBottomCell("在线客服", "09:00-17:00").invoke(this)
-                addBottomCell("意见反馈").invoke(this)
+                addBottomCell("意见反馈"){ startActivity<FeedbackActivity>() }.invoke(this)
                 addBottomCell("设置"){ startActivity<SettingActivity>() }.invoke(this)
             }
         }.view
@@ -77,9 +103,8 @@ class MineFragment : KFragment() {
                 val paddingVal = kIntWidth(0.02f)
                 setContentPadding(paddingVal, paddingVal, paddingVal, paddingVal)
                 setCardBackgroundColor(Color.parseColor("#ffffffff"))
-
+                onMyClick { process() }
                 verticalLayout {
-                    onMyClick { process() }
                     imageView(icon) {}.lparams { }
                     textView(title) {
                         textColor = hostAct.getResColor(R.color.text_black)

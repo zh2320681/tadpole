@@ -24,6 +24,7 @@ import com.wellcent.tadpole.R
 import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
 import com.wellcent.tadpole.ui.AccountActivity
 import com.wellcent.tadpole.ui.AccountProcess
+import com.wellcent.tadpole.ui.ReportActivity
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.support.v4.UI
@@ -116,7 +117,7 @@ class MainFragment : KFragment() {
                         layoutManager = LinearLayoutManager(context)
                         adapter = KAdapter<String, OrderHolder>(arrayListOf("1111111", "2222222")) {
                             itemConstructor { OrderHolder(kIntHeight(0.18f)) }
-                            itemClickDoing { s, i -> hostAct.toastLongShow("我点击了${s}") }
+                            itemClickDoing { s, i -> startActivity<ReportActivity>() }
                             bindData { holder, s, i ->
                                 if(i%2 == 0){
                                     holder.adornView.setImageResource(R.drawable.list_card_stroke_r)

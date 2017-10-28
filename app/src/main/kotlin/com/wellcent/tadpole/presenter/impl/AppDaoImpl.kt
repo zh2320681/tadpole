@@ -5,16 +5,14 @@ import com.shrek.klib.extension.kApplication
 import com.shrek.klib.presenter.BooleanPreDelegate
 import com.shrek.klib.presenter.StringPreDelegate
 import com.shrek.klib.presenter.ZPresenter
+import com.shrek.klib.presenter.ann.Pointcut
+import com.shrek.klib.retrofit.RestExcuter
+import com.wellcent.tadpole.bo.ReqMapping
 import com.wellcent.tadpole.bo.User
 import com.wellcent.tadpole.presenter.AppDao
 import com.wellcent.tadpole.presenter.RestDao
 import com.wellcent.tadpole.presenter.VerifyDao
 import kotlin.reflect.KClass
-
-/**
- * @author Shrek
- * @date:  2017-10-25
- */
 class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.java), VerifyDao, AppDao {
     val operator = kApplication.getSharedPreferences("tadpole", AppCompatActivity.MODE_PRIVATE)
     override var isFirstUse: Boolean by BooleanPreDelegate(operator,true)
@@ -25,8 +23,22 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     private var currOptUser:User? = null
     
     override fun initialization() {
-        
     }
 
     override fun user(): User? {  return currOptUser  }
+
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun userLogin(phone: String, password: String): RestExcuter<ReqMapping<User>> {
+        return RestExcuter.create(restDao?.userLogin(phone,password,"")).wrapPost {
+            if (it.isOk) {
+                this@AppDaoImpl.userName = userName
+                this@AppDaoImpl.password = password
+                this@AppDaoImpl.currOptUser = it.user
+            }
+        }
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun getCode(phone: String): RestExcuter<ReqMapping<String>> {
+        return RestExcuter.create(restDao?.getCode(phone))
+    }
 }

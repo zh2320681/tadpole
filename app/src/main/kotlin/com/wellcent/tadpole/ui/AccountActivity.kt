@@ -46,8 +46,8 @@ class AccountActivity : KActivity() {
             }.lparams(MATCH_PARENT, 0, 1f)
             cententLayout = verticalLayout {
                 linearLayout {
-                    registerLabel = initLabel("注 册").invoke(this)
-                    loginLabel = initLabel("登 录").invoke(this)
+                    registerLabel = initLabel("注 册",0).invoke(this)
+                    loginLabel = initLabel("登 录",1).invoke(this)
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.05f) }
                 slider = view {
                     kRandomId()
@@ -76,11 +76,12 @@ class AccountActivity : KActivity() {
         if(intent.getIntExtra(ROUTINE_DATA_BINDLE,AccountProcess.LOGIN.code) == AccountProcess.LOGIN.code){ viewPage.setCurrentItem(1,false) }
     }
 
-    fun initLabel(title: String): _LinearLayout.() -> TextView {
+    fun initLabel(title: String,pagePosition:Int): _LinearLayout.() -> TextView {
         return {
             var textView: TextView? = null
             relativeLayout {
                 textView = textView(title) {
+                    onMyClick { viewPage.setCurrentItem(pagePosition,true) }
                     textColor = getResColor(R.color.text_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.MID_BIG)
                 }.lparams { centerInParent() }

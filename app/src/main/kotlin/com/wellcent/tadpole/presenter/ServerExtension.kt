@@ -2,12 +2,15 @@ package com.wellcent.tadpole.presenter
 
 import android.app.Activity
 import cn.pedant.SweetAlert.SweetAlertDialog
+import com.shrek.klib.ZActivityManager
 import com.shrek.klib.extension.actManager
 import com.shrek.klib.presenter.AopInvocation
 import com.shrek.klib.retrofit.RestExcuter
+import com.wellcent.tadpole.bo.ReqMapping
 import com.wellcent.tadpole.presenter.exception.AuthFailureException
 import com.wellcent.tadpole.presenter.exception.BussinssException
 import com.wellcent.tadpole.presenter.impl.AppDaoImpl
+import rx.functions.Action1
 import java.net.ConnectException
 
 val ROUTINE_DATA_BINDLE = "ROUTINE_DATA"
@@ -63,4 +66,28 @@ fun <BO> RestExcuter<BO>.defaultError(dealThing: ((Throwable) -> Unit)? = null):
     }
 }
 
+fun <BO> RestExcuter<ReqMapping<BO>>.success(dealThing: ((ReqMapping<BO>) -> Unit)? = null): RestExcuter<ReqMapping<BO>> {
+    return post {
+        successDoing<BO>(containerASAct(), actManager, dealThing,errorDoing, it,it.info)
+    }.defaultError {  }
+}
+
+fun <BO> RestExcuter<ReqMapping<BO>>.listSuccess(dealThing: ((List<BO>) -> Unit)? = null): RestExcuter<ReqMapping<BO>> {
+    return post {
+        successDoing<BO>(containerASAct(), actManager, { dealThing?.invoke(it.list) } , errorDoing, it, it.info)
+    }.defaultError {  }
+}
+
+private fun <BO> successDoing(act: Activity?, actManager: ZActivityManager<Activity>,
+                              dealThing: ((ReqMapping<BO>) -> Unit)? = null, errorDoing: Action1<Throwable>? = null,
+                              data: ReqMapping<BO>?, msg: String) {
+    if (data?.isOk?:false) {
+        if (dealThing != null && data != null) {
+            dealThing(data!!)
+        }
+        return
+    } else {
+        errorDoing?.call(BussinssException(msg))
+    }
+} 
 

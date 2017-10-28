@@ -8,7 +8,7 @@
     <!-- 圆角 -->
     <corners android:radius="5dp" />
 
-    <solid android:color="#a01E90FF" />
+    <solid android:color="#fd9ccc" />
 	<padding
         android:bottom="5dp"
         android:left="10dp"

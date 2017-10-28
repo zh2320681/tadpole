@@ -12,25 +12,46 @@ import android.widget.TextView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
+import com.shrek.klib.ui.kDefaultRestHandler
 import com.shrek.klib.ui.showAlertCrouton
+import com.shrek.klib.ui.showComfirmCrouton
 import com.shrek.klib.view.KFragment
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.presenter.VerifyOperable
+import com.wellcent.tadpole.presenter.success
+import com.wellcent.tadpole.util.LooperTask
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 
-class RegisterFragment : KFragment() {
+class RegisterFragment : KFragment(),VerifyOperable {
     lateinit var accountView: EditText
     lateinit var codeView: EditText
+    lateinit var codeBtn: TextView
     lateinit var pwView: EditText
     lateinit var parentLayout: LinearLayout
+    
+    var reqCodeTime:Long = -1
+    val alertRequestTask = LooperTask(1000) { 
+        val left = 60 -(System.currentTimeMillis() - reqCodeTime)/1000
+        if(reqCodeTime > 0 && left > 0){
+            codeBtn.setText("${left}秒再次发送")
+            codeBtn.isEnabled = false
+        } else {
+            codeBtn.isEnabled = true
+            codeBtn.setText("验证码")
+            reqCodeTime = -1
+            false
+        }
+        true
+    }
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return UI {
             parentLayout = verticalLayout {
                 gravity = Gravity.CENTER_HORIZONTAL
                 accountView = lineInit( "手机号码").invoke(this)
-                codeView = lineInit("验证码"){ }.invoke(this)
+                codeView = lineInit("验证码"){ sendCode() }.invoke(this)
                 pwView = lineInit( "设置登录密码").invoke(this)
                 textView("注  册") {
                     textColor = Color.WHITE
@@ -71,9 +92,11 @@ class RegisterFragment : KFragment() {
                         alignParentRight()
                         centerVertically()
                     }
+                    codeBtn = rightView!!
                 }
                 editText = editText {
                     hint = hitiTitle
+                    hintTextColor = context.getResColor(R.color.text_light_black)
                     textColor = hostAct.getResColor(R.color.text_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                     backgroundColor = Color.TRANSPARENT
@@ -99,6 +122,11 @@ class RegisterFragment : KFragment() {
     
     fun sendCode() {
         if(!isAccountAvild()) { return }
+        verifyOpt.getCode(accountView.text.toString()).handler(hostAct.kDefaultRestHandler(" 正在发送验证码,请稍等... ")).success {
+            hostAct.showComfirmCrouton("验证码发送成功",parentLayout)
+            reqCodeTime = System.currentTimeMillis()
+            alertRequestTask.start()
+        }.excute(hostAct)
     }
     
     fun isAccountAvild() : Boolean {
