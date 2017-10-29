@@ -14,6 +14,7 @@ import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
 import com.shrek.klib.ui.kDefaultRestHandler
+import com.shrek.klib.ui.photo.PhotoChoosePop
 import com.shrek.klib.view.KFragment
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
@@ -35,17 +36,25 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
     lateinit var faceView:ImageView
     lateinit var userInfoLayout :LinearLayout
     
-    var msgTemp:List<SysMessage> = arrayListOf<SysMessage>()
+    lateinit var rootView:View
     
+    var msgTemp:List<SysMessage> = arrayListOf<SysMessage>()
+    var photoChoosePop:PhotoChoosePop? = null
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return UI {
-            verticalLayout {
+            rootView = verticalLayout {
                 relativeLayout {
                     faceView = circleImageView {
                         kRandomId()
                         imageResource = R.drawable.icon_headshot
                         borderColor = Color.WHITE
                         borderWidth = kIntWidth(0.01f)
+                        onMyClick { verifyOpt.user()?.apply {
+                            photoChoosePop = PhotoChoosePop(hostAct,faceView,true){
+                                
+                            }
+                            photoChoosePop?.show(rootView)
+                        } }
                     }.lparams { centerVertically() }
 
                     userInfoLayout = verticalLayout {
@@ -87,7 +96,7 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
                     horizontalMargin = kIntWidth(0.05f)
                 }
                 linearLayout {
-                    addMidFuntionCell("我的报告", R.drawable.icon_my_report) { }.invoke(this)
+                    addMidFuntionCell("我的报告", R.drawable.icon_my_report) { startActivity<ReportActivity>() }.invoke(this)
                     addMidFuntionCell("我的咨询", R.drawable.icon_my_consult) { }.invoke(this)
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) {
                     horizontalMargin = kIntWidth(0.05f)

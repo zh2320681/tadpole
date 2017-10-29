@@ -20,6 +20,7 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     var password:String by StringPreDelegate(operator,"")
     //当前操作的用户
     private var currOptUser:User? = null
+    private var reportsTemp:List<Report>? = null
     
     override fun initialization() {
     }
@@ -59,6 +60,10 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
         return RestExcuter.create(restDao?.changePassword(currOptUser!!.phone,oldPassword,newPassword,newPassword))
     }
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun modifyUserFace(imgName: String): RestExcuter<ReqMapping<String>> {
+        return RestExcuter.create(restDao?.modifyUserFace(currOptUser!!.phone,imgName))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun articles(): RestExcuter<ReqMapping<Article>> {
         return RestExcuter.create(restDao?.articles(1))
     }
@@ -72,7 +77,14 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     }
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun reports(): RestExcuter<ReqMapping<Report>> {
-        return RestExcuter.create(restDao?.reports(currOptUser!!.phone))
+        return RestExcuter.create(restDao?.reports(currOptUser!!.phone)).wrapPost {  reportsTemp = it.list }
+    }
+
+    override fun reportsCache(): List<Report>? { return reportsTemp }
+    
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun reportDetail(report: Report): RestExcuter<ReqMapping<Report>> {
+        return RestExcuter.create(restDao?.reportDetail(report.id))
     }
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun messages(): RestExcuter<ReqMapping<SysMessage>> {

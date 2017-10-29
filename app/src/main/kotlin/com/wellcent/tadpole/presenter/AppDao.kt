@@ -16,6 +16,7 @@ interface AppDao {
     fun feedback(content:String): RestExcuter<ReqMapping<String>>
     
     fun reports(): RestExcuter<ReqMapping<Report>>
-    
+    fun reportsCache():List<Report>?
+    fun reportDetail(report: Report): RestExcuter<ReqMapping<Report>>
     fun messages():RestExcuter<ReqMapping<SysMessage>>
 }

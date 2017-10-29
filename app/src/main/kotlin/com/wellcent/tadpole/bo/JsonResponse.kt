@@ -82,3 +82,23 @@ class SysMessage: Serializable {
     var relate_id = ""        //关联的id               对应的id，如type=1，则为文章的id;type=2，则为保险的id
     var send_time = ""        //发送时间
 }
+
+class Insurance: Serializable {
+    var detect_item_id= ""        //检测项目id
+    var reportId= ""        //报告id
+    var bank_card= ""        //银行卡号
+    var create_time= ""        //创建时间
+    var cost_breakdown:String? = null        //费用明细原件
+    var insurance_policy:String? = null        //保险单
+    var id_image_front:String? = null        //身份证正面
+    var update_time= ""        //更新时间
+    var user_id= ""        //用户id
+    var phone:String? = null        //用户手机号
+    var cost_list:String? = null        //费用明细原件
+    var id_image_back= ""        //身份证反面
+    var bank_name= ""        //开户行
+    var name= ""        //检测项目名称
+    var id= ""        //保险理赔id
+    var invoice:String? = null       //发票原件
+    var status= ""        //状态                   1-审核中，2-审核通过，3-审核失败
+}

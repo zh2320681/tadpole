@@ -66,7 +66,7 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView, var is
                         onMyClick { doHandlerPhoto(PIC_FROM_CAMERA) }
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) {
                         horizontalMargin = kIntWidth(0.04f)
-                        verticalMargin = kIntHeight(0.03f)
+                        verticalMargin = kIntHeight(0.02f)
                     }
 
                     galleryBtn = button("从手机相册选择") {
@@ -76,6 +76,7 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView, var is
                         onMyClick { doHandlerPhoto(PIC_FROM_LOCALPHOTO) }
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) {
                         horizontalMargin = kIntWidth(0.04f)
+                        bottomMargin = kIntHeight(0.02f)
                     }
 
                     cancelBtn = button("取消") {
@@ -85,7 +86,6 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView, var is
                         onMyClick { dismiss() }
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) {
                         horizontalMargin = kIntWidth(0.04f)
-                        verticalMargin = kIntHeight(0.03f)
                     }
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) { alignParentBottom() }
             }

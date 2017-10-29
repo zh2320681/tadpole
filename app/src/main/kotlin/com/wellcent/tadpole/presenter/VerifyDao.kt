@@ -20,6 +20,7 @@ interface VerifyDao {
     fun getBackPassword(phone:String,code:String,password:String): RestExcuter<ReqMapping<String>>
     fun modifyUserInfo(name:String,idNumber: String,expectedDate:String): RestExcuter<ReqMapping<String>>
     fun changePassword(oldPassword:String,newPassword:String): RestExcuter<ReqMapping<String>>
+    fun modifyUserFace(imgName:String): RestExcuter<ReqMapping<String>>
     
     fun logOut()
 }

@@ -36,6 +36,7 @@
         <activity android:name=".ui.SystemMsgActivity"/>
         <activity android:name=".ui.GetBackPasswordActivity"/>
         <activity android:name=".ui.ArticleActivity"/>
+        <activity android:name=".ui.InsuranceActivity"/>
         
     </application>
 

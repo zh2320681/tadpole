@@ -163,7 +163,7 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                     emptyLayout.visibility = View.GONE
                     recyclerView.adapter = KAdapter<Report, OrderHolder>(it) {
                         itemConstructor { OrderHolder(kIntHeight(0.18f)) }
-                        itemClickDoing { bo, i -> startActivity<ReportActivity>() }
+                        itemClickDoing { bo, i -> startActivity<ReportActivity>(ROUTINE_DATA_BINDLE to bo) }
                         bindData { holder, bo, i ->
                             if (i % 2 == 0) {
                                 holder.adornView.setImageResource(R.drawable.list_card_stroke_r)
