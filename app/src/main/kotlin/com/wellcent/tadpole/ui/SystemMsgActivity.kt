@@ -12,19 +12,21 @@ import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.getResColor
 import com.shrek.klib.extension.kIntHeight
 import com.shrek.klib.extension.kIntWidth
-import com.shrek.klib.extension.toastLongShow
 import com.shrek.klib.ui.adapter.HolderBo
 import com.shrek.klib.ui.adapter.KAdapter
 import com.shrek.klib.ui.navigateBar
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.bo.SysMessage
+import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 
 class SystemMsgActivity : TadpoleActivity() {
     lateinit var recyclerView: RecyclerView
     override fun initialize(savedInstanceState: Bundle?) {
+        val messages = intent.getSerializableExtra(ROUTINE_DATA_BINDLE) as List<SysMessage>
         verticalLayout {
             backgroundColor = getResColor(R.color.window_background)
             navigateBar("系统消息") {
@@ -34,10 +36,13 @@ class SystemMsgActivity : TadpoleActivity() {
             }.lparams(MATCH_PARENT, DimensAdapter.nav_height)
             recyclerView = recyclerView {
                 layoutManager = LinearLayoutManager(context)
-                adapter = KAdapter<String, SysMsgHolder>(arrayListOf("1111111", "2222222", "333333", "44444", "55555", "66666")) {
+                adapter = KAdapter<SysMessage, SysMsgHolder>(messages) {
                     itemConstructor { SysMsgHolder(kIntHeight(0.17f)) }
-                    itemClickDoing { s, i -> toastLongShow("我点击了${s}") }
-                    bindData { holder, s, i ->
+                    itemClickDoing { bo, i ->  }
+                    bindData { holder, bo, i ->
+                        holder.timeView.text = bo.send_time
+                        holder.titleView.text = bo.title
+                        holder.desView.text = bo.content
                     }
                 }
             }.lparams(MATCH_PARENT, MATCH_PARENT)

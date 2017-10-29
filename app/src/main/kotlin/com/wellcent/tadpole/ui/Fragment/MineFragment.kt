@@ -7,36 +7,49 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
+import com.shrek.klib.ui.kDefaultRestHandler
 import com.shrek.klib.view.KFragment
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.bo.SysMessage
+import com.wellcent.tadpole.presenter.*
 import com.wellcent.tadpole.ui.*
 import com.wellcent.tadpole.ui.custom.cardView
 import com.wellcent.tadpole.ui.custom.circleImageView
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
+import org.jetbrains.anko.support.v4.startActivity
 
-class MineFragment : KFragment() {
+class MineFragment : KFragment(),VerifyOperable,AppOperable {
     lateinit var nameView:TextView
     lateinit var timeView:TextView
     lateinit var msgNoticeView:TextView
+    lateinit var loginBtn:TextView
+    lateinit var faceView:ImageView
+    lateinit var userInfoLayout :LinearLayout
+    
+    var msgTemp:List<SysMessage> = arrayListOf<SysMessage>()
+    
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return UI {
             verticalLayout {
                 relativeLayout {
-                    val faceView = circleImageView {
+                    faceView = circleImageView {
                         kRandomId()
                         imageResource = R.drawable.icon_headshot
                         borderColor = Color.WHITE
-                        borderWidth = kIntWidth(0.02f)
+                        borderWidth = kIntWidth(0.01f)
                     }.lparams { centerVertically() }
-                    
-                    verticalLayout {
+
+                    userInfoLayout = verticalLayout {
+                        visibility = View.GONE
                         nameView = textView("张三") {
                             textColor = hostAct.getResColor(R.color.text_black)
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.MID_BIG)
@@ -49,15 +62,16 @@ class MineFragment : KFragment() {
                         leftMargin = kIntWidth(0.03f)
                         centerVertically()
                     }
-                    msgNoticeView = textView("您有29条新消息") {
-                        onMyClick { startActivity<SystemMsgActivity>() }
+                    msgNoticeView = textView("您有0条新消息") {
+                        onMyClick { startActivity<SystemMsgActivity>(ROUTINE_DATA_BINDLE to msgTemp) }
+                        visibility = View.GONE
                         textColor = hostAct.getResColor(R.color.text_little_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                     }.lparams(WRAP_CONTENT, WRAP_CONTENT) { 
                         alignParentRight()
                         topMargin = kIntHeight(0.05f)
                     }
-                    textView(" 登 录 ") {
+                    loginBtn = textView(" 登 录 ") {
                         kRandomId()
                         gravity = Gravity.CENTER
                         backgroundResource = R.drawable.primary_small_btn
@@ -103,7 +117,9 @@ class MineFragment : KFragment() {
                 val paddingVal = kIntWidth(0.02f)
                 setContentPadding(paddingVal, paddingVal, paddingVal, paddingVal)
                 setCardBackgroundColor(Color.parseColor("#ffffffff"))
-                onMyClick { process() }
+                onMyClick { 
+                    if(verifyOpt.user() == null){ startActivity<AccountActivity>() } else { process() }
+                }
                 verticalLayout {
                     imageView(icon) {}.lparams { }
                     textView(title) {
@@ -121,7 +137,7 @@ class MineFragment : KFragment() {
     fun addBottomCell(title: String, rightTitle: String? = null, process: (() -> Unit)? = null): _LinearLayout.() -> Unit {
         return {
             relativeLayout {
-                process?.apply { onMyClick { this() } }
+                process?.apply { onMyClick { if(verifyOpt.user() == null){ startActivity<AccountActivity>() } else { this() } } }
                 textView(title) {
                     textColor = hostAct.getResColor(R.color.text_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
@@ -146,6 +162,32 @@ class MineFragment : KFragment() {
             }
             textView { backgroundColor = hostAct.getResColor(R.color.gap_line) }.lparams(MATCH_PARENT, DimensAdapter.dip1.toInt()) { horizontalMargin = kIntWidth(0.08f) }
         }
+    }
+
+    override fun onShow() {
+        val user = verifyOpt.user()
+        if (user == null && userInfoLayout.visibility == View.VISIBLE) {
+            userInfoLayout.visibility = View.GONE
+            msgNoticeView.visibility = View.GONE
+            loginBtn.visibility = View.VISIBLE
+            faceView.imageResource = R.drawable.icon_headshot
+        } else if(user != null && userInfoLayout.visibility != View.VISIBLE){
+            userInfoLayout.visibility = View.VISIBLE
+            msgNoticeView.visibility = View.VISIBLE
+            loginBtn.visibility = View.GONE
+
+            faceView._urlImg(user!!.avatarImage.serPicPath())
+            nameView.text = user!!.name
+            timeView.text = "${user!!.pregnant_week.replace("+","周 + ")}天"
+            reqMsgCount()
+        }
+    }
+    
+    fun reqMsgCount() {
+        appOpt.messages().handler(hostAct.kDefaultRestHandler(" 正在获取报告列表,请稍等... ")).listSuccess {
+            msgTemp = it
+            msgNoticeView.text = "您有${it.size}条新消息"
+        }.excute(hostAct)
     }
 
 }

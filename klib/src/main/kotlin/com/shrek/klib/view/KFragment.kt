@@ -4,10 +4,6 @@ import android.app.Activity
 import android.support.v4.app.Fragment
 import com.shrek.klib.extension.kApplication
 
-/**
- * @author shrek
- * @date:  2016-06-01
- */
 open class KFragment : Fragment() {
 
     val hostAct: KActivity

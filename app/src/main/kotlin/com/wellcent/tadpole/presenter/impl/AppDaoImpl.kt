@@ -7,9 +7,7 @@ import com.shrek.klib.presenter.StringPreDelegate
 import com.shrek.klib.presenter.ZPresenter
 import com.shrek.klib.presenter.ann.Pointcut
 import com.shrek.klib.retrofit.RestExcuter
-import com.wellcent.tadpole.bo.Article
-import com.wellcent.tadpole.bo.ReqMapping
-import com.wellcent.tadpole.bo.User
+import com.wellcent.tadpole.bo.*
 import com.wellcent.tadpole.presenter.AppDao
 import com.wellcent.tadpole.presenter.RestDao
 import com.wellcent.tadpole.presenter.VerifyDao
@@ -27,7 +25,9 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     }
 
     override fun user(): User? {  return currOptUser  }
-
+    override fun logOut() { currOptUser = null }
+    override fun getStoneUserName():String { return userName }
+    
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun userLogin(phone: String, password: String): RestExcuter<ReqMapping<User>> {
         return RestExcuter.create(restDao?.userLogin(phone,password,"")).wrapPost {
@@ -50,7 +50,14 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     override fun getBackPassword(phone: String, code: String, password: String): RestExcuter<ReqMapping<String>> {
         return RestExcuter.create(restDao?.getBackPassword(phone,code,password,password))
     }
-
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun modifyUserInfo(name: String, idNumber: String, expectedDate: String): RestExcuter<ReqMapping<String>> {
+        return RestExcuter.create(restDao?.modifyUserInfo(currOptUser!!.phone,name,idNumber,expectedDate))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun changePassword(oldPassword: String, newPassword: String): RestExcuter<ReqMapping<String>> {
+        return RestExcuter.create(restDao?.changePassword(currOptUser!!.phone,oldPassword,newPassword,newPassword))
+    }
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun articles(): RestExcuter<ReqMapping<Article>> {
         return RestExcuter.create(restDao?.articles(1))
@@ -61,7 +68,14 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     }
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun feedback(content: String): RestExcuter<ReqMapping<String>> {
-         //currOptUser!!.phone
-        return RestExcuter.create(restDao?.feedback("18012778237",content))
+        return RestExcuter.create(restDao?.feedback(currOptUser!!.phone,content))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun reports(): RestExcuter<ReqMapping<Report>> {
+        return RestExcuter.create(restDao?.reports(currOptUser!!.phone))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun messages(): RestExcuter<ReqMapping<SysMessage>> {
+        return RestExcuter.create(restDao?.messages(currOptUser!!.phone))
     }
 }

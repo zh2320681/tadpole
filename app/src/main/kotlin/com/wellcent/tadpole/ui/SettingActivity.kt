@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.TextView
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
@@ -13,10 +14,11 @@ import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
 import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
+import com.wellcent.tadpole.presenter.VerifyOperable
 import org.jetbrains.anko.*
 import java.util.*
 
-class SettingActivity : TadpoleActivity(){
+class SettingActivity : TadpoleActivity(),VerifyOperable{
     override fun initialize(savedInstanceState: Bundle?) {
         verticalLayout {
             backgroundColor = getResColor(R.color.window_background)
@@ -34,6 +36,15 @@ class SettingActivity : TadpoleActivity(){
                 textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
                 verticalPadding = kIntHeight(0.02f)
                 backgroundColor = Color.WHITE
+                onMyClick {
+                    SweetAlertDialog(this@SettingActivity, SweetAlertDialog.SUCCESS_TYPE)
+                            .setContentText("您确认退出登录吗?")
+                            .setConfirmText(" 登 出 ")
+                            .setConfirmClickListener {
+                                verifyOpt.logOut()
+                                finish()
+                            }.setCancelText(" 取 消 ").show()
+                }
             }.lparams(MATCH_PARENT, WRAP_CONTENT){ topMargin = kIntHeight(0.015f) }
         }
     }

@@ -33,22 +33,25 @@ class MainActivity : TadpoleActivity() {
                 arrayOf(report,news,mine).forEach { it.layout().invoke(this@linearLayout) }
             }.lparams(MATCH_PARENT, WRAP_CONTENT) { alignParentBottom() }
             val contentLayout = relativeLayout { kRandomId()  }.lparams(MATCH_PARENT, MATCH_PARENT) { above(tabLayout)}
-            fragmentOpt {opt-> arrayOf(mine,news,report).forEach { opt.add(contentLayout.id,it.content)}  }
+            fragmentOpt {opt-> arrayOf(report,news,mine).forEach { opt.add(contentLayout.id,it.content)}  }
         }
         currFragmentRelation = report
         showFragment(report,news,mine)
     }
 
-
+    override fun onResume() {
+        super.onResume()
+        currFragmentRelation.content.onShow()
+    }
     internal fun setCurrFragmentRelation(trans: FragmentTransaction, showFragment: FragmentRelation) {
+        showFragment.select()
+        if (currFragmentRelation == showFragment) { return }
         if (this.currFragmentRelation != null) {
             this.currFragmentRelation.content.onHide()
         }
         this.currFragmentRelation = showFragment
-
         trans.show(showFragment.content)
         showFragment.content.onShow()
-        showFragment.select()
     }
 
     protected fun switchFragment(newFragmentRelation: FragmentRelation) {
@@ -101,5 +104,4 @@ class MainActivity : TadpoleActivity() {
             }
         }
     }
-    
 }

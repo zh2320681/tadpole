@@ -8,20 +8,24 @@ import android.widget.TextView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
+import com.shrek.klib.ui.kDefaultRestHandler
 import com.shrek.klib.ui.navigateBar
 import com.shrek.klib.ui.selector.datepick.DatePickDialog
 import com.shrek.klib.ui.selector.datepick.DatePickMode
 import com.shrek.klib.ui.showAlertCrouton
+import com.shrek.klib.ui.showComfirmCrouton
 import com.shrek.klib.view.KActivity
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
 import com.wellcent.tadpole.bo.User
 import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
+import com.wellcent.tadpole.presenter.VerifyOperable
+import com.wellcent.tadpole.presenter.success
 import org.jetbrains.anko.*
 import java.util.*
 
-class ModifyActivity : KActivity() {
+class ModifyActivity : KActivity(),VerifyOperable {
     var inputVies = arrayListOf<Pair<TextView,TextView>>()
     lateinit var contentLayout:LinearLayout
     val currType by lazy{ if (intent.getIntExtra(ROUTINE_DATA_BINDLE, ModifyType.USER_DATA.code) == ModifyType.USER_DATA.code) { ModifyType.USER_DATA} else {
@@ -38,7 +42,7 @@ class ModifyActivity : KActivity() {
             contentLayout = verticalLayout {
                 currType.titles.forEachIndexed { index, s -> inputVies.add( addContentCell( currType== ModifyType.USER_DATA && index == 2).invoke(this) ) }
             }.lparams(MATCH_PARENT, WRAP_CONTENT) 
-            currType.initInfo(null,inputVies)
+            currType.initInfo(verifyOpt.user(),inputVies)
             textView("完 成") {
                 textColor = Color.WHITE
                 backgroundResource = R.drawable.primary_btn
@@ -71,6 +75,7 @@ class ModifyActivity : KActivity() {
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) { centerVertically()
                         rightOf(titleView!!)
                         leftMargin = kIntWidth(0.02f)
+                        rightMargin = kIntWidth(0.01f)
                     }
                     onMyClick {
                         val currDate = Date()
@@ -101,8 +106,23 @@ class ModifyActivity : KActivity() {
         val errorInfo = currType.judgeAvild(inputVies)
         if(errorInfo != null){
             showAlertCrouton(errorInfo!!,contentLayout)
+            return
+        } 
+        
+        val text1 = inputVies[0].second.text.toString()
+        val text2 = inputVies[1].second.text.toString()
+        val text3 = inputVies[2].second.text.toString()
+        if(currType == ModifyType.USER_DATA){
+            verifyOpt.modifyUserInfo(text1,text2,text3).handler(kDefaultRestHandler(" 正在修改用户信息,请稍等... ")).success {
+                showComfirmCrouton("用户信息修改成功!",contentLayout)
+            }.excute(this)
         } else {
-            
+            verifyOpt.changePassword(text1,text2).handler(kDefaultRestHandler(" 正在修改密码,请稍等... ")).success {
+                showComfirmCrouton("密码修改成功!",contentLayout)
+                inputVies[0].second.text = ""
+                inputVies[1].second.text = ""
+                inputVies[2].second.text = ""
+            }.excute(this)
         }
     }
 }

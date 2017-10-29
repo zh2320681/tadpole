@@ -36,8 +36,9 @@ class LoginFragment : KFragment(), VerifyOperable {
         return UI {
             parentLayout = verticalLayout {
                 gravity = Gravity.CENTER_HORIZONTAL
-                accountView = lineInit(R.drawable.icon_user, "手机号码").invoke(this)
-                pwView = lineInit(R.drawable.icon_password, "密码", true).invoke(this)
+//                verifyOpt.getStoneUserName()
+                accountView = lineInit(R.drawable.icon_user, "手机号码","18012778237").invoke(this)
+                pwView = lineInit(R.drawable.icon_password, "密码","abc123", true).invoke(this)
                 textView("登  录") {
                     textColor = Color.WHITE
                     gravity = Gravity.CENTER
@@ -57,7 +58,7 @@ class LoginFragment : KFragment(), VerifyOperable {
         }.view
     }
 
-    fun lineInit(@DrawableRes icon: Int, hitiTitle: String, isPassword: Boolean = false): _LinearLayout.() -> EditText {
+    fun lineInit(@DrawableRes icon: Int, hitiTitle: String,defTxt : String, isPassword: Boolean = false): _LinearLayout.() -> EditText {
         return {
             var editText: EditText? = null
             relativeLayout {
@@ -80,7 +81,7 @@ class LoginFragment : KFragment(), VerifyOperable {
                         centerVertically()
                     }
                 }
-                editText = editText {
+                editText = editText(defTxt) {
                     hint = hitiTitle
                     hintTextColor = context.getResColor(R.color.text_light_black)
                     leftDrawable(icon, kIntWidth(0.02f))

@@ -1,8 +1,6 @@
 package com.wellcent.tadpole.presenter
 
-import com.wellcent.tadpole.bo.Article
-import com.wellcent.tadpole.bo.ReqMapping
-import com.wellcent.tadpole.bo.User
+import com.wellcent.tadpole.bo.*
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -23,8 +21,16 @@ interface RestDao {
     fun register(@Query("phone") phone:String,@Query("code") code:String,@Query("password") password: String): Observable<ReqMapping<String>>
     
     @GET("/webUser/getPassword")
-    fun getBackPassword(@Query("phone") phone:String,@Query("code") code:String,@Query("newPassword") password: String,
+    fun getBackPassword(@Query("phone") phone:String,@Query("code") code:String,@Query("newPassword") newPassword: String,
                         @Query("dupNewPassword")dupNewPassword:String): Observable<ReqMapping<String>>
+    
+    @GET("/webUser/changePassword")
+    fun changePassword(@Query("phone") phone:String,@Query("password") password:String,@Query("newPassword") newPassword: String,
+                        @Query("dupNewPassword")dupNewPassword:String): Observable<ReqMapping<String>>
+    
+    @GET("/webUser/setInfo")
+    fun modifyUserInfo(@Query("phone") phone:String,@Query("name") name:String,@Query("idNumber") idNumber: String,
+                       @Query("expectedDate")expectedDate:String): Observable<ReqMapping<String>>
     
     @GET("/webArticle/getArticles")
     fun articles(@Query("page") page:Int):Observable<ReqMapping<Article>>
@@ -34,4 +40,11 @@ interface RestDao {
     
     @GET("/webFeedback/saveFeedback")
     fun feedback(@Query("phone") phone:String,@Query("content") content:String): Observable<ReqMapping<String>>
+
+    @GET("/webReport/getReports")
+    fun reports(@Query("phone") phone:String): Observable<ReqMapping<Report>>
+
+    @GET("/webMessage/getMessages")
+    fun messages(@Query("phone") phone:String): Observable<ReqMapping<SysMessage>>
+    
 }
