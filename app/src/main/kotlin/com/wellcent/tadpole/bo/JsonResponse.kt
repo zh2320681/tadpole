@@ -8,6 +8,7 @@ class ReqMapping<T> {
     var list = arrayListOf<T>()
     var info = ""
     var imagePath = ""
+    var avatarImage = ""
     var user:T? = null
     var detail:T? = null
 }
@@ -100,5 +101,20 @@ class Insurance: Serializable {
     var name= ""        //检测项目名称
     var id= ""        //保险理赔id
     var invoice:String? = null       //发票原件
-    var status= ""        //状态                   1-审核中，2-审核通过，3-审核失败
+    var status= ""        
+    var report_status = 0 //状态                   1-审核中，2-审核通过，3-审核失败
+    var claimImageList = arrayListOf<ClaimImage>()
 }
+
+class ClaimImage: Serializable {
+    var detect_item_id = ""
+    var update_time = ""
+    var create_time = ""
+    var user_id = ""
+    var report_id = ""
+    var image_path = ""
+    var id = ""
+    var type:String? = null
+}
+
+data class UploadImg(var imgId:String?,var localPath:String?,var cImage:ClaimImage?) : Serializable 

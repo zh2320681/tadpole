@@ -76,7 +76,10 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                             })
                             setOnEditorActionListener { v, actionId, event ->
                                 if (actionId == KeyEvent.KEYCODE_ENTER) {
-                                    // do some your things  
+                                    if(verifyOpt.user() == null){
+                                        startActivity<AccountActivity>()
+                                        context.toastLongShow("请您先登录!")
+                                    }
                                     true
                                 }
                                 false

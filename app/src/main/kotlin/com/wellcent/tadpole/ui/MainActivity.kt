@@ -1,5 +1,6 @@
 package com.wellcent.tadpole.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.v4.app.FragmentTransaction
@@ -82,6 +83,11 @@ class MainActivity : TadpoleActivity() {
         }
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        currFragmentRelation.content.onActivityResult(requestCode,resultCode,data)
+    }
+    
     class FragmentRelation(var layoutLevel: Int, @DrawableRes var norIcon: Int, @DrawableRes var preIcon: Int, var content: KFragment, var clickProcess:(FragmentRelation)->Unit) {
         lateinit var imgView: ImageView
         fun layout(): _LinearLayout.() -> Unit {

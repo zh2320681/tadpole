@@ -24,7 +24,6 @@ import com.wellcent.tadpole.bo.Report
 import com.wellcent.tadpole.presenter.AppOperable
 import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
 import com.wellcent.tadpole.presenter.listSuccess
-import com.wellcent.tadpole.presenter.success
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.viewPager
@@ -96,6 +95,7 @@ class ReportHolder() : KFragment(), AppOperable {
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                             textColor = context.getResColor(R.color.colorPrimary_blue)
                             topDrawable(R.drawable.icon_progress, 0)
+                            if (report.report_status == 0) { alpha = 0.5f }
                         }.lparams { }
                         imageView(R.drawable.dotted_line) { }.lparams { topMargin = kIntHeight(0.035f) }
                         checkedView = textView("检测完成") {
@@ -103,6 +103,7 @@ class ReportHolder() : KFragment(), AppOperable {
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                             textColor = context.getResColor(R.color.colorPrimary_blue)
                             topDrawable(R.drawable.icon_finish, 0)
+                            if (report.report_status != 2) { alpha = 0.5f }
                         }.lparams { }
                     }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
                     linearLayout {
@@ -115,20 +116,31 @@ class ReportHolder() : KFragment(), AppOperable {
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
                     itemView = textView(report.detect_item) {
                         textColor = hostAct.getResColor(R.color.text_black)
-                        textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
+                        textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
                         lines = 3
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
                     //内容
-                    relativeLayout {
-                        var noReportLayout = verticalLayout {
-                            gravity = Gravity.CENTER
-                            imageView(R.drawable.icon_wait) { }.lparams { }
-                            textView("报告未出结果,请耐心等待") {
-                                textColor = hostAct.getResColor(R.color.colorPrimary_blue)
-                                textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
-                            }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-                        }.lparams { centerInParent() }
-                    }.lparams(MATCH_PARENT, MATCH_PARENT)
+                    if (report.report_status != 2){
+                        relativeLayout {
+                            var noReportLayout = verticalLayout {
+                                gravity = Gravity.CENTER
+                                imageView(R.drawable.icon_wait) { }.lparams { }
+                                textView("报告未出结果,请耐心等待") {
+                                    textColor = hostAct.getResColor(R.color.colorPrimary_blue)
+                                    textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
+                                }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
+                            }.lparams { centerInParent() }
+                        }.lparams(MATCH_PARENT, MATCH_PARENT)
+                    } else {
+                        scrollView {
+                            isVerticalScrollBarEnabled = false
+                            verticalLayout {
+                                addResultCell("检测结果",report.detect_result).invoke(this)
+                                addResultCell("结果说明",report.detect_introduction).invoke(this)
+                                addResultCell("备注",report.remark).invoke(this)
+                            }.lparams(MATCH_PARENT, WRAP_CONTENT)
+                        }.lparams(MATCH_PARENT, MATCH_PARENT)
+                    }
                 }.lparams(kIntWidth(0.9f), kIntHeight(0.7f)) {
                     topMargin = kIntHeight(0.04f)
                     centerHorizontally()
@@ -140,16 +152,33 @@ class ReportHolder() : KFragment(), AppOperable {
                     topMargin = kIntHeight(0.039f)
                 }
 
-                textView("咨询医生") {
-                    textColor = Color.WHITE
-                    backgroundResource = R.drawable.primary_btn
-                    textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
+                linearLayout { 
                     gravity = Gravity.CENTER
-                    onMyClick { }
+                    textView("咨询医生") {
+                        textColor = Color.WHITE
+                        backgroundResource = R.drawable.primary_btn
+                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
+                        gravity = Gravity.CENTER
+                        onMyClick { }
+                    }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) {
+                        verticalMargin = kIntWidth(0.01f)
+                    }
+                    if (report.report_status == 2) {
+                        textView("申请保险") {
+                            textColor = Color.WHITE
+                            backgroundResource = R.drawable.primary_btn
+                            textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
+                            gravity = Gravity.CENTER
+                            onMyClick { }
+                        }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) {
+                            verticalMargin = kIntWidth(0.01f)
+                        }
+                    }
                 }.lparams(kIntWidth(0.9f), kIntHeight(0.1f)) {
                     centerHorizontally()
                     topMargin = kIntHeight(0.69f)
                 }
+                
             }
         }.view
 
@@ -173,22 +202,38 @@ class ReportHolder() : KFragment(), AppOperable {
         }
     }
     
-    fun showDetail() {
-        if(detailReport != null){
-            initValue(detailReport!!)
-            return 
+    fun addResultCell(title:String,content: String?):_LinearLayout.()->TextView{
+        return {
+            var valTextView: TextView? = null
+            textView(title) {
+                textColor = hostAct.getResColor(R.color.text_light_black)
+                textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
+            }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
+
+            valTextView = textView(content) {
+                textColor = hostAct.getResColor(R.color.text_light_black)
+                textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
+            }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
+            valTextView!!
         }
-        appOpt.reportDetail(report).handler(hostAct.kDefaultRestHandler(" 正在请求报告详情,请稍等... ")).success {
-            detailReport = it.detail
-            initValue(detailReport!!)
-        }.excute(hostAct)
+    }
+    
+    fun showDetail() {
+//        if(detailReport != null){
+//            initValue(detailReport!!)
+//            return 
+//        }
+//        appOpt.reportDetail(report).handler(hostAct.kDefaultRestHandler(" 正在请求报告详情,请稍等... ")).success {
+//            detailReport = it.detail
+//            initValue(detailReport!!)
+//        }.excute(hostAct)
     }
     
     fun initValue(reportData: Report){
-        if (reportData.report_status == 0) { checkIngView.alpha = 0.5f }
-        if (reportData.report_status != 2) { checkedView.alpha = 0.5f }
-        timeView.text = report.receive_date
-        unitNameView.text = report.detect_unit
-        itemView.text = report.detect_item
+//        if (reportData.report_status == 0) { checkIngView.alpha = 0.5f }
+//        if (reportData.report_status != 2) { checkedView.alpha = 0.5f }
+//        timeView.text = report.receive_date
+//        unitNameView.text = report.detect_unit
+//        itemView.text = report.detect_item
     }
 }

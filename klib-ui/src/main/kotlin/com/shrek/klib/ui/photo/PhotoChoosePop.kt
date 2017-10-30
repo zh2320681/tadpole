@@ -14,9 +14,9 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
@@ -41,9 +41,9 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView, var is
 
     lateinit var rootView: View
 
-    lateinit var takePhotoBtn: Button
-    lateinit var galleryBtn: Button
-    lateinit var cancelBtn: Button
+    lateinit var takePhotoBtn: TextView
+    lateinit var galleryBtn: TextView
+    lateinit var cancelBtn: TextView
 
     var photoUri: Uri? = null
 
@@ -59,33 +59,41 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView, var is
                     backgroundColor = Color.WHITE
                     gravity = Gravity.BOTTOM
 
-                    takePhotoBtn = button("拍照") {
+                    takePhotoBtn = textView("拍照") {
                         backgroundResource = R.drawable.comm_photo_btn_bg
                         textColor = Color.BLACK
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
+                        gravity = Gravity.CENTER
+                        verticalPadding = kIntHeight(0.015f)
                         onMyClick { doHandlerPhoto(PIC_FROM_CAMERA) }
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) {
                         horizontalMargin = kIntWidth(0.04f)
-                        verticalMargin = kIntHeight(0.02f)
+                        topMargin = kIntHeight(0.02f)
                     }
 
-                    galleryBtn = button("从手机相册选择") {
+                    galleryBtn = textView("从手机相册选择") {
                         backgroundResource = R.drawable.comm_photo_btn_bg
                         textColor = Color.BLACK
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
+                        gravity = Gravity.CENTER
+                        verticalPadding = kIntHeight(0.015f)
                         onMyClick { doHandlerPhoto(PIC_FROM_LOCALPHOTO) }
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) {
                         horizontalMargin = kIntWidth(0.04f)
-                        bottomMargin = kIntHeight(0.02f)
+                        topMargin = kIntHeight(0.02f)
                     }
 
-                    cancelBtn = button("取消") {
+                    cancelBtn = textView("取消") {
                         backgroundResource = R.drawable.comm_yellow_btn
                         textColor = Color.parseColor("#6b450a")
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
+                        gravity = Gravity.CENTER
+                        verticalPadding = kIntHeight(0.015f)
                         onMyClick { dismiss() }
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) {
                         horizontalMargin = kIntWidth(0.04f)
+                        topMargin = kIntHeight(0.02f)
+                        bottomMargin = kIntHeight(0.06f)
                     }
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) { alignParentBottom() }
             }

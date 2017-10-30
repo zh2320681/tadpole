@@ -1,10 +1,9 @@
 package com.wellcent.tadpole.presenter
 
 import com.wellcent.tadpole.bo.*
-import retrofit2.http.GET
-import retrofit2.http.Headers
-import retrofit2.http.POST
-import retrofit2.http.Query
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.http.*
 import rx.Observable
 
 /**
@@ -32,9 +31,9 @@ interface RestDao {
     @GET("/webUser/setInfo")
     fun modifyUserInfo(@Query("phone") phone:String,@Query("name") name:String,@Query("idNumber") idNumber: String,
                        @Query("expectedDate")expectedDate:String): Observable<ReqMapping<String>>
-    
-    @GET("/webUser/changeAvatar")
-    fun modifyUserFace(@Query("phone") phone:String,@Query("name") name:String): Observable<ReqMapping<String>>
+    @Multipart
+    @POST("/webUser/changeAvatar")
+    fun modifyUserFace(@Part("phone") phone:RequestBody, @Part file:MultipartBody.Part): Observable<ReqMapping<String>>
     
     @GET("/webArticle/getArticles")
     fun articles(@Query("page") page:Int):Observable<ReqMapping<Article>>
@@ -54,5 +53,7 @@ interface RestDao {
     
     @GET("/webMessage/getMessages")
     fun messages(@Query("phone") phone:String): Observable<ReqMapping<SysMessage>>
+    
+    
     
 }

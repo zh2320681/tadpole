@@ -1,5 +1,6 @@
 package com.wellcent.tadpole.ui.Fragment
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.support.annotation.DrawableRes
@@ -14,6 +15,7 @@ import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
 import com.shrek.klib.ui.kDefaultRestHandler
+import com.shrek.klib.ui.loading.handler.KDefaultRestHandler
 import com.shrek.klib.ui.photo.PhotoChoosePop
 import com.shrek.klib.view.KFragment
 import com.shrek.klib.view.adaptation.CustomTSDimens
@@ -27,6 +29,7 @@ import com.wellcent.tadpole.ui.custom.circleImageView
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.startActivity
+import java.io.File
 
 class MineFragment : KFragment(),VerifyOperable,AppOperable {
     lateinit var nameView:TextView
@@ -51,11 +54,13 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
                         borderWidth = kIntWidth(0.01f)
                         onMyClick { verifyOpt.user()?.apply {
                             photoChoosePop = PhotoChoosePop(hostAct,faceView,true){
-                                
+                                verifyOpt.modifyUserFace(File(it)).handler(KDefaultRestHandler(hostAct,"正在修改头像,请稍等...")).success {
+                                    faceView._urlImg(it.avatarImage.serPicPath())
+                                }.excute(hostAct)
                             }
                             photoChoosePop?.show(rootView)
                         } }
-                    }.lparams { centerVertically() }
+                    }.lparams(kIntWidth(0.18f),kIntWidth(0.18f)) { centerVertically() }
 
                     userInfoLayout = verticalLayout {
                         visibility = View.GONE
@@ -103,7 +108,7 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
                     bottomMargin = kIntHeight(0.01f)
                 }
                 linearLayout {
-                    addMidFuntionCell("我的保险", R.drawable.icon_my_claims) { }.invoke(this)
+                    addMidFuntionCell("我的保险", R.drawable.icon_my_claims) { startActivity<InsuranceActivity>() }.invoke(this)
                     addMidFuntionCell("我的订单", R.drawable.icon_my_order) { startActivity<OrderActivity>() }.invoke(this)
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) {
                     horizontalMargin = kIntWidth(0.05f)
@@ -197,6 +202,11 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
             msgTemp = it
             msgNoticeView.text = "您有${it.size}条新消息"
         }.excute(hostAct)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        photoChoosePop?.onActivityResult(requestCode,resultCode,data)
     }
 
 }

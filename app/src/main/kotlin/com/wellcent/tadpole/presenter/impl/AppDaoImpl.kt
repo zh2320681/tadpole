@@ -11,6 +11,10 @@ import com.wellcent.tadpole.bo.*
 import com.wellcent.tadpole.presenter.AppDao
 import com.wellcent.tadpole.presenter.RestDao
 import com.wellcent.tadpole.presenter.VerifyDao
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import java.io.File
 import kotlin.reflect.KClass
 class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.java), VerifyDao, AppDao {
     val operator = kApplication.getSharedPreferences("tadpole", AppCompatActivity.MODE_PRIVATE)
@@ -33,7 +37,7 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     override fun userLogin(phone: String, password: String): RestExcuter<ReqMapping<User>> {
         return RestExcuter.create(restDao?.userLogin(phone,password,"")).wrapPost {
             if (it.isOk) {
-                this@AppDaoImpl.userName = userName
+                this@AppDaoImpl.userName = phone
                 this@AppDaoImpl.password = password
                 this@AppDaoImpl.currOptUser = it.user
             }
@@ -60,8 +64,11 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
         return RestExcuter.create(restDao?.changePassword(currOptUser!!.phone,oldPassword,newPassword,newPassword))
     }
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
-    override fun modifyUserFace(imgName: String): RestExcuter<ReqMapping<String>> {
-        return RestExcuter.create(restDao?.modifyUserFace(currOptUser!!.phone,imgName))
+    override fun modifyUserFace(imgFile: File): RestExcuter<ReqMapping<String>> {
+        val requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), imgFile)
+        val body = MultipartBody.Part.createFormData("image", imgFile.getName(), requestFile)
+        val phoneBody = RequestBody.create(MediaType.parse("multipart/form-data"),currOptUser!!.phone)
+        return RestExcuter.create(restDao?.modifyUserFace(phoneBody,body)).wrapPost { currOptUser?.avatarImage = it.avatarImage }
     }
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun articles(): RestExcuter<ReqMapping<Article>> {
