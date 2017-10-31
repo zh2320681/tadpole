@@ -94,6 +94,30 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
         return RestExcuter.create(restDao?.reportDetail(report.id))
     }
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun insurances(): RestExcuter<ReqMapping<Insurance>> {
+        return RestExcuter.create(restDao?.insurances(currOptUser!!.phone))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun saveInsurance(detectItemId: String, reportId: String, bankCard: String, bankName: String): RestExcuter<ReqMapping<String>> {
+        return RestExcuter.create(restDao?.saveClaim(currOptUser!!.phone,detectItemId,reportId,bankCard,bankName))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun insuranceSaveImgs(detectItemId: String, reportId: String, paths: List<String>, files: List<String>)
+            : RestExcuter<ReqMapping<String>>{
+        val mediaType = MediaType.parse("multipart/form-data")
+        val phoneBody = RequestBody.create(mediaType,currOptUser!!.phone)
+        val reportIdBody = RequestBody.create(mediaType,reportId)
+        val detectItemIdBody = RequestBody.create(mediaType,detectItemId)
+        val pathsBody = arrayListOf<MultipartBody.Part>()
+        paths.forEach { pathsBody.add(MultipartBody.Part.createFormData("url",it) ) }
+        var filesBody = arrayListOf<MultipartBody.Part>()
+        files.forEach {
+            val part = MultipartBody.Part.createFormData("image", it, RequestBody.create(mediaType,File(it)))
+            filesBody.add(part) 
+        }
+        return RestExcuter.create(restDao?.claimSaveImgs(phoneBody,detectItemIdBody,reportIdBody,pathsBody,filesBody))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun messages(): RestExcuter<ReqMapping<SysMessage>> {
         return RestExcuter.create(restDao?.messages(currOptUser!!.phone))
     }

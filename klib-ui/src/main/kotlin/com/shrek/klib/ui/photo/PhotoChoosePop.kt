@@ -33,7 +33,7 @@ import java.io.FileNotFoundException
  * @date:  2017-03-22
  */
 class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView, var isPNG: Boolean = false
-                     , var imgProcess: ((imgUri: String) -> Unit)? = null) : PopupWindow(hostAct) {
+                     , var randomFileName:Boolean = false,var imgProcess: ((imgUri: String) -> Unit)? = null) : PopupWindow(hostAct) {
 
     private val PIC_FROM_CAMERA = 1
     private val PIC_FROM_LOCALPHOTO = 0
@@ -142,8 +142,9 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView, var is
             if (!pictureFileDir.exists()) {
                 pictureFileDir.mkdirs()
             }
-
-            picFile = File(pictureFileDir, "upload." + if (isPNG) "png" else "jpeg")
+            val suffix= if (isPNG) "png" else "jpeg"
+            val nameSuffix = if(randomFileName) System.currentTimeMillis().toString() else ""
+            picFile = File(pictureFileDir, "upload${nameSuffix}.${suffix}")
             if (!(picFile?.exists()!!)) {
                 picFile?.createNewFile()
             }
@@ -229,17 +230,20 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView, var is
             }
 
             PIC_FROM_LOCALPHOTO ->
-                try {
-                    if (photoUri != null) {
-                        val bitmap = decodeUriAsBitmap(hostAct, photoUri!!)
-                        showImageView.setImageBitmap(bitmap)
-                        imgProcess?.invoke(picFile!!.path)
-                        dismiss()
+                if (resultCode == Activity.RESULT_OK) {
+                    try {
+                        if (photoUri != null) {
+                            val bitmap = decodeUriAsBitmap(hostAct, photoUri!!)
+                            showImageView.setImageBitmap(bitmap)
+                            imgProcess?.invoke(picFile!!.path)
+                            dismiss()
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+                } else {
+                    Toast.makeText(hostAct, "您取消了操作", Toast.LENGTH_SHORT).show()
                 }
-
         }
     }
 

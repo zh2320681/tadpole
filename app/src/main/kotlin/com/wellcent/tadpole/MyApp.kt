@@ -9,7 +9,7 @@ import com.wellcent.tadpole.presenter.ServerPath
 class MyApp : KApp() {
     override protected fun initSetting(builder: ZSetting.Builder) {
         builder.setRestBasrUrl("${ServerPath}/")
-            .setIsDebugMode(false)
+            .setIsDebugMode(true)
     }
 
     override fun onAfterCreate() {

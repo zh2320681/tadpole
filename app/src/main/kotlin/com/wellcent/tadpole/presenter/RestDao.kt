@@ -53,7 +53,19 @@ interface RestDao {
     
     @GET("/webMessage/getMessages")
     fun messages(@Query("phone") phone:String): Observable<ReqMapping<SysMessage>>
-    
-    
+
+    @GET("/webClaim/getClaims")
+    @Headers("Cache-Control: max-age=60*60*1000")
+    fun insurances(@Query("phone") phone:String): Observable<ReqMapping<Insurance>>
+
+    @Multipart
+    @POST("/webClaim/uploadImage")
+    fun claimSaveImgs(@Part("phone") phone:RequestBody, @Part("detectItemId") detectItemId:RequestBody
+                      , @Part("reportId") reportId:RequestBody, @Part paths:List<MultipartBody.Part>,
+                      @Part files:List<MultipartBody.Part>): Observable<ReqMapping<String>>
+    //, @Part("urls[]") vararg paths:RequestBody
+    @GET("/webClaim/saveClaim")
+    fun saveClaim(@Query("phone") phone:String,@Query("detectItemId") detectItemId:String ,@Query("reportId") reportId:String,
+                  @Query("bankCard") bankCard:String,@Query("bankName") bankName:String): Observable<ReqMapping<String>>
     
 }

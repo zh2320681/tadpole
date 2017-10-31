@@ -72,6 +72,15 @@ class Report: Serializable {
         if(report_status == 1){ return "检测中" }
         return "检测完毕"
     }
+
+    fun converInsurance():Insurance{
+        return Insurance().apply {
+            this.reportId = this@Report.id
+            this.detect_item_id = this@Report.detectItemId
+            this.phone = this@Report.phone
+            this.detectItemName = this@Report.detect_item
+        }
+    }
 }
 
 class SysMessage: Serializable {
@@ -96,14 +105,16 @@ class Insurance: Serializable {
     var user_id= ""        //用户id
     var phone:String? = null        //用户手机号
     var cost_list:String? = null        //费用明细原件
-    var id_image_back= ""        //身份证反面
+    var id_image_back:String? = null         //身份证反面
     var bank_name= ""        //开户行
-    var name= ""        //检测项目名称
+    var detectItemName= ""        //检测项目名称
+    var introduction:String? = null
     var id= ""        //保险理赔id
     var invoice:String? = null       //发票原件
-    var status= ""        
+    var status= 0        //1-审核中，2-审核通过，3-审核失败
     var report_status = 0 //状态                   1-审核中，2-审核通过，3-审核失败
     var claimImageList = arrayListOf<ClaimImage>()
+    
 }
 
 class ClaimImage: Serializable {
@@ -115,6 +126,8 @@ class ClaimImage: Serializable {
     var image_path = ""
     var id = ""
     var type:String? = null
+    //本地的图片
+    var localImgPath:String?= null
 }
 
-data class UploadImg(var imgId:String?,var localPath:String?,var cImage:ClaimImage?) : Serializable 
+//data class UploadImg(var imgId:String?,var localPath:String?,var cImage:ClaimImage?) : Serializable 

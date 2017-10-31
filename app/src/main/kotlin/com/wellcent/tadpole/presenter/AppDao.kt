@@ -1,10 +1,7 @@
 package com.wellcent.tadpole.presenter
 
 import com.shrek.klib.retrofit.RestExcuter
-import com.wellcent.tadpole.bo.Article
-import com.wellcent.tadpole.bo.Report
-import com.wellcent.tadpole.bo.ReqMapping
-import com.wellcent.tadpole.bo.SysMessage
+import com.wellcent.tadpole.bo.*
 
 /**
  * 业务接口
@@ -19,4 +16,8 @@ interface AppDao {
     fun reportsCache():List<Report>?
     fun reportDetail(report: Report): RestExcuter<ReqMapping<Report>>
     fun messages():RestExcuter<ReqMapping<SysMessage>>
+
+    fun insurances(): RestExcuter<ReqMapping<Insurance>>
+    fun saveInsurance(detectItemId:String, reportId:String, bankCard:String,bankName:String): RestExcuter<ReqMapping<String>>
+    fun insuranceSaveImgs(detectItemId:String, reportId: String,paths: List<String>,files:List<String>): RestExcuter<ReqMapping<String>>
 }

@@ -169,7 +169,7 @@ class ReportHolder() : KFragment(), AppOperable {
                             backgroundResource = R.drawable.primary_btn
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
                             gravity = Gravity.CENTER
-                            onMyClick { }
+                            onMyClick { startActivity<InsuranceActivity>( ROUTINE_DATA_BINDLE to report.converInsurance()) }
                         }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) {
                             verticalMargin = kIntWidth(0.01f)
                         }
