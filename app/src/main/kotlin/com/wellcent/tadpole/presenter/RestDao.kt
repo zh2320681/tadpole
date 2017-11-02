@@ -60,7 +60,11 @@ interface RestDao {
     @GET("/webClaim/getClaims")
     @Headers("Cache-Control: max-age=60*60*1000")
     fun insurances(@Query("phone") phone:String): Observable<ReqMapping<Insurance>>
-
+    
+    @GET("/webClaim/getDetail")
+    @Headers("Cache-Control: max-age=60*60*1000")
+    fun insuranceDetail(@Query("phone") phone:String,@Query("id")id:String): Observable<ReqMapping<Insurance>>
+    
     @Multipart
     @POST("/webClaim/uploadImage")
     fun claimSaveImgs(@Part("phone") phone:RequestBody, @Part("detectItemId") detectItemId:RequestBody
@@ -81,16 +85,19 @@ interface RestDao {
     @POST("/webCustomerService/sendOneMsg")
     fun sysSendMessage(@Part("phone") phone:RequestBody, @Part("content") content:RequestBody?, @Part file:MultipartBody.Part?): Observable<ReqMapping<String>>
    
-    @GET("/webCustomerService/getAllMsg")
+    @GET("/webConsult/getAllMsg")
     fun doctorsChartMessages(@Query("phone") phone: String): Observable<ReqMapping<ChartContent>>
 
-    @GET("/webCustomerService/getUnreadMsg")
+    @GET("/webConsult/getUnreadMsg")
     fun doctorsChartUnReadMessages(@Query("phone") phone: String): Observable<ReqMapping<ChartContent>>
 
     @Multipart
-    @POST("/webCustomerService/sendOneMsg")
+    @POST("/webConsult/sendConsult")
     fun doctorsSendMessage(@Part("phone") phone:RequestBody, @Part("content") content:RequestBody?, @Part file:MultipartBody.Part?): Observable<ReqMapping<String>>
 
     @GET("/webOrder/getOrders")
     fun orders(@Query("phone") phone: String,@Query("page") page:Int = 1): Observable<ReqMapping<Order>>
+    
+    @GET("webPeriod/getDoctorPeriod")
+    fun getDoctorPeriod(): Observable<ReqMapping<String>>
 }

@@ -104,7 +104,7 @@ class ReportHolder() : KFragment(), AppOperable {
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return UI {
+        val parentView = UI {
             relativeLayout {
                 val contentLayout = verticalLayout {
                     kRandomId()
@@ -177,7 +177,7 @@ class ReportHolder() : KFragment(), AppOperable {
                         backgroundResource = R.drawable.primary_btn
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
                         gravity = Gravity.CENTER
-                        onMyClick { }
+                        onMyClick { startActivity<AdvisoryActivity>(ROUTINE_DATA_BINDLE to true) }
                     }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) {
                         verticalMargin = kIntWidth(0.01f)
                     }
@@ -186,7 +186,8 @@ class ReportHolder() : KFragment(), AppOperable {
                         backgroundResource = R.drawable.primary_btn
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
                         gravity = Gravity.CENTER
-                        onMyClick { startActivityForResult<InsuranceActivity>(APPLY_INSURE,ROUTINE_DATA_BINDLE to report.converInsurance()) }
+                        onMyClick { 
+                            startActivityForResult<InsuranceActivity>(APPLY_INSURE ,ROUTINE_DATA_BINDLE to report.converInsurance()) }
                     }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) {
                         verticalMargin = kIntWidth(0.01f)
                     }
@@ -198,6 +199,7 @@ class ReportHolder() : KFragment(), AppOperable {
             }
         }.view
         initValue()
+        return parentView
     }
 
     fun addInfoCell(title: String, content: String, weight: Float): _LinearLayout.() -> TextView {

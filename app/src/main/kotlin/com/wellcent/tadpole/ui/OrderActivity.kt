@@ -68,18 +68,18 @@ class OrderHolder() : KFragment() {
                     backgroundResource = R.drawable.order_bg
                     imageView() {
                         scaleType = ImageView.ScaleType.FIT_XY
-                        _urlImg(order.image_path.serPicPath())
+                        _urlImg(order.imagePath.serPicPath())
                     }.lparams(MATCH_PARENT, kIntHeight(0.25f)) { }
-                    val statusImg = if (order.isUsed == 0) R.drawable.order_state0 else R.drawable.order_status1
+                    val statusImg = if (!order.isUsed) R.drawable.order_state0 else R.drawable.order_status1
                     imageView(statusImg) { }.lparams { alignParentRight() }
                     val maskedView = view {
                         kRandomId()
                         backgroundColor = Color.parseColor("#40000000")
-                        if(order.status == 0){ visibility = View.INVISIBLE }
+                        if(!order.isUsed){ visibility = View.INVISIBLE }
                     }.lparams(MATCH_PARENT, kIntHeight(0.25f)) { }
 
                     val hMargin = kIntWidth(0.03f)
-                    val titleView = textView(order.name) {
+                    val titleView = textView(order.detectItemName) {
                         kRandomId()
                         textColor = hostAct.getResColor(R.color.text_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
@@ -115,7 +115,7 @@ class OrderHolder() : KFragment() {
                         below(priceView)
                         horizontalMargin = hMargin
                     }
-                    val orderCreateView = textView("订单创建时间: ${ order.create_time}") {
+                    val orderCreateView = textView("订单创建时间:  ${ order.create_time}") {
                         kRandomId()
                         textColor = hostAct.getResColor(R.color.text_light_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
@@ -124,7 +124,7 @@ class OrderHolder() : KFragment() {
                         below(gapLine)
                         horizontalMargin = hMargin
                     }
-                    val orderPayView = textView("订单支付时间: ${ order.pay_time}") {
+                    val orderPayView = textView("订单支付时间:  ${ order.pay_time}") {
                         kRandomId()
                         textColor = hostAct.getResColor(R.color.text_light_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
@@ -141,9 +141,13 @@ class OrderHolder() : KFragment() {
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                         }.lparams(WRAP_CONTENT, WRAP_CONTENT) { }
                         textView(order.code) {
-                            textColor = hostAct.getResColor(R.color.colorPrimary_purple)
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.BIGGER)
-                            if(order.status == 0){  getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG) }
+                            if(order.isUsed){  
+                                getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG)
+                                textColor = Color.GRAY
+                            } else {
+                                textColor = hostAct.getResColor(R.color.colorPrimary_purple)
+                            }
 //                            getPaint().setFlags(0);
                         }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
                     }.lparams(MATCH_PARENT, MATCH_PARENT) {

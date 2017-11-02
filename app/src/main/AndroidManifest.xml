@@ -48,6 +48,7 @@
         <activity android:name=".ui.ArticleActivity"/>
         <activity android:name=".ui.InsuranceActivity"/>
         <activity android:name=".ui.AdvisoryActivity"/>
+        <activity android:name=".ui.ImageZoomActivity"/>
         
     </application>
 

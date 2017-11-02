@@ -34,13 +34,15 @@ import java.io.File
 import java.util.*
 
 class AdvisoryActivity : TadpoleActivity(), VerifyOperable, AppOperable {
+    val isDoctors by lazy { intent.getBooleanExtra(ROUTINE_DATA_BINDLE,false) }
     lateinit var rootView: RelativeLayout
     lateinit var recyclerView: RecyclerView
     lateinit var inputView:EditText
     var photoChoosePop: PhotoChoosePop? = null
     var adapter: KAdapter<ChartContent, ChartHolder>? = null
     val unRequestTask = LooperTask(20000) {
-        appOpt.sysChartUnReadMessages().listSuccess { notifyDataSetChanged(it) }.excute(this@AdvisoryActivity)
+        val restExcuter = if(isDoctors) appOpt.doctorsChartUnReadMessages() else appOpt.sysChartUnReadMessages()
+        restExcuter.listSuccess { notifyDataSetChanged(it) }.error {  }.excute(this@AdvisoryActivity)
         true
     }
     
@@ -50,6 +52,8 @@ class AdvisoryActivity : TadpoleActivity(), VerifyOperable, AppOperable {
             val nav = navigateBar("我的咨询") {
                 setTitleColor(Color.WHITE)
                 setNavBg(R.drawable.chart_nav_bg)
+                isFocusable = true
+                isFocusableInTouchMode = true
                 addLeftDefaultBtn(R.drawable.icon_back_g) { finish() }
             }.lparams(MATCH_PARENT, DimensAdapter.nav_height) { bottomMargin = kIntHeight(0.015f) }
             val bottomLayout = relativeLayout {
@@ -100,24 +104,36 @@ class AdvisoryActivity : TadpoleActivity(), VerifyOperable, AppOperable {
                 above(bottomLayout)
             }
         }
-
-        appOpt.sysChartMessages().handler(kDefaultRestHandler(" 正在请求历时聊天记录,请稍等... ")).listSuccess {
+        val restExcuter = if(isDoctors) appOpt.doctorsChartMessages() else appOpt.sysChartMessages()
+        restExcuter.handler(kDefaultRestHandler(" 正在请求历时聊天记录,请稍等... ")).listSuccess {
             adapter = KAdapter<ChartContent, ChartHolder>(it) {
                 itemConstructor { ChartHolder() }
-                itemClickDoing { bo, i -> }
+                itemClickDoing { bo, i ->
+                    bo.image_path?.apply { if(bo.type == 2){ startActivity<ImageZoomActivity>(ROUTINE_DATA_BINDLE to this)} }
+                }
                 bindData { holder, bo, i -> holder.initData(this@AdvisoryActivity,bo) }
             }
             recyclerView.adapter = adapter
             notifyDataSetChanged()
-            unRequestTask.start()
+            if(isDoctors) { getDoctorPeriod() }
+            uiThread(20000){ unRequestTask.start() }
         }.excute(this)
     }
 
+    fun getDoctorPeriod(){
+        verifyOpt.getDoctorPeriod().handler(kDefaultRestHandler(" 正在请求历时聊天记录,请稍等... ")).success { 
+            notifyDataSetChanged(arrayListOf(ChartContent().apply { 
+                type = 999
+                name = it.period
+            }))
+        }.excute(this)
+    }
     fun sendMessage(msg: String?, imgFile: File?) {
         val contentTemp = instanceChartContent(msg,imgFile)
         notifyDataSetChanged(listOf(contentTemp))
         adapter?.notifyDataSetChanged()
-        appOpt.sysSendMessage(msg, imgFile).success {
+        val restExcuter = if(isDoctors) appOpt.doctorsSendMessage(msg, imgFile) else appOpt.sysSendMessage(msg, imgFile)
+        restExcuter.success {
             contentTemp.localStatus = 0
             notifyDataSetChanged()
         }.error {
@@ -128,7 +144,7 @@ class AdvisoryActivity : TadpoleActivity(), VerifyOperable, AppOperable {
 
     fun instanceChartContent(msg: String?, imgFile: File?): ChartContent {
         return ChartContent().apply {
-            isImage = if (msg == null) 1 else 0
+            isImage = msg == null
             send_time = Date().stringFormat("yyyy-MM-dd HH:mm:ss")
             user_id = verifyOpt.user()!!.id
             avatarImage = verifyOpt.user()!!.avatarImage
@@ -176,19 +192,28 @@ class ChartHolder() : HolderBo(0) {
     lateinit var failView: ImageView
     lateinit var faceLayout: LinearLayout
     lateinit var chatContenLayout: RelativeLayout
-
+    lateinit var noticeView:TextView
+    lateinit var parentView:RelativeLayout
     var lastDate: Date? = null
     override fun rootViewInit(): AnkoContext<Context>.() -> Unit {
         return {
             verticalLayout {
                 layoutParams = viewGroupLP(MATCH_PARENT, WRAP_CONTENT)
                 gravity = Gravity.CENTER_HORIZONTAL
+
+                noticeView = textView {
+                    textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
+                    textColor = Color.WHITE
+                    backgroundResource = R.drawable.doctor_period_bg
+                    gravity = Gravity.CENTER
+                }.lparams(kIntWidth(0.5f), WRAP_CONTENT){ verticalMargin = kIntHeight(0.01f) }
+                
                 timeView = textView("2017-02-03 12:22:33") {
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                     textColor = context.getResColor(R.color.text_light_black)
-                }.lparams(WRAP_CONTENT, WRAP_CONTENT) { verticalMargin = kIntHeight(0.01f) }
+                }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
 
-                relativeLayout {
+                parentView = relativeLayout {
                     faceLayout = verticalLayout {
                         kRandomId()
                         gravity = Gravity.CENTER
@@ -215,7 +240,7 @@ class ChartHolder() : HolderBo(0) {
                                 textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                             }.lparams(WRAP_CONTENT, WRAP_CONTENT) { }
                             contentImgView = imageView(R.drawable.icon_chart_msg_warn) { }.lparams {}
-                        }.lparams { }
+                        }.lparams { topMargin = kIntHeight(0.01f) }
 
                         failView = imageView(R.drawable.icon_chart_msg_warn) { }.lparams {
                             centerVertically()
@@ -237,6 +262,18 @@ class ChartHolder() : HolderBo(0) {
     }
 
     fun initData(host:TadpoleActivity,content: ChartContent) {
+        if(content.type == 999){
+            parentView.visibility = View.GONE
+            timeView.visibility = View.GONE
+            noticeView.visibility = View.VISIBLE
+            noticeView.text = content.name
+            return
+        } else {
+            parentView.visibility = View.VISIBLE
+            timeView.visibility = View.VISIBLE
+            noticeView.visibility = View.GONE
+        }
+            
         //时间格式化
         val sendDate = content.send_time.toDate("yyyy-MM-dd HH:mm:ss") ?: Date()
         var formatTime = content.send_time
@@ -258,11 +295,7 @@ class ChartHolder() : HolderBo(0) {
         faceView._urlImg(content.avatarImage.serPicPath())
         userNameView.text = content.name
         //内容
-        if (content.isImage == 0) {
-            contentImgView.visibility = View.GONE
-            contentView.visibility = View.VISIBLE
-            contentView.text = content.content
-        } else {
+        if (content.isImage) {
             contentImgView.visibility = View.VISIBLE
             contentView.visibility = View.GONE
             content.localImgPath?.apply {
@@ -271,6 +304,10 @@ class ChartHolder() : HolderBo(0) {
                 contentImgView.setImageBitmap(bitmap)
             }
             content.image_path?.apply { contentImgView._urlImg(serPicPath()) }
+        } else {
+            contentImgView.visibility = View.GONE
+            contentView.visibility = View.VISIBLE
+            contentView.text = content.content
         }
         //发送状态设置
         if(content.localStatus == 666){

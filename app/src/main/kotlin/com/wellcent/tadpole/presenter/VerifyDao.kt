@@ -23,5 +23,6 @@ interface VerifyDao {
     fun changePassword(oldPassword:String,newPassword:String): RestExcuter<ReqMapping<String>>
     fun modifyUserFace(imgFile: File): RestExcuter<ReqMapping<String>>
     
+    fun getDoctorPeriod(): RestExcuter<ReqMapping<String>>
     fun logOut()
 }

@@ -71,6 +71,10 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
         return RestExcuter.create(restDao?.modifyUserFace(phoneBody,body)).wrapPost { currOptUser?.avatarImage = it.avatarImage }
     }
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun getDoctorPeriod(): RestExcuter<ReqMapping<String>> {
+        return RestExcuter.create(restDao?.getDoctorPeriod())
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun articles(): RestExcuter<ReqMapping<Article>> {
         return RestExcuter.create(restDao?.articles(1))
     }
@@ -100,6 +104,10 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun insurances(): RestExcuter<ReqMapping<Insurance>> {
         return RestExcuter.create(restDao?.insurances(currOptUser!!.phone))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun insuranceDetail(id: String): RestExcuter<ReqMapping<Insurance>> {
+        return RestExcuter.create(restDao?.insuranceDetail(currOptUser!!.phone,id))
     }
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun saveInsurance(detectItemId: String, reportId: String, bankCard: String, bankName: String): RestExcuter<ReqMapping<String>> {

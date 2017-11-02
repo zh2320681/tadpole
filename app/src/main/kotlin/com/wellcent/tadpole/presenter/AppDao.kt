@@ -2,6 +2,7 @@ package com.wellcent.tadpole.presenter
 
 import com.shrek.klib.retrofit.RestExcuter
 import com.wellcent.tadpole.bo.*
+import rx.Observable
 import java.io.File
 
 /**
@@ -20,6 +21,7 @@ interface AppDao {
     fun messages():RestExcuter<ReqMapping<SysMessage>>
 
     fun insurances(): RestExcuter<ReqMapping<Insurance>>
+    fun insuranceDetail(id:String): RestExcuter<ReqMapping<Insurance>>
     fun saveInsurance(detectItemId:String, reportId:String, bankCard:String,bankName:String): RestExcuter<ReqMapping<String>>
     fun insuranceSaveImgs(detectItemId:String, reportId: String,paths: List<String>,files:List<String>): RestExcuter<ReqMapping<String>>
 
