@@ -1,5 +1,7 @@
 package com.wellcent.tadpole.ui
 
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.view.ViewPager
@@ -8,6 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
@@ -24,8 +28,10 @@ import com.wellcent.tadpole.bo.Report
 import com.wellcent.tadpole.presenter.AppOperable
 import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
 import com.wellcent.tadpole.presenter.listSuccess
+import com.wellcent.tadpole.presenter.success
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
+import org.jetbrains.anko.support.v4.startActivityForResult
 import org.jetbrains.anko.support.v4.viewPager
 import java.lang.ref.WeakReference
 
@@ -46,38 +52,53 @@ class ReportActivity : KActivity(), AppOperable {
         getReport(report)
     }
 
-    fun initAdapter(reports:List<Report>) {
+    fun initAdapter(reports: List<Report>) {
         val listTemp = arrayListOf<ReportHolder>()
         reports.forEach { listTemp.add(ReportHolder(it)) }
         val holderList = listTemp.toTypedArray()
-        viewPage.adapter = KFragmentPagerAdapter<ReportHolder>(this, WeakReference(viewPage), holderList){ positon,oldFragment,newFragment ->
+        viewPage.adapter = KFragmentPagerAdapter<ReportHolder>(this, WeakReference(viewPage), holderList) { positon, oldFragment, newFragment ->
             newFragment.showDetail()
         }
-        if(holderList.size>0){ holderList[0].showDetail() }
+        if (holderList.size > 0) {
+            holderList[0].showDetail()
+        }
     }
-    
+
     fun getReport(detail: Report?) {
-        var reports:List<Report>? = null
-        if (detail != null) { reports = arrayListOf(detail!!) } else { reports = appOpt.reportsCache() }
-        if(reports != null){ initAdapter(reports!!) } else {
+        var reports: List<Report>? = null
+        if (detail != null) {
+            reports = arrayListOf(detail!!)
+        } else {
+            reports = appOpt.reportsCache()
+        }
+        if (reports != null) {
+            initAdapter(reports!!)
+        } else {
             appOpt.reports().handler(kDefaultRestHandler(" 正在请求报表列表,请稍等... ")).listSuccess {
                 initAdapter(it)
             }.excute(this)
         }
-    } 
+    }
 }
 
 
 class ReportHolder() : KFragment(), AppOperable {
+    val APPLY_INSURE = 0x98
     lateinit var report: Report
-    var detailReport:Report? = null
-    
-    lateinit var checkIngView:TextView
-    lateinit var checkedView:TextView
-    lateinit var timeView:TextView
-    lateinit var unitNameView:TextView
-    lateinit var itemView:TextView
-    
+    lateinit var checkIngView: TextView
+    lateinit var checkedView: TextView
+    lateinit var timeView: TextView
+    lateinit var unitNameView: TextView
+    lateinit var itemView: TextView
+
+    lateinit var resultView: TextView
+    lateinit var introView: TextView
+    lateinit var remarkView: TextView
+
+    lateinit var noReportLayout: LinearLayout
+    lateinit var resultScrollView: ScrollView
+    lateinit var insuranceBtn: TextView
+
     constructor(report: Report) : this() {
         this.report = report
     }
@@ -95,7 +116,6 @@ class ReportHolder() : KFragment(), AppOperable {
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                             textColor = context.getResColor(R.color.colorPrimary_blue)
                             topDrawable(R.drawable.icon_progress, 0)
-                            if (report.report_status == 0) { alpha = 0.5f }
                         }.lparams { }
                         imageView(R.drawable.dotted_line) { }.lparams { topMargin = kIntHeight(0.035f) }
                         checkedView = textView("检测完成") {
@@ -103,7 +123,6 @@ class ReportHolder() : KFragment(), AppOperable {
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                             textColor = context.getResColor(R.color.colorPrimary_blue)
                             topDrawable(R.drawable.icon_finish, 0)
-                            if (report.report_status != 2) { alpha = 0.5f }
                         }.lparams { }
                     }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
                     linearLayout {
@@ -120,27 +139,26 @@ class ReportHolder() : KFragment(), AppOperable {
                         lines = 3
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
                     //内容
-                    if (report.report_status != 2){
-                        relativeLayout {
-                            var noReportLayout = verticalLayout {
-                                gravity = Gravity.CENTER
-                                imageView(R.drawable.icon_wait) { }.lparams { }
-                                textView("报告未出结果,请耐心等待") {
-                                    textColor = hostAct.getResColor(R.color.colorPrimary_blue)
-                                    textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
-                                }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-                            }.lparams { centerInParent() }
-                        }.lparams(MATCH_PARENT, MATCH_PARENT)
-                    } else {
-                        scrollView {
+                    relativeLayout {
+                        noReportLayout = verticalLayout {
+                            gravity = Gravity.CENTER
+                            imageView(R.drawable.icon_wait) { }.lparams { }
+                            textView("报告未出结果,请耐心等待") {
+                                textColor = hostAct.getResColor(R.color.colorPrimary_blue)
+                                textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
+                            }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
+                        }.lparams { centerInParent() }
+
+                        resultScrollView = scrollView {
                             isVerticalScrollBarEnabled = false
                             verticalLayout {
-                                addResultCell("检测结果",report.detect_result).invoke(this)
-                                addResultCell("结果说明",report.detect_introduction).invoke(this)
-                                addResultCell("备注",report.remark).invoke(this)
+                                resultView = addResultCell("检测结果", report.detect_result).invoke(this)
+                                introView = addResultCell("结果说明", report.detect_introduction).invoke(this)
+                                remarkView = addResultCell("备注", report.remark).invoke(this)
                             }.lparams(MATCH_PARENT, WRAP_CONTENT)
                         }.lparams(MATCH_PARENT, MATCH_PARENT)
-                    }
+                    }.lparams(MATCH_PARENT, MATCH_PARENT)
+
                 }.lparams(kIntWidth(0.9f), kIntHeight(0.7f)) {
                     topMargin = kIntHeight(0.04f)
                     centerHorizontally()
@@ -152,7 +170,7 @@ class ReportHolder() : KFragment(), AppOperable {
                     topMargin = kIntHeight(0.039f)
                 }
 
-                linearLayout { 
+                linearLayout {
                     gravity = Gravity.CENTER
                     textView("咨询医生") {
                         textColor = Color.WHITE
@@ -163,26 +181,23 @@ class ReportHolder() : KFragment(), AppOperable {
                     }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) {
                         verticalMargin = kIntWidth(0.01f)
                     }
-                    if (report.report_status == 2) {
-                        textView("申请保险") {
-                            textColor = Color.WHITE
-                            backgroundResource = R.drawable.primary_btn
-                            textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
-                            gravity = Gravity.CENTER
-                            onMyClick { startActivity<InsuranceActivity>( ROUTINE_DATA_BINDLE to report.converInsurance()) }
-                        }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) {
-                            verticalMargin = kIntWidth(0.01f)
-                        }
+                    insuranceBtn = textView("申请保险") {
+                        textColor = Color.WHITE
+                        backgroundResource = R.drawable.primary_btn
+                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
+                        gravity = Gravity.CENTER
+                        onMyClick { startActivityForResult<InsuranceActivity>(APPLY_INSURE,ROUTINE_DATA_BINDLE to report.converInsurance()) }
+                    }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) {
+                        verticalMargin = kIntWidth(0.01f)
                     }
                 }.lparams(kIntWidth(0.9f), kIntHeight(0.1f)) {
                     centerHorizontally()
                     topMargin = kIntHeight(0.69f)
                 }
-                
+
             }
         }.view
-
-        initValue(report)
+        initValue()
     }
 
     fun addInfoCell(title: String, content: String, weight: Float): _LinearLayout.() -> TextView {
@@ -201,8 +216,8 @@ class ReportHolder() : KFragment(), AppOperable {
             valTextView!!
         }
     }
-    
-    fun addResultCell(title:String,content: String?):_LinearLayout.()->TextView{
+
+    fun addResultCell(title: String, content: String?): _LinearLayout.() -> TextView {
         return {
             var valTextView: TextView? = null
             textView(title) {
@@ -217,23 +232,52 @@ class ReportHolder() : KFragment(), AppOperable {
             valTextView!!
         }
     }
-    
+
     fun showDetail() {
-//        if(detailReport != null){
-//            initValue(detailReport!!)
-//            return 
-//        }
-//        appOpt.reportDetail(report).handler(hostAct.kDefaultRestHandler(" 正在请求报告详情,请稍等... ")).success {
-//            detailReport = it.detail
-//            initValue(detailReport!!)
-//        }.excute(hostAct)
+        appOpt.reportDetail(report).handler(hostAct.kDefaultRestHandler(" 正在请求报告详情,请稍等... ")).success {
+            report = it.detail!!
+            initValue()
+        }.excute(hostAct)
     }
-    
-    fun initValue(reportData: Report){
-//        if (reportData.report_status == 0) { checkIngView.alpha = 0.5f }
-//        if (reportData.report_status != 2) { checkedView.alpha = 0.5f }
-//        timeView.text = report.receive_date
-//        unitNameView.text = report.detect_unit
-//        itemView.text = report.detect_item
+
+    fun initValue() {
+        if (report.report_status == 0) {
+            checkIngView.alpha = 0.5f
+        }
+        if (report.report_status != 2) {
+            checkedView.alpha = 0.5f
+        }
+        timeView.text = report.receive_date
+        unitNameView.text = report.detect_unit
+        itemView.text = report.detect_item
+
+        resultView.text = report.detect_result
+        introView.text = report.detect_introduction
+        remarkView.text = report.remark
+        if (report.report_status == 0) {
+            checkIngView.alpha = 0.5f
+            checkedView.alpha = 0.5f
+            noReportLayout.visibility = View.VISIBLE
+            resultScrollView.visibility = View.GONE
+            insuranceBtn.visibility = View.GONE
+        } else if (report.report_status == 1) {
+            checkIngView.alpha = 1f
+            checkedView.alpha = 0.5f
+            noReportLayout.visibility = View.VISIBLE
+            resultScrollView.visibility = View.GONE
+            insuranceBtn.visibility = View.GONE
+        } else if (report.report_status == 2) {
+            checkIngView.alpha = 1f
+            checkedView.alpha = 1f
+            noReportLayout.visibility = View.GONE
+            resultScrollView.visibility = View.VISIBLE
+            insuranceBtn.visibility = View.VISIBLE
+            if( report.claimId?.isNotEmpty()?:false ){ insuranceBtn.text = "查看保险" } else { insuranceBtn.text = "申请保险" }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == APPLY_INSURE && resultCode == Activity.RESULT_OK){  showDetail() }
     }
 }

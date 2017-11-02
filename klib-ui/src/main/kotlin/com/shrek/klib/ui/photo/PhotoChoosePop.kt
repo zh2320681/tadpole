@@ -32,7 +32,7 @@ import java.io.FileNotFoundException
  * @author Shrek
  * @date:  2017-03-22
  */
-class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView, var isPNG: Boolean = false
+class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView?, var isPNG: Boolean = false
                      , var randomFileName:Boolean = false,var imgProcess: ((imgUri: String) -> Unit)? = null) : PopupWindow(hostAct) {
 
     private val PIC_FROM_CAMERA = 1
@@ -49,6 +49,20 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView, var is
 
     var picFile: File? = null
 
+    companion object {
+        fun decodeUriAsBitmap(hostAct: Activity, uri: Uri): Bitmap? {
+            var bitmap: Bitmap? = null
+            try {
+                bitmap = BitmapFactory.decodeStream(hostAct.contentResolver
+                        .openInputStream(uri))
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+                return null
+            }
+            return bitmap
+        }
+    }
+    
     init {
         val rootView = kApplication.UI {
             relativeLayout() {
@@ -234,7 +248,7 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView, var is
                     try {
                         if (photoUri != null) {
                             val bitmap = decodeUriAsBitmap(hostAct, photoUri!!)
-                            showImageView.setImageBitmap(bitmap)
+                            showImageView?.setImageBitmap(bitmap)
                             imgProcess?.invoke(picFile!!.path)
                             dismiss()
                         }
@@ -246,18 +260,4 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView, var is
                 }
         }
     }
-
-
-    fun decodeUriAsBitmap(hostAct: Activity, uri: Uri): Bitmap? {
-        var bitmap: Bitmap? = null
-        try {
-            bitmap = BitmapFactory.decodeStream(hostAct.contentResolver
-                    .openInputStream(uri))
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-            return null
-        }
-        return bitmap
-    }
-
 }

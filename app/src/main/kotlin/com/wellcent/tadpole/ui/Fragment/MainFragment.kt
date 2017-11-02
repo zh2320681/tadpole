@@ -13,6 +13,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.shrek.klib.colligate.IDCardUtil
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
@@ -24,10 +25,7 @@ import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
 import com.wellcent.tadpole.bo.Report
-import com.wellcent.tadpole.presenter.AppOperable
-import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
-import com.wellcent.tadpole.presenter.VerifyOperable
-import com.wellcent.tadpole.presenter.listSuccess
+import com.wellcent.tadpole.presenter.*
 import com.wellcent.tadpole.ui.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -60,6 +58,7 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                             hint = "请输入身份证号"
                             hintTextColor = hostAct.getResColor(R.color.text_light_black)
                             backgroundColor = Color.TRANSPARENT
+                            gravity = Gravity.CENTER_VERTICAL
                             singleLine = true
                             inputType = EditorInfo.TYPE_CLASS_TEXT
                             imeOptions = EditorInfo.IME_ACTION_SEARCH
@@ -76,10 +75,7 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                             })
                             setOnEditorActionListener { v, actionId, event ->
                                 if (actionId == KeyEvent.KEYCODE_ENTER) {
-                                    if(verifyOpt.user() == null){
-                                        startActivity<AccountActivity>()
-                                        context.toastLongShow("请您先登录!")
-                                    }
+                                    searchReport()
                                     true
                                 }
                                 false
@@ -188,6 +184,26 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                 }
             }.excute(hostAct)
         }
+    }
+    
+    fun searchReport(){
+        if(verifyOpt.user() == null){
+            startActivity<AccountActivity>()
+            context.toastLongShow("请您先登录!")
+            return
+        }
+        val idNum = idInputView.text.toString()
+        if(idNum.isEmpty()){
+            context.toastLongShow("请您输入身份证号!")
+            return 
+        }
+        if(!IDCardUtil.isIdcard(idNum)){
+            context.toastLongShow("请您输入正确身份证号!")
+            return
+        }
+        appOpt.searchReport(idNum).handler(hostAct.kDefaultRestHandler(" 正在查找报告,请稍等... ")).success {
+            
+        }.excute(hostAct)
     }
 }
 

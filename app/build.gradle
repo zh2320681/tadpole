@@ -18,6 +18,12 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
+
+        multiDexEnabled true
+    }
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
     }
     buildTypes {
         release {
@@ -34,6 +40,7 @@ android {
 }
 
 dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     //compile "org.jetbrains.anko:anko-cardview-v7:$anko_version";
     compile project(':sweet-alert-dialog')
     compile project(':klib-ui')
@@ -42,6 +49,7 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:cardview-v7:25.3.1'
     compile 'com.yqritc:recyclerview-flexibledivider:1.4.0'
+    compile 'com.android.support:multidex:1.0.0'
 }
 
 repositories {

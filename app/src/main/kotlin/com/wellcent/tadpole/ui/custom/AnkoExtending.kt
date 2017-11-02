@@ -63,3 +63,4 @@ inline fun ViewManager.springView(addHeader: SpringView.DragHander? = null,
  */
 inline fun ViewManager.circleImageView() = circleImageView {}
 inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit) = ankoView({ CircleImageView(it) },nonTheme, init)
+

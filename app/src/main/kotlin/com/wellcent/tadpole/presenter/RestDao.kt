@@ -51,6 +51,9 @@ interface RestDao {
     @GET("/webReport/getDetail")
     fun reportDetail(@Query("id") id:String):Observable<ReqMapping<Report>>
     
+    @GET("/webReport/searchReport")
+    fun searchReport(@Query("phone") phone:String,@Query("idNumber") idNumber:String): Observable<ReqMapping<Report>>
+    
     @GET("/webMessage/getMessages")
     fun messages(@Query("phone") phone:String): Observable<ReqMapping<SysMessage>>
 
@@ -63,9 +66,31 @@ interface RestDao {
     fun claimSaveImgs(@Part("phone") phone:RequestBody, @Part("detectItemId") detectItemId:RequestBody
                       , @Part("reportId") reportId:RequestBody, @Part paths:List<MultipartBody.Part>,
                       @Part files:List<MultipartBody.Part>): Observable<ReqMapping<String>>
-    //, @Part("urls[]") vararg paths:RequestBody
+    
     @GET("/webClaim/saveClaim")
     fun saveClaim(@Query("phone") phone:String,@Query("detectItemId") detectItemId:String ,@Query("reportId") reportId:String,
                   @Query("bankCard") bankCard:String,@Query("bankName") bankName:String): Observable<ReqMapping<String>>
+
+    @GET("/webCustomerService/getAllMsg")
+    fun sysChartMessages(@Query("phone") phone: String): Observable<ReqMapping<ChartContent>>
     
+    @GET("/webCustomerService/getUnreadMsg")
+    fun sysChartUnReadMessages(@Query("phone") phone: String): Observable<ReqMapping<ChartContent>>
+
+    @Multipart
+    @POST("/webCustomerService/sendOneMsg")
+    fun sysSendMessage(@Part("phone") phone:RequestBody, @Part("content") content:RequestBody?, @Part file:MultipartBody.Part?): Observable<ReqMapping<String>>
+   
+    @GET("/webCustomerService/getAllMsg")
+    fun doctorsChartMessages(@Query("phone") phone: String): Observable<ReqMapping<ChartContent>>
+
+    @GET("/webCustomerService/getUnreadMsg")
+    fun doctorsChartUnReadMessages(@Query("phone") phone: String): Observable<ReqMapping<ChartContent>>
+
+    @Multipart
+    @POST("/webCustomerService/sendOneMsg")
+    fun doctorsSendMessage(@Part("phone") phone:RequestBody, @Part("content") content:RequestBody?, @Part file:MultipartBody.Part?): Observable<ReqMapping<String>>
+
+    @GET("/webOrder/getOrders")
+    fun orders(@Query("phone") phone: String,@Query("page") page:Int = 1): Observable<ReqMapping<Order>>
 }

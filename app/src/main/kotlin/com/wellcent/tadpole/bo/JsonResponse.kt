@@ -1,5 +1,6 @@
 package com.wellcent.tadpole.bo
 
+import java.io.File
 import java.io.Serializable
 
 class ReqMapping<T> {
@@ -7,7 +8,7 @@ class ReqMapping<T> {
     var isFail = false
     var list = arrayListOf<T>()
     var info = ""
-    var imagePath = ""
+    var imagePath:String? = null
     var avatarImage = ""
     var user:T? = null
     var detail:T? = null
@@ -130,4 +131,39 @@ class ClaimImage: Serializable {
     var localImgPath:String?= null
 }
 
+class ChartContent: Serializable {
+    var isImage = 0  // 0：否    1：是
+    var detect_item_id:String? = null
+    var send_time = ""
+    var user_id = ""
+    var image_path:String? = null
+    var price:String? = null
+    var avatarImage = ""
+    var name = ""
+    var hasRead = 0  //0：否    1：是
+    var id = ""
+    var type = 0   //1：用户消息    2：后台回复消息 
+    var content:String? = null
+    
+    var localImgPath: File? = null
+    var localStatus = 0 //本地状态  666 为发送中  777为发送失败
+}
+
+class Order : Serializable {
+    var create_time = ""    //创建时间
+    var update_time = ""    //更新时间
+    var pay_time = ""
+    var name = ""    //检测项目名称
+    var remark = ""    //检测项目说明
+    var price = ""    //价格
+    var id = ""    //项目id
+    var normal_value = ""    //正常值
+    var test_value = ""    //测试值
+    var result = ""    //检测结果
+    var status = 0  // 状态                   0：停用     1：正常
+    var image_path = ""    //图片路径
+    var detectUnitName = ""
+    var code = ""
+    var isUsed = 0
+}
 //data class UploadImg(var imgId:String?,var localPath:String?,var cImage:ClaimImage?) : Serializable 

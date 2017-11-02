@@ -1,5 +1,6 @@
 package com.wellcent.tadpole.ui
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -33,10 +34,7 @@ import com.wellcent.tadpole.R
 import com.wellcent.tadpole.bo.ClaimImage
 import com.wellcent.tadpole.bo.Insurance
 import com.wellcent.tadpole.bo.Report
-import com.wellcent.tadpole.presenter.AppOperable
-import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
-import com.wellcent.tadpole.presenter.listSuccess
-import com.wellcent.tadpole.presenter.success
+import com.wellcent.tadpole.presenter.*
 import com.wellcent.tadpole.ui.custom.InsuranceIntroPop
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration
 import org.jetbrains.anko.*
@@ -143,13 +141,13 @@ class InsuranceHolder() : KFragment(), AppOperable {
                     topMargin = kIntHeight(0.039f)
                 }
 
-                if (insurance.status != 2) {
+                if (insurance.status == 0 || insurance.status == 3) {
                     textView("上 传") {
                         textColor = Color.WHITE
                         backgroundResource = R.drawable.primary_btn
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
                         gravity = Gravity.CENTER
-                        onMyClick { submit() }
+                        onMyClick { beforeSubmitCheck() }
                     }.lparams(kIntWidth(0.9f), kIntHeight(0.1f)) {
                         centerHorizontally()
                         topMargin = kIntHeight(0.69f)
@@ -158,39 +156,59 @@ class InsuranceHolder() : KFragment(), AppOperable {
             }
         }.view
     }
-    //提交
-    fun submit(){
-        val backNum = bankNumView.text.toString()
-        if(backNum.isEmpty()){
+
+    fun beforeSubmitCheck(){
+        if (bankNumView.text.isEmpty()) {
             hostAct.toastLongShow("您还未输入银行卡号")
             return
         }
-        val bankKHH = bankKHHView.text.toString()
-        if(bankKHHView.text.toString().isEmpty()){
+        if (bankKHHView.text.toString().isEmpty()) {
             hostAct.toastLongShow("您还未输入开户行信息")
             return
         }
-        appOpt.saveInsurance(insurance.detect_item_id,insurance.reportId,backNum,bankKHH).handler(
-                hostAct.kDefaultRestHandler(" 正在提交保险信息,请稍等... ")).success {
-            hostAct.toastLongShow("保险信息提交成功!")
-            submitImgs()
-        }.excute(hostAct)
+        if(imgAdapter.itemCount == 0){
+            hostAct.toastLongShow("您还未上传资料")
+            return
+        }
+        submitImgs()
     }
     
+    //提交
+    fun submit() {
+        val backNum = bankNumView.text.toString()
+        val bankKHH = bankKHHView.text.toString()
+        appOpt.saveInsurance(insurance.detect_item_id, insurance.reportId, backNum, bankKHH).handler(
+                hostAct.kDefaultRestHandler(" 正在提交保险信息,请稍等... ")).success {
+//            hostAct.toastLongShow("保险信息提交成功!")
+            SweetAlertDialog(hostAct, SweetAlertDialog.SUCCESS_TYPE)
+                    .setContentText("保险申报成功!")
+                    .setConfirmText(" 确 定 ")
+                    .setConfirmClickListener {
+                        hostAct.setResult(Activity.RESULT_OK)
+                        hostAct.finish()
+                    }.setCancelText(" 取 消 ").show()
+        }.excute(hostAct)
+    }
+
     //提交图片
-    fun submitImgs(){
+    fun submitImgs() {
         var urls = arrayListOf<String>()
         var localFiles = arrayListOf<String>()
-        imgAdapter.sourceData.forEach { 
-            if(it.image_path.isNotEmpty()){ urls.add(it.image_path) }
-            if(it.localImgPath?.isNotEmpty()?:false){ localFiles.add(it.localImgPath!!) }
+        imgAdapter.sourceData.forEach {
+            if (it.image_path.isNotEmpty()) {
+                urls.add(it.image_path)
+            }
+            if (it.localImgPath?.isNotEmpty() ?: false) {
+                localFiles.add(it.localImgPath!!)
+            }
         }
-        appOpt.insuranceSaveImgs(insurance.detect_item_id,insurance.reportId,urls,localFiles).handler(
+        appOpt.insuranceSaveImgs(insurance.detect_item_id, insurance.reportId, urls, localFiles).handler(
                 hostAct.kDefaultRestHandler(" 正在上传保险资料,请稍等... ")).success {
             hostAct.toastLongShow("保险资料上传成功!")
+            submit()
         }.excute(hostAct)
     }
-    
+
     fun initStatusContent(): _LinearLayout.() -> Unit {
         return {
             linearLayout {
@@ -239,19 +257,21 @@ class InsuranceHolder() : KFragment(), AppOperable {
                 textColor = hostAct.getResColor(R.color.text_light_black)
                 textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
             }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-            bankNumView = editText() {
+            bankNumView = editText(insurance.bank_card) {
                 hint = "请输入开户行信息"
                 hintTextColor = hostAct.getResColor(R.color.text_light_black)
                 textColor = hostAct.getResColor(R.color.text_black)
                 textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                 backgroundColor = Color.TRANSPARENT
+                isEnabled = insurance.status == 0
             }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-            bankKHHView = editText() {
+            bankKHHView = editText(insurance.bank_name) {
                 hint = "请输入银行卡号"
                 hintTextColor = hostAct.getResColor(R.color.text_light_black)
                 textColor = hostAct.getResColor(R.color.text_black)
                 textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                 backgroundColor = Color.TRANSPARENT
+                isEnabled = insurance.status == 0
             }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
             textView("上传材料:") {
                 textColor = hostAct.getResColor(R.color.text_light_black)
@@ -265,7 +285,8 @@ class InsuranceHolder() : KFragment(), AppOperable {
                     addItemDecoration(HorizontalDividerItemDecoration.Builder(context).color(Color.TRANSPARENT).build())
                     val list = arrayListOf<ClaimImage>()
                     list.addAll(insurance.claimImageList)
-                    list.add(ClaimImage())
+                    val isEditable = (insurance.status == 0 || insurance.status == 2)
+                    if (isEditable) { list.add(ClaimImage()) }
                     imgAdapter = KAdapter<ClaimImage, ImageUploadHolder>(list) {
                         itemConstructor { ImageUploadHolder(kIntWidth(0.7f) / 4) }
                         itemClickDoing { bo, i -> }
@@ -273,7 +294,7 @@ class InsuranceHolder() : KFragment(), AppOperable {
                             if (i == 0) {
                                 firstImgView = holder.showImg
                             }
-                            holder.initContent(bo, { selectImage(it) }, { delImage(i) })
+                            holder.initContent(bo,isEditable,  { selectImage(it) }, { delImage(i) })
                         }
                     }
                     adapter = imgAdapter
@@ -302,8 +323,10 @@ class InsuranceHolder() : KFragment(), AppOperable {
                 textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                 bottomDrawable(R.drawable.bx_dotted_line_c, 0)
                 onMyClick { (hostAct as? InsuranceActivity)?.apply { InsuranceIntroPop(hostAct).show(it.rootView) } }
-            }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) 
-                bottomMargin = kIntHeight(0.04f)}
+            }.lparams(WRAP_CONTENT, WRAP_CONTENT) {
+                topMargin = kIntHeight(0.01f)
+                bottomMargin = kIntHeight(0.04f)
+            }
         }
     }
 
@@ -368,13 +391,21 @@ class InsuranceHolder() : KFragment(), AppOperable {
         dialog.setConfirmClickListener {
             (imgAdapter.sourceData as? ArrayList)?.removeAt(position)
             imgAdapter.notifyDataSetChanged()
-            if(imgAdapter.itemCount <= 1){
+            if (imgAdapter.itemCount <= 1) {
                 uploadLayout.visibility = View.VISIBLE
                 recycleView.visibility = View.GONE
             }
             dialog.dismiss()
-        }.setCancelText(" 取 消 ")        
+        }.setCancelText(" 取 消 ")
         dialog.show()
+    }
+
+    fun initData() {
+        if (insurance.status == 0) {
+
+        } else if (insurance.status == 1) {
+
+        }
     }
 }
 
@@ -402,18 +433,22 @@ class ImageUploadHolder(cellHeight: Int) : HolderBo(cellHeight) {
         }
     }
 
-    fun initContent(imageBo: ClaimImage, addClick: (ImageView) -> Unit, reduceClick: () -> Unit) {
-        if (imageBo.localImgPath == null) {
+    fun initContent(imageBo: ClaimImage, isEnable: Boolean, addClick: (ImageView) -> Unit, reduceClick: () -> Unit) {
+        val serPathNotExist = imageBo.image_path.isEmpty()
+        if(imageBo.localImgPath == null && serPathNotExist ){
             addImgLayout.visibility = View.VISIBLE
             showImgLayout.visibility = View.GONE
-
-            addImgLayout.onMyClick { addClick(showImg) }
-        }
-        if (!(imageBo.localImgPath?.isEmpty() ?: true)) {
+            addImgLayout.onMyClick { addClick(showImg) } 
+        } else {
             addImgLayout.visibility = View.GONE
             showImgLayout.visibility = View.VISIBLE
-
-            delImgView.onMyClick { reduceClick() }
+            showImg._urlImg(imageBo.image_path.serPicPath())
+            if (!isEnable) {
+                delImgView.visibility = View.GONE
+            } else {
+                delImgView.visibility = View.VISIBLE
+                delImgView.onMyClick { reduceClick() }
+            }
         }
     }
 }

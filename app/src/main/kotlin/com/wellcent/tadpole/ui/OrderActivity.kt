@@ -3,6 +3,7 @@ package com.wellcent.tadpole.ui
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.support.v4.view.ViewPager
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -11,23 +12,26 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
-import com.shrek.klib.extension.getResColor
-import com.shrek.klib.extension.kIntHeight
-import com.shrek.klib.extension.kIntWidth
-import com.shrek.klib.extension.kRandomId
+import com.shrek.klib.extension.*
 import com.shrek.klib.ui.adapter.KFragmentPagerAdapter
+import com.shrek.klib.ui.kDefaultRestHandler
 import com.shrek.klib.ui.navigateBar
 import com.shrek.klib.view.KActivity
 import com.shrek.klib.view.KFragment
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.bo.Order
+import com.wellcent.tadpole.presenter.AppOperable
+import com.wellcent.tadpole.presenter.listSuccess
+import com.wellcent.tadpole.presenter.serPicPath
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.viewPager
 import java.lang.ref.WeakReference
 
-class OrderActivity : KActivity() {
+class OrderActivity : KActivity(), AppOperable {
+    lateinit var viewPage: ViewPager
     override fun initialize(savedInstanceState: Bundle?) {
         relativeLayout {
             backgroundColor = Color.WHITE
@@ -37,28 +41,45 @@ class OrderActivity : KActivity() {
                 setNavBgColor(Color.TRANSPARENT, false)
                 addLeftDefaultBtn(R.drawable.icon_back_g) { finish() }
             }.lparams(MATCH_PARENT, DimensAdapter.nav_height) { bottomMargin = kIntHeight(0.015f) }
-            viewPager {
+            viewPage = viewPager {
                 kRandomId()
-                adapter = KFragmentPagerAdapter<OrderHolder>(this@OrderActivity, WeakReference(this), arrayOf(OrderHolder(), OrderHolder()))
             }.lparams(MATCH_PARENT, MATCH_PARENT) { below(nav) }
         }
+
+        appOpt.orders().handler(kDefaultRestHandler(" 正在请求订单列表,请稍等... ")).listSuccess {
+            val orderFragments = arrayListOf<OrderHolder>()
+            it.forEach { orderFragments.add(OrderHolder(it)) }
+            viewPage.adapter = KFragmentPagerAdapter<OrderHolder>(this@OrderActivity, WeakReference(viewPage), orderFragments.toTypedArray())
+        }.excute(this)
     }
 }
 
-class OrderHolder : KFragment() {
+class OrderHolder() : KFragment() {
+    lateinit var order: Order
+
+    constructor(order: Order) : this() {
+        this.order = order
+    }
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return UI {
             relativeLayout {
                 relativeLayout {
                     backgroundResource = R.drawable.order_bg
-                    imageView() { scaleType = ImageView.ScaleType.FIT_XY }.lparams(MATCH_PARENT, kIntHeight(0.25f)) { }
-                    imageView(R.drawable.order_state0) { }.lparams { alignParentRight() }
+                    imageView() {
+                        scaleType = ImageView.ScaleType.FIT_XY
+                        _urlImg(order.image_path.serPicPath())
+                    }.lparams(MATCH_PARENT, kIntHeight(0.25f)) { }
+                    val statusImg = if (order.isUsed == 0) R.drawable.order_state0 else R.drawable.order_status1
+                    imageView(statusImg) { }.lparams { alignParentRight() }
                     val maskedView = view {
                         kRandomId()
                         backgroundColor = Color.parseColor("#40000000")
+                        if(order.status == 0){ visibility = View.INVISIBLE }
                     }.lparams(MATCH_PARENT, kIntHeight(0.25f)) { }
+
                     val hMargin = kIntWidth(0.03f)
-                    val titleView = textView("报告未出结果,请耐心等待") {
+                    val titleView = textView(order.name) {
                         kRandomId()
                         textColor = hostAct.getResColor(R.color.text_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
@@ -67,7 +88,7 @@ class OrderHolder : KFragment() {
                         below(maskedView)
                         horizontalMargin = hMargin
                     }
-                    val hosView = textView("苏州市九龙医院") {
+                    val hosView = textView(order.detectUnitName) {
                         kRandomId()
                         textColor = hostAct.getResColor(R.color.text_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
@@ -76,7 +97,7 @@ class OrderHolder : KFragment() {
                         below(titleView)
                         leftMargin = hMargin
                     }
-                    val priceView = textView("1987.6") {
+                    val priceView = textView(order.price) {
                         kRandomId()
                         textColor = hostAct.getResColor(R.color.text_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
@@ -86,13 +107,15 @@ class OrderHolder : KFragment() {
                         alignParentRight()
                         rightMargin = hMargin
                     }
-                    val gapLine = view { kRandomId()
-                        backgroundColor = hostAct.getResColor(R.color.gap_line) }.lparams(MATCH_PARENT, DimensAdapter.dip1.toInt()) {
+                    val gapLine = view {
+                        kRandomId()
+                        backgroundColor = hostAct.getResColor(R.color.gap_line)
+                    }.lparams(MATCH_PARENT, DimensAdapter.dip1.toInt()) {
                         topMargin = kIntHeight(0.02f)
                         below(priceView)
                         horizontalMargin = hMargin
                     }
-                    val orderCreateView = textView("订单创建时间: 2017年10月22日 13:22:12") {
+                    val orderCreateView = textView("订单创建时间: ${ order.create_time}") {
                         kRandomId()
                         textColor = hostAct.getResColor(R.color.text_light_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
@@ -101,7 +124,7 @@ class OrderHolder : KFragment() {
                         below(gapLine)
                         horizontalMargin = hMargin
                     }
-                    val orderPayView = textView("订单支付时间: 2017年10月22日 13:22:12") {
+                    val orderPayView = textView("订单支付时间: ${ order.pay_time}") {
                         kRandomId()
                         textColor = hostAct.getResColor(R.color.text_light_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
@@ -110,17 +133,17 @@ class OrderHolder : KFragment() {
                         below(orderCreateView)
                         horizontalMargin = hMargin
                     }
-                    
-                    verticalLayout { 
+
+                    verticalLayout {
                         gravity = Gravity.CENTER
                         textView("验证码") {
                             textColor = hostAct.getResColor(R.color.text_little_black)
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                         }.lparams(WRAP_CONTENT, WRAP_CONTENT) { }
-                        textView("34343434343443") {
+                        textView(order.code) {
                             textColor = hostAct.getResColor(R.color.colorPrimary_purple)
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.BIGGER)
-                            getPaint().setFlags(Paint. STRIKE_THRU_TEXT_FLAG)
+                            if(order.status == 0){  getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG) }
 //                            getPaint().setFlags(0);
                         }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
                     }.lparams(MATCH_PARENT, MATCH_PARENT) {

@@ -94,6 +94,10 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
         return RestExcuter.create(restDao?.reportDetail(report.id))
     }
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun searchReport(idNumber: String): RestExcuter<ReqMapping<Report>> {
+        return RestExcuter.create(restDao?.searchReport(currOptUser!!.phone,idNumber))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun insurances(): RestExcuter<ReqMapping<Insurance>> {
         return RestExcuter.create(restDao?.insurances(currOptUser!!.phone))
     }
@@ -120,5 +124,48 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun messages(): RestExcuter<ReqMapping<SysMessage>> {
         return RestExcuter.create(restDao?.messages(currOptUser!!.phone))
+    }
+
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun sysChartMessages(): RestExcuter<ReqMapping<ChartContent>>{
+        return RestExcuter.create(restDao?.sysChartMessages(currOptUser!!.phone))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun sysChartUnReadMessages(): RestExcuter<ReqMapping<ChartContent>>{
+        return RestExcuter.create(restDao?.sysChartUnReadMessages(currOptUser!!.phone))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun sysSendMessage(content:String?, imgFile: File?): RestExcuter<ReqMapping<String>>{
+        return chartSendMessage(content,imgFile,false)
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun doctorsChartMessages(): RestExcuter<ReqMapping<ChartContent>>{
+        return RestExcuter.create(restDao?.doctorsChartMessages(currOptUser!!.phone))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun doctorsChartUnReadMessages(): RestExcuter<ReqMapping<ChartContent>>{
+        return RestExcuter.create(restDao?.doctorsChartUnReadMessages(currOptUser!!.phone))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun doctorsSendMessage(content:String?, imgFile: File?): RestExcuter<ReqMapping<String>>{
+        return chartSendMessage(content,imgFile,true)
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun orders(): RestExcuter<ReqMapping<Order>> {
+        return RestExcuter.create(restDao?.orders(currOptUser!!.phone))
+    }
+    
+    private fun chartSendMessage(content:String?, imgFile: File?,isDoctors: Boolean): RestExcuter<ReqMapping<String>>{
+        val mediaType = MediaType.parse("multipart/form-data")
+        val phoneBody = RequestBody.create(mediaType,currOptUser!!.phone)
+        var contentBody:RequestBody? = null
+        content?.apply { contentBody = RequestBody.create(mediaType,this) }
+        var imgBody:MultipartBody.Part? = null
+        imgFile?.apply {
+            val requestFile = RequestBody.create(mediaType, this)
+            imgBody = MultipartBody.Part.createFormData("image", imgFile.getName(), requestFile)
+        }
+        if( isDoctors ){  return RestExcuter.create(restDao?.doctorsSendMessage(phoneBody,contentBody,imgBody)) }
+        return RestExcuter.create(restDao?.sysSendMessage(phoneBody,contentBody,imgBody))
     }
 }
