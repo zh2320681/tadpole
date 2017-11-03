@@ -7,10 +7,13 @@ import com.shrek.klib.presenter.StringPreDelegate
 import com.shrek.klib.presenter.ZPresenter
 import com.shrek.klib.presenter.ann.Pointcut
 import com.shrek.klib.retrofit.RestExcuter
+import com.shrek.klib.retrofit.handler.RestHandler
 import com.wellcent.tadpole.bo.*
 import com.wellcent.tadpole.presenter.AppDao
 import com.wellcent.tadpole.presenter.RestDao
 import com.wellcent.tadpole.presenter.VerifyDao
+import com.wellcent.tadpole.presenter.listSuccess
+import com.wellcent.tadpole.ui.TadpoleActivity
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -25,6 +28,11 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     //当前操作的用户
     private var currOptUser:User? = null
     private var reportsTemp:List<Report>? = null
+    //缓存
+    private var provincesCache:List<Province> = arrayListOf<Province>()
+    private var citiesCache = hashMapOf<String,List<City>>()
+    private var unitsCache = hashMapOf<String,List<DetectUnit>>()
+    private var goodsCache:List<Goods> = arrayListOf<Goods>()
     
     override fun initialization() {
     }
@@ -161,6 +169,50 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun orders(): RestExcuter<ReqMapping<Order>> {
         return RestExcuter.create(restDao?.orders(currOptUser!!.phone))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun provinces(host: TadpoleActivity, restHandler: RestHandler<ReqMapping<Province>>, process:(List<Province>)->Unit) {
+        if( provincesCache.size > 0 ){ process(provincesCache) } else {
+            RestExcuter.create(restDao?.provinces()).handler(restHandler).listSuccess {
+                provincesCache = it
+                process(it)
+            }.excute(host)
+        }
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun cities(host:TadpoleActivity,provinceId:String,restHandler: RestHandler<ReqMapping<City>>, process:(List<City>)->Unit) {
+        val cityTemp = citiesCache[provinceId]
+        if( cityTemp?.size?:0 > 0 ){ process(cityTemp!!) } else {
+            RestExcuter.create(restDao?.cities(provinceId)).handler(restHandler).listSuccess {
+                citiesCache.put(provinceId,it)
+                process(it)
+            }.excute(host)
+        }
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun units(host:TadpoleActivity,cityName:String,restHandler: RestHandler<ReqMapping<DetectUnit>>, process:(List<DetectUnit>)->Unit){
+        val unitTemp = unitsCache[cityName]
+        if( unitTemp?.size?:0 > 0 ){ process(unitTemp!!) } else {
+            RestExcuter.create(restDao?.units(cityName)).handler(restHandler).listSuccess {
+                unitsCache.put(cityName,it)
+                process(it)
+            }.excute(host)
+        }
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun goods(host: TadpoleActivity, goodsId: String,restHandler: RestHandler<ReqMapping<Goods>>, process: (Goods?) -> Unit) {
+        if( goodsCache.size > 0 ){ process(findGoods(goodsId)) } else {
+            RestExcuter.create(restDao?.goods()).handler(restHandler).listSuccess {
+                goodsCache = it
+                process(findGoods(goodsId))
+            }.excute(host)
+        }
+    }
+    
+    private fun findGoods(goodsId: String) : Goods?{
+        var returnGoods:Goods? = null
+        goodsCache.forEach { if(it.id.equals(goodsId)){ returnGoods = it } }
+        return  returnGoods
     }
     
     private fun chartSendMessage(content:String?, imgFile: File?,isDoctors: Boolean): RestExcuter<ReqMapping<String>>{

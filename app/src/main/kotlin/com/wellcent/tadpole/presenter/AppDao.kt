@@ -1,8 +1,9 @@
 package com.wellcent.tadpole.presenter
 
 import com.shrek.klib.retrofit.RestExcuter
+import com.shrek.klib.retrofit.handler.RestHandler
 import com.wellcent.tadpole.bo.*
-import rx.Observable
+import com.wellcent.tadpole.ui.TadpoleActivity
 import java.io.File
 
 /**
@@ -34,4 +35,9 @@ interface AppDao {
     fun doctorsSendMessage(content:String?, imgFile: File?): RestExcuter<ReqMapping<String>>
     
     fun orders(): RestExcuter<ReqMapping<Order>>
+    fun provinces(host:TadpoleActivity,restHandler: RestHandler<ReqMapping<Province>>, process:(List<Province>)->Unit)
+    fun cities(host:TadpoleActivity,provinceId:String,restHandler: RestHandler<ReqMapping<City>>, process:(List<City>)->Unit)
+    fun units(host:TadpoleActivity,cityName:String,restHandler: RestHandler<ReqMapping<DetectUnit>>, process:(List<DetectUnit>)->Unit)
+    
+    fun goods(host:TadpoleActivity,goodsId:String,restHandler: RestHandler<ReqMapping<Goods>>,process:(Goods?)->Unit)
 }

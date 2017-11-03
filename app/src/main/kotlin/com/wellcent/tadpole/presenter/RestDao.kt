@@ -100,4 +100,16 @@ interface RestDao {
     
     @GET("webPeriod/getDoctorPeriod")
     fun getDoctorPeriod(): Observable<ReqMapping<String>>
+    
+    @GET("/webOrder/getProvinces")
+    fun provinces(): Observable<ReqMapping<Province>>
+
+    @GET("/webOrder/getCitiesByProvince")
+    fun cities(@Query("provinceId")provinceId:String): Observable<ReqMapping<City>>
+
+    @GET("/webOrder/getDetectUnits")
+    fun units(@Query("cityName")cityName:String): Observable<ReqMapping<DetectUnit>>
+
+    @GET("/webOrder/getDetectItems")
+    fun goods(@Query("page")page:Int = 1): Observable<ReqMapping<Goods>>
 }

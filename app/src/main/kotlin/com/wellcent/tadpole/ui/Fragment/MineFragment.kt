@@ -1,5 +1,6 @@
 package com.wellcent.tadpole.ui.Fragment
 
+import android.Manifest
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -58,7 +59,11 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
                                     faceView._urlImg(it.avatarImage.serPicPath())
                                 }.excute(hostAct)
                             }
-                            photoChoosePop?.show(rootView)
+                            hostAct.requestPermissionsWithCallBack(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                hostAct.requestPermissionsWithCallBack(arrayOf(Manifest.permission.CAMERA)) {
+                                    photoChoosePop?.show(rootView)
+                                }
+                            }
                         } }
                     }.lparams(kIntWidth(0.18f),kIntWidth(0.18f)) { centerVertically() }
 

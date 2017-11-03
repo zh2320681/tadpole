@@ -115,6 +115,10 @@ class ModifyActivity : KActivity(),VerifyOperable {
         if(currType == ModifyType.USER_DATA){
             verifyOpt.modifyUserInfo(text1,text2,text3).handler(kDefaultRestHandler(" 正在修改用户信息,请稍等... ")).success {
                 showComfirmCrouton("用户信息修改成功!",contentLayout)
+                verifyOpt.user()?.apply {
+                    name = text1
+                    id_number = text2
+                }
             }.excute(this)
         } else {
             verifyOpt.changePassword(text1,text2).handler(kDefaultRestHandler(" 正在修改密码,请稍等... ")).success {

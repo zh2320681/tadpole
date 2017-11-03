@@ -11,6 +11,7 @@ import com.shrek.klib.extension.kRandomId
 import com.shrek.klib.ui.adapter.KFragmentPagerAdapter
 import com.shrek.klib.view.KFragment
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.presenter.VerifyOperable
 import org.jetbrains.anko.imageView
 import org.jetbrains.anko.relativeLayout
 import org.jetbrains.anko.startActivity
@@ -18,7 +19,7 @@ import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.viewPager
 import java.lang.ref.WeakReference
 
-class GuideActivity : TadpoleActivity(){
+class GuideActivity : TadpoleActivity(),VerifyOperable{
     var tempIndex = 0
     override fun initialize(savedInstanceState: Bundle?) {
         relativeLayout { viewPager { kRandomId()
@@ -27,6 +28,7 @@ class GuideActivity : TadpoleActivity(){
                 onPageScrolled = { p1,p2,p3 ->
                     if(p1 == 2 && p2 == 0f && p3 == 0){ tempIndex++ } else { tempIndex = 0 }
                     if(tempIndex == 5){ 
+                        verifyOpt.isFirstUse = false
                         startActivity<MainActivity>()
                         finish()
                     }

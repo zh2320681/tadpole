@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import android.view.ViewManager
 import com.rengwuxian.materialedittext.MaterialEditText
 import com.shrek.klib.colligate.ReflectUtils
-import com.shrek.klib.ui.CommonUiSetup
 import com.shrek.klib.ui.crouton.Crouton
 import com.shrek.klib.ui.crouton.Style
 import com.shrek.klib.ui.loading.AVLoadingIndicatorView
@@ -15,6 +14,7 @@ import com.shrek.klib.ui.material.MaterialCheckBox
 import com.shrek.klib.ui.material.RectangleButton
 import com.shrek.klib.ui.navigate.NavigateBar
 import com.shrek.klib.ui.photo.CircleImageView
+import com.shrek.klib.ui.selector.datepick.wheel.WheelView
 import com.shrek.klib.ui.swipe.SwipeMenuRecyclerView
 import org.jetbrains.anko.custom.ankoView
 
@@ -129,4 +129,7 @@ inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit) = ankoV
  * */
 inline fun ViewManager.swipeRecyclerView() = swipeRecyclerView {}
 inline fun ViewManager.swipeRecyclerView(init: SwipeMenuRecyclerView.() -> Unit)= ankoView({ SwipeMenuRecyclerView(it) }, nonTheme, init)
+
+inline fun ViewManager.wheelView() = wheelView {}
+inline fun ViewManager.wheelView(init: WheelView.() -> Unit)= ankoView({ WheelView(it) }, nonTheme, init)
       

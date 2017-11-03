@@ -1,5 +1,6 @@
 package com.wellcent.tadpole.ui
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -110,6 +111,7 @@ class AdvisoryActivity : TadpoleActivity(), VerifyOperable, AppOperable {
                 itemConstructor { ChartHolder() }
                 itemClickDoing { bo, i ->
                     bo.image_path?.apply { if(bo.type == 2){ startActivity<ImageZoomActivity>(ROUTINE_DATA_BINDLE to this)} }
+                    bo.detect_item_id?.apply { if(bo.type == 3){ startActivity<GoodsAcvtivity>(ROUTINE_DATA_BINDLE to this)} }
                 }
                 bindData { holder, bo, i -> holder.initData(this@AdvisoryActivity,bo) }
             }
@@ -167,7 +169,12 @@ class AdvisoryActivity : TadpoleActivity(), VerifyOperable, AppOperable {
         photoChoosePop = PhotoChoosePop(this@AdvisoryActivity, null, false, true) {
             sendMessage(null,File(it))
         }
-        photoChoosePop?.show(rootView)
+        requestPermissionsWithCallBack(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            requestPermissionsWithCallBack(arrayOf(Manifest.permission.CAMERA)) {
+                photoChoosePop?.show(rootView)
+            }
+        }
+        
     }
     
     override fun onStop() {
@@ -194,6 +201,7 @@ class ChartHolder() : HolderBo(0) {
     lateinit var chatContenLayout: RelativeLayout
     lateinit var noticeView:TextView
     lateinit var parentView:RelativeLayout
+    lateinit var priceView:TextView
     var lastDate: Date? = null
     override fun rootViewInit(): AnkoContext<Context>.() -> Unit {
         return {
@@ -235,11 +243,16 @@ class ChartHolder() : HolderBo(0) {
                         contentLayout = verticalLayout {
                             kRandomId()
                             backgroundResource = R.drawable.chat_message_bg
+                            contentImgView = imageView(R.drawable.icon_chart_msg_warn) { scaleType = ImageView.ScaleType.FIT_XY }.lparams {}
                             contentView = textView("拉的撒大三大四") {
                                 textColor = context.getResColor(R.color.text_black)
                                 textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                             }.lparams(WRAP_CONTENT, WRAP_CONTENT) { }
-                            contentImgView = imageView(R.drawable.icon_chart_msg_warn) { }.lparams {}
+                            priceView = textView("拉的撒大三大四") {
+                                visibility = View.GONE
+                                textColor = context.getResColor(R.color.colorPrimary_blue)
+                                textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
+                            }.lparams(WRAP_CONTENT, WRAP_CONTENT) { }
                         }.lparams { topMargin = kIntHeight(0.01f) }
 
                         failView = imageView(R.drawable.icon_chart_msg_warn) { }.lparams {
@@ -295,20 +308,31 @@ class ChartHolder() : HolderBo(0) {
         faceView._urlImg(content.avatarImage.serPicPath())
         userNameView.text = content.name
         //内容
-        if (content.isImage) {
+        if(content.type == 3){
             contentImgView.visibility = View.VISIBLE
-            contentView.visibility = View.GONE
-            content.localImgPath?.apply {
-                val photoUri = Uri.fromFile(this)
-                val bitmap = PhotoChoosePop.decodeUriAsBitmap(host, photoUri)
-                contentImgView.setImageBitmap(bitmap)
-            }
-            content.image_path?.apply { contentImgView._urlImg(serPicPath()) }
-        } else {
-            contentImgView.visibility = View.GONE
             contentView.visibility = View.VISIBLE
+            priceView.visibility = View.VISIBLE
+            content.image_path?.apply { contentImgView._urlImg(serPicPath()) }
             contentView.text = content.content
+            priceView.text = "￥"+content.price
+        } else {
+            priceView.visibility = View.GONE
+            if (content.isImage) {
+                contentImgView.visibility = View.VISIBLE
+                contentView.visibility = View.GONE
+                content.localImgPath?.apply {
+                    val photoUri = Uri.fromFile(this)
+                    val bitmap = PhotoChoosePop.decodeUriAsBitmap(host, photoUri)
+                    contentImgView.setImageBitmap(bitmap)
+                }
+                content.image_path?.apply { contentImgView._urlImg(serPicPath()) }
+            } else {
+                contentImgView.visibility = View.GONE
+                contentView.visibility = View.VISIBLE
+                contentView.text = content.content
+            }
         }
+        
         //发送状态设置
         if(content.localStatus == 666){
             progressView.visibility = View.VISIBLE
@@ -322,7 +346,7 @@ class ChartHolder() : HolderBo(0) {
         }
        
         //调整布局
-        if (content.type == 2) {
+        if (content.type == 2 || content.type == 3) {
             contentLayout.setBackgroundResource(R.drawable.chat_message_bg)
             faceLayout.layoutParams = (faceLayout.layoutParams as? RelativeLayout.LayoutParams)?.apply {
                 addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0)

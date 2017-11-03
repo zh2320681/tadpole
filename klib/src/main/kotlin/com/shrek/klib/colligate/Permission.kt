@@ -22,7 +22,8 @@ class PermissionUtils {
 
 enum class PermissionDescript(val pName:String,val abbDes:String ,val descript:String) {
     WRITE_STORAGE(Manifest.permission.WRITE_EXTERNAL_STORAGE,"文件存储权限","外部存储写入权限"),
-    READ_PHONE_STATE(Manifest.permission.READ_PHONE_STATE,"读取手机信息权限","读取手机信息权限")
+    READ_PHONE_STATE(Manifest.permission.READ_PHONE_STATE,"读取手机信息权限","读取手机信息权限"),
+    CAMERA(Manifest.permission.CAMERA,"访问照相机权限","访问照相机权限")
 }
 
 

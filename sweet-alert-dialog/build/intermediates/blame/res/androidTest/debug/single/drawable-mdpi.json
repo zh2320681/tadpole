@@ -108,12 +108,12 @@
         "source": "/Users/Shrek/.android/build-cache/c8eeefe78ba97d891d7dcd9d8e8b1609c835bbb3/output/res/drawable-mdpi/abc_textfield_search_activated_mtrl_alpha.9.png"
     },
     {
-        "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/androidTest/debug/drawable-mdpi/abc_btn_switch_to_on_mtrl_00001.9.png",
-        "source": "/Users/Shrek/.android/build-cache/c8eeefe78ba97d891d7dcd9d8e8b1609c835bbb3/output/res/drawable-mdpi/abc_btn_switch_to_on_mtrl_00001.9.png"
-    },
-    {
         "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/androidTest/debug/drawable-mdpi/abc_list_longpressed_holo.9.png",
         "source": "/Users/Shrek/.android/build-cache/c8eeefe78ba97d891d7dcd9d8e8b1609c835bbb3/output/res/drawable-mdpi/abc_list_longpressed_holo.9.png"
+    },
+    {
+        "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/androidTest/debug/drawable-mdpi/abc_btn_switch_to_on_mtrl_00001.9.png",
+        "source": "/Users/Shrek/.android/build-cache/c8eeefe78ba97d891d7dcd9d8e8b1609c835bbb3/output/res/drawable-mdpi/abc_btn_switch_to_on_mtrl_00001.9.png"
     },
     {
         "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/androidTest/debug/drawable-mdpi/abc_popup_background_mtrl_mult.9.png",

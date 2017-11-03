@@ -170,4 +170,39 @@ class Order : Serializable {
     var code = ""
     var isUsed:Boolean = false
 }
-//data class UploadImg(var imgId:String?,var localPath:String?,var cImage:ClaimImage?) : Serializable 
+
+class Province : Serializable {
+    var province_id = ""
+    var name = ""
+    var id = 0
+}
+
+class City : Serializable {
+    var province_id = ""
+    var name = ""
+    var id = 0
+    var city_id = ""
+}
+
+class DetectUnit : Serializable {
+    var code = ""
+    var province = ""
+    var create_time = ""
+    var city = ""
+    var name = ""
+    var id = ""
+    var sn = ""
+    var status = 0
+}
+
+class Goods : Serializable {
+    var update_time = ""
+    var code = ""
+    var create_time = ""
+    var price = ""
+    var image_path = ""
+    var name = ""
+    var remark = ""
+    var id = ""
+    var status = 0
+}
