@@ -21,12 +21,10 @@ import com.shrek.klib.view.adaptation.DimensAdapter
 import com.umeng.socialize.ShareAction
 import com.umeng.socialize.UMShareListener
 import com.umeng.socialize.bean.SHARE_MEDIA
+import com.umeng.socialize.media.UMWeb
 import com.wellcent.tadpole.R
 import com.wellcent.tadpole.bo.Article
-import com.wellcent.tadpole.presenter.AppOperable
-import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
-import com.wellcent.tadpole.presenter.ServerPath
-import com.wellcent.tadpole.presenter.success
+import com.wellcent.tadpole.presenter.*
 import org.jetbrains.anko.*
 
 class ArticleActivity : TadpoleActivity(),AppOperable{
@@ -77,6 +75,7 @@ class ArticleActivity : TadpoleActivity(),AppOperable{
     fun share(){
         ShareAction(this@ArticleActivity).setPlatform(SHARE_MEDIA.WEIXIN)//传入平台
                 .withText(article.title)//分享内容
+                .withMedia(UMWeb(article.id.serArticlePath()))
                 .setCallback(object :UMShareListener{
                     override fun onStart(p0: SHARE_MEDIA?) { }
                     override fun onCancel(p0: SHARE_MEDIA?) { showInfoCrouton("您取消了分享!") }

@@ -182,6 +182,10 @@ class AdvisoryActivity : TadpoleActivity(), VerifyOperable, AppOperable {
         unRequestTask.stop()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unRequestTask.stop()
+    }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         photoChoosePop?.onActivityResult(requestCode,resultCode,data)

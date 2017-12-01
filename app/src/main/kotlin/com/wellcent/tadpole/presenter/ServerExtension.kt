@@ -16,9 +16,14 @@ import java.net.ConnectException
 val ROUTINE_DATA_BINDLE = "ROUTINE_DATA"
 val ROUTINE_DATA1_BINDLE = "ROUTINE_DATA1"
 
-val ServerPath = "http://139.129.57.98:8087"
+//val ServerPath = "http://139.129.57.98:8087"
+val ServerPath = "http://admin.cell-bay.com"
 fun String.serPicPath():String {
     return "${ServerPath}${this}"
+}
+
+fun String.serArticlePath():String {
+    return "${ServerPath}/api/order.html#id${this}"
 }
 
 private val impl: AppDaoImpl by lazy {

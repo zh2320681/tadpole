@@ -112,4 +112,10 @@ interface RestDao {
 
     @GET("/webOrder/getDetectItems")
     fun goods(@Query("page")page:Int = 1): Observable<ReqMapping<Goods>>
+
+    @GET("/webOrder/aliPay")
+    fun aliPayOrder(@Query("detectItemId")detectItemId:String,@Query("phone")phone:String,@Query("detectUnitId")detectUnitId:String): Observable<ReqMapping<String>>
+    
+    @GET("/webOrder/wxPay")
+    fun wxPayOrder(@Query("detectItemId")detectItemId:String,@Query("phone")phone:String,@Query("detectUnitId")detectUnitId:String): Observable<ReqMapping<WXPayParas>>
 }

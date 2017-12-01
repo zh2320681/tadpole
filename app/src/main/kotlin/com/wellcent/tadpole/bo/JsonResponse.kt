@@ -13,6 +13,7 @@ class ReqMapping<T> {
     var period = ""
     var user:T? = null
     var detail:T? = null
+    var orderStr:T? = null
 }
 
 class User {
@@ -206,3 +207,20 @@ class Goods : Serializable {
     var id = ""
     var status = 0
 }
+
+class WXPayParas : Serializable {
+    var appid = ""
+    var partnerId = ""
+    var prepay_id = ""
+    var packageValue = ""
+    var mch_id = ""
+    var trade_type = ""
+    var nonce_str = ""
+    var timestamp = ""
+    var sign = ""
+}
+
+enum class PayType(val title:String) {
+    ALIPAY("支付宝"),WEICHAT("微信")
+}
+data class GoodsPayResult(var isSuccess:Boolean,var payType: PayType, var goods:Goods) : Serializable 

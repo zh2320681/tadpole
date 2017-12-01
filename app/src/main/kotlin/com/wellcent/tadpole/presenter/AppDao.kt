@@ -40,4 +40,8 @@ interface AppDao {
     fun units(host:TadpoleActivity,cityName:String,restHandler: RestHandler<ReqMapping<DetectUnit>>, process:(List<DetectUnit>)->Unit)
     
     fun goods(host:TadpoleActivity,goodsId:String,restHandler: RestHandler<ReqMapping<Goods>>,process:(Goods?)->Unit)
+
+    fun aliPayOrder(detectItemId:String,detectUnitId:String): RestExcuter<ReqMapping<String>>
+
+    fun wxPayOrder(detectItemId:String,detectUnitId:String): RestExcuter<ReqMapping<WXPayParas>>
 }

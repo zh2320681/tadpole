@@ -208,6 +208,15 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
             }.excute(host)
         }
     }
+
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun aliPayOrder(detectItemId:String,detectUnitId:String): RestExcuter<ReqMapping<String>> {
+        return RestExcuter.create(restDao?.aliPayOrder(detectItemId,currOptUser!!.phone,detectUnitId))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun wxPayOrder(detectItemId: String, detectUnitId: String): RestExcuter<ReqMapping<WXPayParas>> {
+        return RestExcuter.create(restDao?.wxPayOrder(detectItemId,currOptUser!!.phone,detectUnitId))
+    }
     
     private fun findGoods(goodsId: String) : Goods?{
         var returnGoods:Goods? = null

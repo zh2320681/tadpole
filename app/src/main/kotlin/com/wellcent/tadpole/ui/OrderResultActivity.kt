@@ -9,9 +9,12 @@ import com.shrek.klib.extension.*
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.bo.GoodsPayResult
+import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
 import org.jetbrains.anko.*
 
-class OrderSuceessActivity : TadpoleActivity() {
+class OrderResultActivity : TadpoleActivity() {
+    val goodsPayResult by lazy { intent.getSerializableExtra(ROUTINE_DATA_BINDLE) as GoodsPayResult }
     override fun initialize(savedInstanceState: Bundle?) {
         verticalLayout { 
             relativeLayout { 
@@ -23,15 +26,22 @@ class OrderSuceessActivity : TadpoleActivity() {
                 }.lparams {  alignParentRight()
                     verticalMargin = kIntHeight(0.01f) 
                     horizontalMargin = kIntHeight(0.02f)}
-                val logoView = imageView(R.drawable.icon_order_success) { kRandomId() }.lparams { centerInParent() }
-                val resultView = textView("订单支付成功"){
+
+                var resultInfo = "订单支付失败"
+                var imgId = R.drawable.icon_order_info
+                if(goodsPayResult.isSuccess){
+                    resultInfo = "订单支付成功"
+                    imgId = R.drawable.icon_order_success
+                }
+                val logoView = imageView(imgId) { kRandomId() }.lparams { centerInParent() }
+                val resultView = textView(resultInfo){
                     kRandomId()
                     textColor = Color.WHITE
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.BIGGER)
                 }.lparams {  centerHorizontally()
                     bottomOf(logoView)
                     verticalMargin = kIntHeight(0.04f)}
-                textView("支付方式: 支付宝  支付金额：￥2039"){
+                textView("支付方式: ${goodsPayResult.payType.title}  支付金额：￥${goodsPayResult.goods.price}"){
                     textColor = Color.WHITE
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                 }.lparams {
@@ -45,12 +55,12 @@ class OrderSuceessActivity : TadpoleActivity() {
                 linearLayout { 
                     imageView {  }.lparams(0, WRAP_CONTENT,1f){ }
                     verticalLayout {
-                        textView("支付方式: 支付宝  支付金额：￥2039"){
+                        textView(goodsPayResult.goods.name){
                             textColor = getResColor(R.color.text_little_black)
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                             lines = 2
                         }.lparams { }
-                        textView("支付方式: 支付宝  支付金额：￥2039"){
+                        textView(goodsPayResult.goods.remark){
                             textColor = getResColor(R.color.text_little_black)
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                         }.lparams { topMargin = kIntHeight(0.01f) }
