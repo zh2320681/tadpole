@@ -251,8 +251,11 @@ class GoodsAcvtivity : TadpoleActivity(), AppOperable {
             }
             launch(UI) {
                 val isPaySuccess = callAlipay.await().resultStatus.equals("9000", true)
-                val payResult = GoodsPayResult(isPaySuccess, PayType.ALIPAY, goods!!)
-                startActivity<OrderResultActivity>(ROUTINE_DATA_BINDLE to payResult)
+                if(isPaySuccess){
+                    val payResult = GoodsPayResult(isPaySuccess, PayType.ALIPAY, goods!!)
+                    startActivity<OrderResultActivity>(ROUTINE_DATA_BINDLE to payResult)
+                    finish()
+                } else { showAlertCrouton("付款失败!") }
             }
         }.excute(this)
     }
@@ -260,7 +263,7 @@ class GoodsAcvtivity : TadpoleActivity(), AppOperable {
     fun wxPay() {
         appOpt.wxPayOrder(goodsId, selectUnit!!.id).handler(kDefaultRestHandler("获取微信支付信息中,请稍等...")).success {
             it.orderStr?.also { detailTemp ->
-                val msgApi = WXAPIFactory.createWXAPI(this, null)
+                val msgApi = WXAPIFactory.createWXAPI(this, detailTemp.appid,false)
                 msgApi.registerApp(detailTemp.appid)
                 val request = PayReq().apply {
                     appId = detailTemp.appid

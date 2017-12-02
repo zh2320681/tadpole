@@ -329,7 +329,10 @@ class ChartHolder() : HolderBo(0) {
                     val bitmap = PhotoChoosePop.decodeUriAsBitmap(host, photoUri)
                     contentImgView.setImageBitmap(bitmap)
                 }
-                content.image_path?.apply { contentImgView._urlImg(serPicPath()) }
+                content.image_path?.apply {
+                    contentImgView._urlImg(serPicPath())
+                    contentImgView.onMyClick { host.startActivity<ImageZoomActivity>(ROUTINE_DATA_BINDLE to this) }
+                }
             } else {
                 contentImgView.visibility = View.GONE
                 contentView.visibility = View.VISIBLE

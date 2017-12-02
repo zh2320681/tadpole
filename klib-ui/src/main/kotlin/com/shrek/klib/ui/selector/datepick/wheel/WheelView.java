@@ -63,7 +63,7 @@ public class WheelView extends View {
     /**
      * 文字大小
      */
-    private static int TEXT_SIZE = 16;
+    private static int TEXT_SIZE = 15;
 
     /**
      * Top and bottom items offset (to hide that)
@@ -184,7 +184,7 @@ public class WheelView extends View {
 
         scroller = new Scroller(context);
 
-        TEXT_SIZE = (int) DimenUtils.dpToPx(18, getContext());
+        TEXT_SIZE = (int) DimenUtils.dpToPx(15, getContext());
     }
 
     public void setTextSize(int textSize) {
@@ -799,8 +799,8 @@ public class WheelView extends View {
      * @param canvas the canvas for drawing
      */
     private void drawValue(Canvas canvas) {
-
-        itemsPaint.setTextSize(DimenUtils.dpToPx(25, getContext()));
+        //DimenUtils.dpToPx(25, getContext())
+        itemsPaint.setTextSize(TEXT_SIZE);
 
         valuePaint.setColor(VALUE_TEXT_COLOR);
 
@@ -838,7 +838,8 @@ public class WheelView extends View {
 
         int top = itemsLayout.getLineTop(1);
         canvas.translate(0, -top + scrollingOffset);
-        itemsPaint.setTextSize(DimenUtils.dpToPx(18, getContext()));
+//        itemsPaint.setTextSize(DimenUtils.dpToPx(18, getContext()));
+        itemsPaint.setTextSize(TEXT_SIZE);
         itemsPaint.setColor(ITEMS_TEXT_COLOR);
         itemsPaint.drawableState = getDrawableState();
         itemsLayout.draw(canvas);

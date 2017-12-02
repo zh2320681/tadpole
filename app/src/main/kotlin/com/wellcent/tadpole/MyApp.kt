@@ -18,7 +18,7 @@ class MyApp : KApp() {
 
     override fun onAfterCreate() {
         super.onAfterCreate()
-        PlatformConfig.setWeixin("wx967daebe835fbeac", "5bb696d9ccd75a38c8a0bfe0675559b3");
+        PlatformConfig.setWeixin("wx7a63612508e08137", "5bb696d9ccd75a38c8a0bfe0675559b3");
         UMShareAPI.get(this)
         CommonUiSetup.pramaryColor = getResColor(R.color.colorPrimary)
     }

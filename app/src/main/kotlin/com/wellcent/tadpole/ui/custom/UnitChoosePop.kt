@@ -63,15 +63,15 @@ class UnitChoosePop(var hostAct: TadpoleActivity, var process: ((DetectUnit?) ->
                     }
                     linearLayout {
                         provinceChooseView = wheelView {
-                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.SMALL).toInt())
+//                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.MID_SMALL).toInt())
                             addChangingListener { wheel, oldValue, newValue -> getCitys() }
                         }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { }
                         cityChooseView = wheelView {
-                            //                            setTextSize(DimensAdapter.textSpSize(CustomTSDimens.MID_SMALL).toInt())
+//                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.MID_SMALL).toInt())
                             addChangingListener { wheel, oldValue, newValue -> getUnits() }
                         }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { }
                         unitChooseView = wheelView {
-                            //                            setTextSize(DimensAdapter.textSpSize(CustomTSDimens.MID_SMALL).toInt())
+//                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.MID_SMALL).toInt())
                         }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { }
                     }.lparams(MATCH_PARENT, kIntHeight(0.4f)) {
                         bottomMargin = kIntHeight(0.1f)

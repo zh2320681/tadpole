@@ -61,7 +61,7 @@ class ArticleActivity : TadpoleActivity(),AppOperable{
                             onMyClick { share() }
                         }.lparams(MATCH_PARENT, WRAP_CONTENT,1f){  }
                         imageView(R.drawable.icon_weixin1) { scaleType=ImageView.ScaleType.CENTER_INSIDE
-                            onMyClick { share() }}.lparams(MATCH_PARENT, WRAP_CONTENT,1f){  }
+                            onMyClick { share(true) }}.lparams(MATCH_PARENT, WRAP_CONTENT,1f){  }
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) { verticalMargin = kIntHeight(0.02f) }
                 }.lparams(MATCH_PARENT, WRAP_CONTENT){ horizontalMargin = kIntWidth(0.02f) }
             }.lparams(MATCH_PARENT, MATCH_PARENT)
@@ -72,9 +72,10 @@ class ArticleActivity : TadpoleActivity(),AppOperable{
         }.excute(this)
     }
     
-    fun share(){
-        ShareAction(this@ArticleActivity).setPlatform(SHARE_MEDIA.WEIXIN)//传入平台
+    fun share(isClicle:Boolean = false){
+        ShareAction(this@ArticleActivity).setPlatform(if(!isClicle) SHARE_MEDIA.WEIXIN else SHARE_MEDIA.WEIXIN_CIRCLE)//传入平台
                 .withText(article.title)//分享内容
+                .withSubject(article.title)
                 .withMedia(UMWeb(article.id.serArticlePath()))
                 .setCallback(object :UMShareListener{
                     override fun onStart(p0: SHARE_MEDIA?) { }
