@@ -35,13 +35,13 @@ class OrderResultActivity : TadpoleActivity() {
                 val logoView = imageView(imgId) { kRandomId() }.lparams { centerInParent() }
                 val resultView = textView(resultInfo){
                     kRandomId()
-                    textColor = Color.WHITE
+                    textColor = getResColor(R.color.text_color)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.BIGGER)
                 }.lparams {  centerHorizontally()
                     bottomOf(logoView)
-                    verticalMargin = kIntHeight(0.04f)}
+                    verticalMargin = kIntHeight(0.03f)}
                 textView("支付方式: ${goodsPayResult.payType.title}  支付金额：￥${goodsPayResult.goods.price}"){
-                    textColor = Color.WHITE
+                    textColor = getResColor(R.color.text_color)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                 }.lparams {
                     centerHorizontally()

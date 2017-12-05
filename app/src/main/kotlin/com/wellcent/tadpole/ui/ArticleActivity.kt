@@ -21,6 +21,7 @@ import com.shrek.klib.view.adaptation.DimensAdapter
 import com.umeng.socialize.ShareAction
 import com.umeng.socialize.UMShareListener
 import com.umeng.socialize.bean.SHARE_MEDIA
+import com.umeng.socialize.media.UMImage
 import com.umeng.socialize.media.UMWeb
 import com.wellcent.tadpole.R
 import com.wellcent.tadpole.bo.Article
@@ -51,7 +52,7 @@ class ArticleActivity : TadpoleActivity(),AppOperable{
                         textColor = getResColor(R.color.text_little_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                     }.lparams { topMargin = kIntHeight(0.02f) }
-                    webView = webView { 
+                    webView = webView {
                         val settings = getSettings()
                         settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN)
                     }.lparams { topMargin = kIntHeight(0.02f) }
@@ -67,16 +68,19 @@ class ArticleActivity : TadpoleActivity(),AppOperable{
             }.lparams(MATCH_PARENT, MATCH_PARENT)
         }
         appOpt.articleDetail(article.id).handler(kDefaultRestHandler("正在请求正文,请稍等... ")).success {
-            val newContent = it.detail!!.content.replace("<img src=\"","<img width=\"${kIntWidth(0.96f)}px\" src=\"${ServerPath}",true)
+            val newContent = it.detail!!.content.replace("<img src=\"","<img width=\"${kIntWidth(0.35f)}\" src=\"${ServerPath}",true)
             webView.loadData(newContent, "text/html; charset=UTF-8", null)
         }.excute(this)
     }
     
     fun share(isClicle:Boolean = false){
+        val web = UMWeb(article.id.serArticlePath()).also { 
+            it.title = article.title
+            it.description = article.vice_title
+            it.setThumb(UMImage(this,article.title_image.serPicPath()))
+        }
         ShareAction(this@ArticleActivity).setPlatform(if(!isClicle) SHARE_MEDIA.WEIXIN else SHARE_MEDIA.WEIXIN_CIRCLE)//传入平台
-                .withText(article.title)//分享内容
-                .withSubject(article.title)
-                .withMedia(UMWeb(article.id.serArticlePath()))
+                .withMedia(web)
                 .setCallback(object :UMShareListener{
                     override fun onStart(p0: SHARE_MEDIA?) { }
                     override fun onCancel(p0: SHARE_MEDIA?) { showInfoCrouton("您取消了分享!") }

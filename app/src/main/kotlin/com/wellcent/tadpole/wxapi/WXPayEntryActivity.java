@@ -8,7 +8,9 @@ import android.widget.Toast;
 import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
+import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 import com.wellcent.tadpole.bo.GoodsPayResult;
 import com.wellcent.tadpole.ui.OrderResultActivity;
 
@@ -17,13 +19,20 @@ import com.wellcent.tadpole.ui.OrderResultActivity;
 public class WXPayEntryActivity extends AppCompatActivity implements IWXAPIEventHandler {
     //传参数写的不好 管他呢
     public static GoodsPayResult goodsPayResult;
+
+    private IWXAPI api;
+    
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate(Bundle savedIntanceState) {
+        super.onCreate(savedIntanceState);
+        api = WXAPIFactory.createWXAPI(this, "wx7a63612508e08137");
+        api.handleIntent(getIntent(), this);
     }
 
     @Override
-    public void onReq(BaseReq baseReq) {}
+    public void onReq(BaseReq baseReq) {
+        Toast.makeText(this, "请求微信支付中", Toast.LENGTH_LONG).show();
+    }
 
     @Override
     public void onResp(BaseResp baseResp) {
@@ -54,5 +63,12 @@ public class WXPayEntryActivity extends AppCompatActivity implements IWXAPIEvent
         }
 
         Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        api.handleIntent(intent, this);
     }
 }

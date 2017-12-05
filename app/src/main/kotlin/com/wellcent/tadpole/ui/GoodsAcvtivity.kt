@@ -277,6 +277,7 @@ class GoodsAcvtivity : TadpoleActivity(), AppOperable {
                 }
                 msgApi.sendReq(request)
                 WXPayEntryActivity.goodsPayResult = GoodsPayResult(true, PayType.WEICHAT, goods!!)
+                finish()
             }
         }.excute(this)
     }
