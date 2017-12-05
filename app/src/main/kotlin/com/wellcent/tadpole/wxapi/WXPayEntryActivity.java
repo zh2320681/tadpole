@@ -1,5 +1,6 @@
 package com.wellcent.tadpole.wxapi;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
@@ -8,32 +9,21 @@ import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
+import com.wellcent.tadpole.bo.GoodsPayResult;
+import com.wellcent.tadpole.ui.OrderResultActivity;
 
 //import com.umeng.socialize.weixin.view.WXCallbackActivity;
 
 public class WXPayEntryActivity extends AppCompatActivity implements IWXAPIEventHandler {
-    
+    //传参数写的不好 管他呢
+    public static GoodsPayResult goodsPayResult;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        WXPayParas paras = (WXPayParas) getIntent().getSerializableExtra("data");
-//        IWXAPI msgApi = WXAPIFactory.createWXAPI(this, null);
-//        msgApi.registerApp(paras.getAppid());
-//        PayReq request = new PayReq();
-//        request.appId = paras.getAppid();
-//        request.partnerId = paras.getPartnerId();
-//        request.prepayId= paras.getPrepay_id();
-//        request.packageValue = paras.getPackageValue();
-//        request.nonceStr= paras.getNonce_str();
-//        request.timeStamp= paras.getTimestamp();
-//        request.sign= paras.getSign();
-//        msgApi.sendReq(request);
     }
 
     @Override
-    public void onReq(BaseReq baseReq) {
-        
-    }
+    public void onReq(BaseReq baseReq) {}
 
     @Override
     public void onResp(BaseResp baseResp) {
@@ -44,6 +34,10 @@ public class WXPayEntryActivity extends AppCompatActivity implements IWXAPIEvent
         switch (baseResp.errCode) {
             case BaseResp.ErrCode.ERR_OK:
                 result = "发送微信支付成功!";
+                Intent i = new Intent(this,OrderResultActivity.class);
+                i.putExtra("RESULT",goodsPayResult);
+                startActivity(i);
+                finish();
                 break;
             case BaseResp.ErrCode.ERR_USER_CANCEL:
                 result = "发送微信支付取消!";

@@ -217,7 +217,10 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     override fun wxPayOrder(detectItemId: String, detectUnitId: String): RestExcuter<ReqMapping<WXPayParas>> {
         return RestExcuter.create(restDao?.wxPayOrder(detectItemId,currOptUser!!.phone,detectUnitId))
     }
-    
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun getByTradeNo(tradeNo:String): RestExcuter<ReqMapping<Order>>{
+        return RestExcuter.create(restDao?.getByTradeNo(tradeNo))
+    }
     private fun findGoods(goodsId: String) : Goods?{
         var returnGoods:Goods? = null
         goodsCache.forEach { if(it.id.equals(goodsId)){ returnGoods = it } }

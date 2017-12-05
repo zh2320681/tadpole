@@ -30,6 +30,7 @@ import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
 import com.wellcent.tadpole.presenter.serPicPath
 import com.wellcent.tadpole.presenter.success
 import com.wellcent.tadpole.ui.custom.UnitChoosePop
+import com.wellcent.tadpole.wxapi.WXPayEntryActivity
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.async
@@ -253,7 +254,7 @@ class GoodsAcvtivity : TadpoleActivity(), AppOperable {
                 val isPaySuccess = callAlipay.await().resultStatus.equals("9000", true)
                 if(isPaySuccess){
                     val payResult = GoodsPayResult(isPaySuccess, PayType.ALIPAY, goods!!)
-                    startActivity<OrderResultActivity>(ROUTINE_DATA_BINDLE to payResult)
+                    startActivity<OrderResultActivity>("RESULT" to payResult)
                     finish()
                 } else { showAlertCrouton("付款失败!") }
             }
@@ -268,13 +269,14 @@ class GoodsAcvtivity : TadpoleActivity(), AppOperable {
                 val request = PayReq().apply {
                     appId = detailTemp.appid
                     partnerId = "1491963982"
-                    prepayId = detailTemp.prepay_id
+                    prepayId = detailTemp.prepayid
                     packageValue = "Sign=WXPay"
-                    nonceStr = detailTemp.nonce_str
+                    nonceStr = detailTemp.noncestr
                     timeStamp = detailTemp.timestamp
                     sign = detailTemp.sign
                 }
                 msgApi.sendReq(request)
+                WXPayEntryActivity.goodsPayResult = GoodsPayResult(true, PayType.WEICHAT, goods!!)
             }
         }.excute(this)
     }

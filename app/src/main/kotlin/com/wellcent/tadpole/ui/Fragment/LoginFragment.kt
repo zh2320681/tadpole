@@ -36,9 +36,9 @@ class LoginFragment : KFragment(), VerifyOperable {
         return UI {
             parentLayout = verticalLayout {
                 gravity = Gravity.CENTER_HORIZONTAL
-//                verifyOpt.getStoneUserName()
-                accountView = lineInit(R.drawable.icon_user, "手机号码","18012778237").invoke(this)
-                pwView = lineInit(R.drawable.icon_password, "密码","abc123", true).invoke(this)
+//                verifyOpt.getStoneUserName() 18012778237 abc123
+                accountView = lineInit(R.drawable.icon_user, "手机号码","").invoke(this)
+                pwView = lineInit(R.drawable.icon_password, "密码","", true).invoke(this)
                 textView("登  录") {
                     textColor = Color.WHITE
                     gravity = Gravity.CENTER

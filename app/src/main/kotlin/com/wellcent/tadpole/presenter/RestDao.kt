@@ -118,4 +118,7 @@ interface RestDao {
     
     @GET("/webOrder/wxPay")
     fun wxPayOrder(@Query("detectItemId")detectItemId:String,@Query("phone")phone:String,@Query("detectUnitId")detectUnitId:String): Observable<ReqMapping<WXPayParas>>
+
+    @GET("/webOrder/getByTradeNo")
+    fun getByTradeNo(@Query("tradeNo")tradeNo:String): Observable<ReqMapping<Order>>
 }

@@ -10,11 +10,10 @@ import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
 import com.wellcent.tadpole.bo.GoodsPayResult
-import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
 import org.jetbrains.anko.*
 
 class OrderResultActivity : TadpoleActivity() {
-    val goodsPayResult by lazy { intent.getSerializableExtra(ROUTINE_DATA_BINDLE) as GoodsPayResult }
+    val goodsPayResult by lazy { intent.getSerializableExtra("RESULT") as GoodsPayResult }
     override fun initialize(savedInstanceState: Bundle?) {
         verticalLayout { 
             relativeLayout { 
@@ -53,14 +52,14 @@ class OrderResultActivity : TadpoleActivity() {
             verticalLayout { 
                 gravity = Gravity.CENTER
                 linearLayout { 
-                    imageView {  }.lparams(0, WRAP_CONTENT,1f){ }
+                    imageView { _urlImg(goodsPayResult.goods.image_path) }.lparams(0, WRAP_CONTENT,1f){ }
                     verticalLayout {
                         textView(goodsPayResult.goods.name){
                             textColor = getResColor(R.color.text_little_black)
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                             lines = 2
                         }.lparams { }
-                        textView(goodsPayResult.goods.remark){
+                        textView("暂无描述"){
                             textColor = getResColor(R.color.text_little_black)
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                         }.lparams { topMargin = kIntHeight(0.01f) }
@@ -72,7 +71,11 @@ class OrderResultActivity : TadpoleActivity() {
                     backgroundResource = R.drawable.primary_btn
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
                     gravity = Gravity.CENTER
-                    onMyClick { startActivity<OrderActivity>() }
+                    //ROUTINE_DATA_BINDLE to goodsPayResult.orderId
+                    onMyClick { 
+                        startActivity<OrderActivity>() 
+                        finish()
+                    }
                 }.lparams(kIntWidth(0.8f), kIntHeight(0.09f)) {
                     verticalMargin = kIntWidth(0.01f)
                 }

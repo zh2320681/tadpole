@@ -14,6 +14,7 @@ class ReqMapping<T> {
     var user:T? = null
     var detail:T? = null
     var orderStr:T? = null
+    var order:T? = null
 }
 
 class User {
@@ -210,14 +211,15 @@ class Goods : Serializable {
 
 class WXPayParas : Serializable {
     var appid = ""
-    var partnerId = ""
-    var prepay_id = ""
+    var partnerid = ""
+    var prepayid = ""
     var packageValue = ""
     var mch_id = ""
     var trade_type = ""
-    var nonce_str = ""
+    var noncestr = ""
     var timestamp = ""
     var sign = ""
+    var order_no = ""
 }
 
 enum class PayType(val title:String) {

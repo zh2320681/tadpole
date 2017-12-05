@@ -44,4 +44,6 @@ interface AppDao {
     fun aliPayOrder(detectItemId:String,detectUnitId:String): RestExcuter<ReqMapping<String>>
 
     fun wxPayOrder(detectItemId:String,detectUnitId:String): RestExcuter<ReqMapping<WXPayParas>>
+
+    fun getByTradeNo(tradeNo:String): RestExcuter<ReqMapping<Order>>
 }
