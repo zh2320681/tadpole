@@ -23,7 +23,7 @@ fun String.serPicPath():String {
 }
 
 fun String.serArticlePath():String {
-    return "${ServerPath}/api/order.html#id${this}"
+    return "${ServerPath}/h5/article/?id=${this}"
 }
 
 private val impl: AppDaoImpl by lazy {

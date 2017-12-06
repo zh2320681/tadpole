@@ -18,6 +18,9 @@ import com.shrek.klib.ui.navigateBar
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.bo.Article
+import com.wellcent.tadpole.bo.Insurance
+import com.wellcent.tadpole.bo.Report
 import com.wellcent.tadpole.bo.SysMessage
 import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
 import org.jetbrains.anko.*
@@ -38,7 +41,7 @@ class SystemMsgActivity : TadpoleActivity() {
                 layoutManager = LinearLayoutManager(context)
                 adapter = KAdapter<SysMessage, SysMsgHolder>(messages) {
                     itemConstructor { SysMsgHolder(kIntHeight(0.17f)) }
-                    itemClickDoing { bo, i ->  }
+                    itemClickDoing { bo, i ->  itemClick(bo) }
                     bindData { holder, bo, i ->
                         holder.timeView.text = bo.send_time
                         holder.titleView.text = bo.title
@@ -46,6 +49,23 @@ class SystemMsgActivity : TadpoleActivity() {
                     }
                 }
             }.lparams(MATCH_PARENT, MATCH_PARENT)
+        }
+    }
+    
+    fun itemClick(msg:SysMessage){
+        if(msg.type == 1){
+            val bo = Article().also { it.id = msg.relate_id }
+            startActivity<ArticleActivity>(ROUTINE_DATA_BINDLE to bo)
+        } else if(msg.type == 2){
+            val bo = Insurance().also { it.id = msg.relate_id }
+            startActivity<InsuranceActivity>(ROUTINE_DATA_BINDLE to bo)
+        } else if(msg.type == 3){
+            startActivity<AdvisoryActivity>(ROUTINE_DATA_BINDLE to true)
+        } else if(msg.type == 4){
+            val bo = Report().also { it.id = msg.relate_id }
+            startActivity<ReportActivity>(ROUTINE_DATA_BINDLE to bo)
+        } else if(msg.type == 5){
+            startActivity<OrderActivity>()
         }
     }
 }

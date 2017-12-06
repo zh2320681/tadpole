@@ -67,7 +67,10 @@ class ReportActivity : KActivity(), AppOperable {
     fun getReport(detail: Report?) {
         var reports: List<Report>? = null
         if (detail != null) {
-            reports = arrayListOf(detail!!)
+            appOpt.reportDetail(detail!!).handler(kDefaultRestHandler(" 正在请求报表信息,请稍等... ")).success {
+                initAdapter(arrayListOf(it.detail!!))
+            }.excute(this)
+            return
         } else {
             reports = appOpt.reportsCache()
         }

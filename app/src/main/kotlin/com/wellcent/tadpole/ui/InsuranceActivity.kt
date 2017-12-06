@@ -71,8 +71,11 @@ class InsuranceActivity : KActivity(), AppOperable {
 
     fun getInsurances(insurance: Insurance?) {
         if (insurance != null) {
-            var insurances = arrayListOf(insurance!!)
-            initAdapter(insurances)
+            appOpt.insuranceDetail(insurance!!.id).handler(kDefaultRestHandler(" 正在请求保险详情,请稍等... ")).success {
+                var insurances = arrayListOf(insurance!!)
+                initAdapter(insurances)
+            }.excute(this)
+            return
         } else {
             appOpt.insurances().handler(kDefaultRestHandler(" 正在请求保险列表,请稍等... ")).listSuccess {
                 initAdapter(it)
