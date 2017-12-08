@@ -21,9 +21,9 @@ class MainActivity : TadpoleActivity() {
     lateinit var currFragmentRelation: FragmentRelation
 
     private val clickProcess:(FragmentRelation)->Unit = { switchFragment(it) }
-    val report by lazy { FragmentRelation(0, R.drawable.icon_report_nor, R.drawable.icon_report_pre, MainFragment(),clickProcess) }
-    val news by lazy { FragmentRelation(1, R.drawable.icon_news_nor, R.drawable.icon_news_pre, NewsFragment(),clickProcess) }
-    val mine by lazy { FragmentRelation(2, R.drawable.icon_me_nor, R.drawable.icon_me_pre, MineFragment(),clickProcess) }
+    val report by lazy { FragmentRelation(0, R.drawable.icon_report_nor, R.drawable.icon_report_nor, R.drawable.icon_report_pre, MainFragment(),clickProcess) }
+    val news by lazy { FragmentRelation(1, R.drawable.icon_news_nor_left, R.drawable.icon_news_nor_right, R.drawable.icon_news_pre, NewsFragment(),clickProcess) }
+    val mine by lazy { FragmentRelation(2, R.drawable.icon_me_nor, R.drawable.icon_report_nor, R.drawable.icon_me_pre, MineFragment(),clickProcess) }
 
     override fun initialize(savedInstanceState: Bundle?) {
         relativeLayout {
@@ -45,7 +45,7 @@ class MainActivity : TadpoleActivity() {
         currFragmentRelation.content.onShow()
     }
     internal fun setCurrFragmentRelation(trans: FragmentTransaction, showFragment: FragmentRelation) {
-        showFragment.select()
+        showFragment.select(showFragment.layoutLevel)
         if (currFragmentRelation == showFragment) { return }
         if (this.currFragmentRelation != null) {
             this.currFragmentRelation.content.onHide()
@@ -61,7 +61,8 @@ class MainActivity : TadpoleActivity() {
         }
         fragmentOpt { trans ->
             val tempFragmentRelation = currFragmentRelation
-            tempFragmentRelation.select()
+            arrayOf(report,news,mine).forEach { it.select(newFragmentRelation.layoutLevel) }
+//            tempFragmentRelation.select(newFragmentRelation.layoutLevel)
             if (newFragmentRelation.layoutLevel >= tempFragmentRelation.layoutLevel) {
                 trans.setCustomAnimations(R.anim.right_to_left_in, R.anim.right_to_left_out,
                         R.anim.left_to_right_in, R.anim.left_to_right_out)
@@ -88,7 +89,7 @@ class MainActivity : TadpoleActivity() {
         currFragmentRelation.content.onActivityResult(requestCode,resultCode,data)
     }
     
-    class FragmentRelation(var layoutLevel: Int, @DrawableRes var norIcon: Int, @DrawableRes var preIcon: Int, var content: KFragment, var clickProcess:(FragmentRelation)->Unit) {
+    class FragmentRelation(var layoutLevel: Int, @DrawableRes var norIcon: Int, @DrawableRes var norIcon1: Int, @DrawableRes var preIcon: Int, var content: KFragment, var clickProcess:(FragmentRelation)->Unit) {
         lateinit var imgView: ImageView
         fun layout(): _LinearLayout.() -> Unit {
             return {
@@ -99,13 +100,12 @@ class MainActivity : TadpoleActivity() {
             }
         }
 
-        fun select() {
+        fun select(selectLevel:Int) {
             with(imgView) {
-                isSelected = !isSelected
-                if (imgView.isSelected) {
+                if (selectLevel == layoutLevel) {
                     imageResource = preIcon
                 } else {
-                    imageResource = norIcon
+                    if(selectLevel < layoutLevel){ imageResource = norIcon } else { imageResource = norIcon1 }
                 }
             }
         }
