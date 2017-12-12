@@ -137,10 +137,12 @@ class AdvisoryActivity : TadpoleActivity(), VerifyOperable, AppOperable {
         val restExcuter = if(isDoctors) appOpt.doctorsSendMessage(msg, imgFile) else appOpt.sysSendMessage(msg, imgFile)
         restExcuter.success {
             contentTemp.localStatus = 0
+            inputView.setText("")
             notifyDataSetChanged()
         }.error {
             contentTemp.localStatus = 777
             notifyDataSetChanged()
+            inputView.setText("")
         }.excute(this)
     }
 
@@ -150,7 +152,7 @@ class AdvisoryActivity : TadpoleActivity(), VerifyOperable, AppOperable {
             send_time = Date().stringFormat("yyyy-MM-dd HH:mm:ss")
             user_id = verifyOpt.user()!!.id
             avatarImage = verifyOpt.user()!!.avatarImage
-            name = verifyOpt.user()!!.name
+            name = verifyOpt.user()!!.name?:""
             hasRead = 1
             type = 1
             content = msg

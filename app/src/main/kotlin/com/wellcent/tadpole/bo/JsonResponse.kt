@@ -19,14 +19,14 @@ class ReqMapping<T> {
 
 class User {
     var id = ""
-    var name = "" 
+    var name:String? = ""
     var avatarImage = ""
     var password = ""
     var phone = ""
     var age = 0
-    var id_number = ""
-    var expected_date = ""
-    var pregnant_week = ""
+    var id_number:String? = ""
+    var expected_date:String? = ""
+    var pregnant_week:String? = ""
     var jpush_id = ""
     var create_time = ""
     var update_time = ""
@@ -84,6 +84,7 @@ class Report: Serializable {
             this.phone = this@Report.phone
             this.detectItemName = this@Report.detect_item
             this.claimId = this@Report.claimId
+            this.id = this@Report.claimId?:""
         }
     }
 }

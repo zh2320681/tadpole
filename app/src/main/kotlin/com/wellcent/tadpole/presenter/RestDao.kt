@@ -121,4 +121,7 @@ interface RestDao {
 
     @GET("/webOrder/getByTradeNo")
     fun getByTradeNo(@Query("tradeNo")tradeNo:String): Observable<ReqMapping<Order>>
+    
+    @GET("/webMessage/setReaded")
+    fun setReaded(@Query("phone")phone:String , @Query("id")id:String): Observable<ReqMapping<String>>
 }

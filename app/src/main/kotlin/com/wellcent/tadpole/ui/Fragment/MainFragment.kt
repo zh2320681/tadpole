@@ -25,7 +25,10 @@ import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
 import com.wellcent.tadpole.bo.Report
-import com.wellcent.tadpole.presenter.*
+import com.wellcent.tadpole.presenter.AppOperable
+import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
+import com.wellcent.tadpole.presenter.VerifyOperable
+import com.wellcent.tadpole.presenter.listSuccess
 import com.wellcent.tadpole.ui.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -53,7 +56,7 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                         gravity = Gravity.CENTER
                         backgroundResource = R.drawable.mf_search_bg
                         imageView(R.drawable.icon_search) { }.lparams()
-                        idInputView = editText {
+                        idInputView = editText("342623198506073017") {
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                             hint = "请输入身份证号"
                             hintTextColor = hostAct.getResColor(R.color.text_light_black)
@@ -73,8 +76,19 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                                     }
                                 }
                             })
+                            
+//                            setOnFocusChangeListener { v, hasFocus -> 
+//                                if(hasFocus){
+//                                    accountInfo.visibility = View.GONE
+//                                    accoutOptLayout.visibility = View.GONE
+//                                } else {
+//                                    accountInfo.visibility = View.VISIBLE
+//                                    accoutOptLayout.visibility = View.VISIBLE
+//                                }
+//                            }
                             setOnEditorActionListener { v, actionId, event ->
-                                if (actionId == KeyEvent.KEYCODE_ENTER) {
+                                if (event!= null && ( event.keyCode == KeyEvent.KEYCODE_ENTER 
+                                        || event.keyCode == KeyEvent.KEYCODE_SEARCH) ) {
                                     searchReport()
                                     true
                                 }
@@ -201,7 +215,7 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
             context.toastLongShow("请您输入正确身份证号!")
             return
         }
-        appOpt.searchReport(idNum).handler(hostAct.kDefaultRestHandler(" 正在查找报告,请稍等... ")).success {
+        appOpt.searchReport(idNum).handler(hostAct.kDefaultRestHandler(" 正在查找报告,请稍等... ")).listSuccess {
             
         }.excute(hostAct)
     }

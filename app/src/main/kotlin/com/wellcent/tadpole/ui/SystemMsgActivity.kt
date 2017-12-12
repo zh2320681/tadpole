@@ -14,22 +14,23 @@ import com.shrek.klib.extension.kIntHeight
 import com.shrek.klib.extension.kIntWidth
 import com.shrek.klib.ui.adapter.HolderBo
 import com.shrek.klib.ui.adapter.KAdapter
+import com.shrek.klib.ui.kDefaultRestHandler
 import com.shrek.klib.ui.navigateBar
+import com.shrek.klib.ui.showComfirmCrouton
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
-import com.wellcent.tadpole.bo.Article
-import com.wellcent.tadpole.bo.Insurance
-import com.wellcent.tadpole.bo.Report
-import com.wellcent.tadpole.bo.SysMessage
+import com.wellcent.tadpole.bo.*
+import com.wellcent.tadpole.presenter.AppOperable
 import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
+import com.wellcent.tadpole.presenter.success
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 
-class SystemMsgActivity : TadpoleActivity() {
+class SystemMsgActivity : TadpoleActivity(),AppOperable {
     lateinit var recyclerView: RecyclerView
+    var processMsg:SysMessage? = null
     override fun initialize(savedInstanceState: Bundle?) {
-        val messages = intent.getSerializableExtra(ROUTINE_DATA_BINDLE) as List<SysMessage>
         verticalLayout {
             backgroundColor = getResColor(R.color.window_background)
             navigateBar("系统消息") {
@@ -39,17 +40,32 @@ class SystemMsgActivity : TadpoleActivity() {
             }.lparams(MATCH_PARENT, DimensAdapter.nav_height)
             recyclerView = recyclerView {
                 layoutManager = LinearLayoutManager(context)
-                adapter = KAdapter<SysMessage, SysMsgHolder>(messages) {
-                    itemConstructor { SysMsgHolder(kIntHeight(0.17f)) }
-                    itemClickDoing { bo, i ->  itemClick(bo) }
-                    bindData { holder, bo, i ->
-                        holder.timeView.text = bo.send_time
-                        holder.titleView.text = bo.title
-                        holder.desView.text = bo.content
-                    }
-                }
             }.lparams(MATCH_PARENT, MATCH_PARENT)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val process = kDefaultRestHandler<ReqMapping<SysMessage>>(" 正在获取消息列表,请稍等... ")
+        appOpt.messages(processMsg!= null,this,process){
+            recyclerView.adapter = KAdapter<SysMessage, SysMsgHolder>(it) {
+                itemConstructor { SysMsgHolder(kIntHeight(0.17f)) }
+                itemClickDoing { bo, i ->  itemClick(bo) }
+                bindData { holder, bo, i ->
+                    holder.timeView.text = bo.send_time
+                    holder.titleView.text = bo.title
+                    holder.desView.text = bo.content
+                }
+            }
+        }
+        
+        if(processMsg != null){
+            appOpt.setReaded(processMsg!!.id).handler(kDefaultRestHandler(" 正在获取报告列表,请稍等... ")).success{
+                showComfirmCrouton("该消息已经值为已读状态!")
+                processMsg = null
+            }.excute(this)
+        }
+        
     }
     
     fun itemClick(msg:SysMessage){
@@ -67,6 +83,7 @@ class SystemMsgActivity : TadpoleActivity() {
         } else if(msg.type == 5){
             startActivity<OrderActivity>()
         }
+        processMsg = msg
     }
 }
 

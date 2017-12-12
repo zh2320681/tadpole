@@ -22,6 +22,7 @@ import com.shrek.klib.view.KFragment
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.bo.ReqMapping
 import com.wellcent.tadpole.bo.SysMessage
 import com.wellcent.tadpole.presenter.*
 import com.wellcent.tadpole.ui.*
@@ -42,7 +43,7 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
     
     lateinit var rootView:View
     
-    var msgTemp:List<SysMessage> = arrayListOf<SysMessage>()
+//    var msgTemp:List<SysMessage> = arrayListOf<SysMessage>()
     var photoChoosePop:PhotoChoosePop? = null
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return UI {
@@ -82,7 +83,7 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
                         centerVertically()
                     }
                     msgNoticeView = textView("您有0条新消息") {
-                        onMyClick { startActivity<SystemMsgActivity>(ROUTINE_DATA_BINDLE to msgTemp) }
+                        onMyClick { startActivity<SystemMsgActivity>() }
                         visibility = View.GONE
                         textColor = hostAct.getResColor(R.color.text_little_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
@@ -119,7 +120,7 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
                     horizontalMargin = kIntWidth(0.05f)
                     bottomMargin = kIntHeight(0.01f)
                 }
-                addBottomCell("在线客服", "09:00-17:00").invoke(this)
+                addBottomCell("在线客服", "09:00-17:00"){ startActivity<AdvisoryActivity>(ROUTINE_DATA_BINDLE to false) }.invoke(this)
                 addBottomCell("意见反馈"){ startActivity<FeedbackActivity>() }.invoke(this)
                 addBottomCell("设置"){ startActivity<SettingActivity>() }.invoke(this)
             }
@@ -197,16 +198,16 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
 
             faceView._urlImg(user!!.avatarImage.serPicPath())
             nameView.text = user!!.name
-            timeView.text = "${user!!.pregnant_week.replace("+","周 + ")}天"
+            timeView.text = if(user!!.pregnant_week == null ){ "暂未设置" } else { "${user!!.pregnant_week!!.replace("+","周 + ")}天"}
             reqMsgCount()
         }
     }
     
     fun reqMsgCount() {
-        appOpt.messages().handler(hostAct.kDefaultRestHandler(" 正在获取报告列表,请稍等... ")).listSuccess {
-            msgTemp = it
+        val process = hostAct.kDefaultRestHandler<ReqMapping<SysMessage>>(" 正在获取消息列表,请稍等... ")
+        appOpt.messages(false,hostAct,process){
             msgNoticeView.text = "您有${it.size}条新消息"
-        }.excute(hostAct)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

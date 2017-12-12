@@ -191,7 +191,7 @@ class ReportHolder() : KFragment(), AppOperable {
                         gravity = Gravity.CENTER
                         onMyClick { 
                             startActivityForResult<InsuranceActivity>(APPLY_INSURE ,ROUTINE_DATA_BINDLE to report.converInsurance()) }
-                    }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) {
+                    }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { 
                         verticalMargin = kIntWidth(0.01f)
                     }
                 }.lparams(kIntWidth(0.9f), kIntHeight(0.1f)) {

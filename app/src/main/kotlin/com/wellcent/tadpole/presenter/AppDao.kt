@@ -2,6 +2,7 @@ package com.wellcent.tadpole.presenter
 
 import com.shrek.klib.retrofit.RestExcuter
 import com.shrek.klib.retrofit.handler.RestHandler
+import com.shrek.klib.view.KActivity
 import com.wellcent.tadpole.bo.*
 import com.wellcent.tadpole.ui.TadpoleActivity
 import java.io.File
@@ -19,7 +20,7 @@ interface AppDao {
     fun reportsCache():List<Report>?
     fun reportDetail(report: Report): RestExcuter<ReqMapping<Report>>
     fun searchReport(idNumber:String): RestExcuter<ReqMapping<Report>>
-    fun messages():RestExcuter<ReqMapping<SysMessage>>
+    fun messages(isForcibly:Boolean, host: KActivity, restHandler: RestHandler<ReqMapping<SysMessage>>, process:(List<SysMessage>)->Unit)
 
     fun insurances(): RestExcuter<ReqMapping<Insurance>>
     fun insuranceDetail(id:String): RestExcuter<ReqMapping<Insurance>>
@@ -46,4 +47,6 @@ interface AppDao {
     fun wxPayOrder(detectItemId:String,detectUnitId:String): RestExcuter<ReqMapping<WXPayParas>>
 
     fun getByTradeNo(tradeNo:String): RestExcuter<ReqMapping<Order>>
+
+    fun setReaded(id:String): RestExcuter<ReqMapping<String>>
 }

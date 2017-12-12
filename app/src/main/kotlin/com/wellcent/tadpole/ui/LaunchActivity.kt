@@ -15,7 +15,8 @@ import org.jetbrains.anko.startActivity
 class LaunchActivity : KActivity(),VerifyOperable{
     override fun initialize(savedInstanceState: Bundle?) {
         relativeLayout { imageView(R.drawable.launch){ scaleType = ImageView.ScaleType.FIT_XY }.lparams(MATCH_PARENT, MATCH_PARENT) }
-        uiThread(2000){ if(verifyOpt.isFirstUse){ startActivity<GuideActivity>() } else { startActivity<MainActivity>() }
+        uiThread(2000){ if(verifyOpt.isFirstUse){ startActivity<GuideActivity>()
+            finish() } else { startActivity<MainActivity>() }
             finish()}
     }
 }

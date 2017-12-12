@@ -8,6 +8,7 @@ import com.shrek.klib.presenter.ZPresenter
 import com.shrek.klib.presenter.ann.Pointcut
 import com.shrek.klib.retrofit.RestExcuter
 import com.shrek.klib.retrofit.handler.RestHandler
+import com.shrek.klib.view.KActivity
 import com.wellcent.tadpole.bo.*
 import com.wellcent.tadpole.presenter.AppDao
 import com.wellcent.tadpole.presenter.RestDao
@@ -33,6 +34,7 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     private var citiesCache = hashMapOf<String,List<City>>()
     private var unitsCache = hashMapOf<String,List<DetectUnit>>()
     private var goodsCache:List<Goods> = arrayListOf<Goods>()
+    private var sysMessageCache:List<SysMessage> = arrayListOf<SysMessage>()
     
     override fun initialization() {
     }
@@ -43,7 +45,7 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun userLogin(phone: String, password: String): RestExcuter<ReqMapping<User>> {
-        return RestExcuter.create(restDao?.userLogin(phone,password,"")).wrapPost {
+        return RestExcuter.create(restDao?.userLogin(phone,password,"2836a7b63742a5a6814f3a2d")).wrapPost {
             if (it.isOk) {
                 this@AppDaoImpl.userName = phone
                 this@AppDaoImpl.password = password
@@ -138,8 +140,13 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
         return RestExcuter.create(restDao?.claimSaveImgs(phoneBody,detectItemIdBody,reportIdBody,pathsBody,filesBody))
     }
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
-    override fun messages(): RestExcuter<ReqMapping<SysMessage>> {
-        return RestExcuter.create(restDao?.messages(currOptUser!!.phone))
+    override fun messages(isForcibly:Boolean, host: KActivity, restHandler: RestHandler<ReqMapping<SysMessage>>, process:(List<SysMessage>)->Unit){
+        if( !isForcibly && sysMessageCache.size > 0 ){ process(sysMessageCache) } else {
+            RestExcuter.create(restDao?.messages(currOptUser!!.phone)).handler(restHandler).listSuccess {
+                sysMessageCache = it
+                process(it)
+            }.excute(host)
+        }
     }
 
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
@@ -220,6 +227,10 @@ class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.jav
     @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
     override fun getByTradeNo(tradeNo:String): RestExcuter<ReqMapping<Order>>{
         return RestExcuter.create(restDao?.getByTradeNo(tradeNo))
+    }
+    @Pointcut(before = arrayOf("beforeLog"), after = arrayOf("afterLog"))
+    override fun setReaded(id: String): RestExcuter<ReqMapping<String>> {
+        return RestExcuter.create(restDao?.setReaded(currOptUser!!.phone,id))
     }
     private fun findGoods(goodsId: String) : Goods?{
         var returnGoods:Goods? = null

@@ -61,6 +61,7 @@ class AccountActivity : KActivity() {
                     kRandomId()
                     registerFragment = RegisterFragment().apply { registerProcess = {
                         viewPage.setCurrentItem(1,true)
+                        loginFragment.accountView.setText(it)
                     } }
                     loginFragment = LoginFragment()
                     adapter = KFragmentPagerAdapter<KFragment>(this@AccountActivity, WeakReference(this), arrayOf(registerFragment,loginFragment )) { positon, oldFragment, newFragment ->

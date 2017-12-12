@@ -125,7 +125,7 @@ class RegisterFragment : KFragment(),VerifyOperable {
         val code = codeView.text.toString()
         val pw = pwView.text.toString()
         verifyOpt.register(account,code,pw).handler(hostAct.kDefaultRestHandler(" 正在提交注册信息,请稍等... ")).success {
-            hostAct.showComfirmCrouton("验证码发送成功",parentLayout)
+            hostAct.showComfirmCrouton("帐号注册成功!",parentLayout)
             accountView.setText("")
             codeView.setText("")
             pwView.setText("")

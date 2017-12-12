@@ -2,6 +2,7 @@ package com.wellcent.tadpole.ui
 
 import android.graphics.Color
 import android.os.Bundle
+import android.text.InputType
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -87,10 +88,14 @@ class ModifyActivity : KActivity(),VerifyOperable {
                     }
                 } else {
                     inputView = editText() {
-                        gravity = Gravity.RIGHT
                         textColor = getResColor(R.color.text_little_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
                         backgroundColor = Color.TRANSPARENT
+                        if(currType == ModifyType.PASSWORD){ 
+                            inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD 
+                        } else {
+                            gravity = Gravity.RIGHT
+                        }
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) { centerVertically()
                         rightOf(titleView!!)
                         leftMargin = kIntWidth(0.02f)
