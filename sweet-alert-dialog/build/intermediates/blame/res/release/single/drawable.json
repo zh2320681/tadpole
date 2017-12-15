@@ -8,12 +8,12 @@
         "source": "/Users/Shrek/.android/build-cache/c8eeefe78ba97d891d7dcd9d8e8b1609c835bbb3/output/res/drawable/abc_btn_check_material.xml"
     },
     {
-        "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/release/drawable/success_circle.xml",
-        "source": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/src/main/res/drawable/success_circle.xml"
-    },
-    {
         "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/release/drawable/abc_item_background_holo_light.xml",
         "source": "/Users/Shrek/.android/build-cache/c8eeefe78ba97d891d7dcd9d8e8b1609c835bbb3/output/res/drawable/abc_item_background_holo_light.xml"
+    },
+    {
+        "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/release/drawable/success_circle.xml",
+        "source": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/src/main/res/drawable/success_circle.xml"
     },
     {
         "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/release/drawable/error_center_x.xml",

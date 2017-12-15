@@ -97,6 +97,9 @@ class SysMessage: Serializable {
     var type = 0        //类型                  1：文章; 2:保险; 3:医生回复; 4:检测报告; 5:订单
     var relate_id = ""        //关联的id               对应的id，如type=1，则为文章的id;type=2，则为保险的id
     var send_time = ""        //发送时间
+    var status = 0
+    
+    fun isRead():Boolean = status==1
 }
 
 class Insurance: Serializable {

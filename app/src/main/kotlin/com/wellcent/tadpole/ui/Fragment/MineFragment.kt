@@ -206,7 +206,9 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
     fun reqMsgCount() {
         val process = hostAct.kDefaultRestHandler<ReqMapping<SysMessage>>(" 正在获取消息列表,请稍等... ")
         appOpt.messages(false,hostAct,process){
-            msgNoticeView.text = "您有${it.size}条新消息"
+            var unReadNum = 0
+            it.forEach { if(!it.isRead()){ unReadNum++ } }
+            msgNoticeView.text = "您有${unReadNum}条新消息"
         }
     }
 

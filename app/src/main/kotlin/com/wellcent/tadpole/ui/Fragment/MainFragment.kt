@@ -56,7 +56,7 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                         gravity = Gravity.CENTER
                         backgroundResource = R.drawable.mf_search_bg
                         imageView(R.drawable.icon_search) { }.lparams()
-                        idInputView = editText("342623198506073017") {
+                        idInputView = editText("") {
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                             hint = "请输入身份证号"
                             hintTextColor = hostAct.getResColor(R.color.text_light_black)

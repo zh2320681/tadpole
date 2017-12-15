@@ -72,7 +72,7 @@ class NewsFragment : KFragment(),AppOperable {
         springView.callFresh()
         appOpt.articles().listSuccess {
             adapter = KAdapter<Article, NewsHolder>(it) {
-                itemConstructor { NewsHolder(kIntHeight(0.31f)) }
+                itemConstructor { NewsHolder(kIntHeight(0.38f)) }
                 itemClickDoing { bo, i -> startActivity<ArticleActivity>( ROUTINE_DATA_BINDLE to bo ) }
                 bindData { holder, bo, i ->
                     holder.timeView.text = bo.create_time

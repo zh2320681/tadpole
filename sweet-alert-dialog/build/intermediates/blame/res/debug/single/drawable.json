@@ -12,12 +12,12 @@
         "source": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/src/main/res/drawable/success_circle.xml"
     },
     {
-        "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/debug/drawable/abc_cab_background_internal_bg.xml",
-        "source": "/Users/Shrek/.android/build-cache/c8eeefe78ba97d891d7dcd9d8e8b1609c835bbb3/output/res/drawable/abc_cab_background_internal_bg.xml"
-    },
-    {
         "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/debug/drawable/abc_edit_text_material.xml",
         "source": "/Users/Shrek/.android/build-cache/c8eeefe78ba97d891d7dcd9d8e8b1609c835bbb3/output/res/drawable/abc_edit_text_material.xml"
+    },
+    {
+        "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/debug/drawable/abc_cab_background_internal_bg.xml",
+        "source": "/Users/Shrek/.android/build-cache/c8eeefe78ba97d891d7dcd9d8e8b1609c835bbb3/output/res/drawable/abc_cab_background_internal_bg.xml"
     },
     {
         "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/debug/drawable/abc_list_selector_background_transition_holo_light.xml",
@@ -28,12 +28,12 @@
         "source": "/Users/Shrek/.android/build-cache/c8eeefe78ba97d891d7dcd9d8e8b1609c835bbb3/output/res/drawable/abc_tab_indicator_material.xml"
     },
     {
-        "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/debug/drawable/blue_button_background.xml",
-        "source": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/src/main/res/drawable/blue_button_background.xml"
-    },
-    {
         "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/debug/drawable/abc_list_selector_holo_dark.xml",
         "source": "/Users/Shrek/.android/build-cache/c8eeefe78ba97d891d7dcd9d8e8b1609c835bbb3/output/res/drawable/abc_list_selector_holo_dark.xml"
+    },
+    {
+        "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/debug/drawable/blue_button_background.xml",
+        "source": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/src/main/res/drawable/blue_button_background.xml"
     },
     {
         "merged": "/Users/Shrek/develop/android/workspace/kotlin/Tadpole/sweet-alert-dialog/build/intermediates/res/merged/debug/drawable/dialog_background.xml",

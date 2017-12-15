@@ -95,10 +95,6 @@ class SysMsgHolder(cellHeight:Int): HolderBo(cellHeight) {
         return {
             verticalLayout { 
                 gravity = Gravity.CENTER
-                timeView = textView("2017年10月22日 13:22:12") {
-                    textColor = context.getResColor(R.color.text_light_black)
-                    textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
-                }.lparams(WRAP_CONTENT, WRAP_CONTENT) { verticalMargin = kIntHeight(0.01f) }
                 verticalLayout { 
                     backgroundColor = Color.WHITE
                     horizontalPadding = kIntWidth(0.04f)
@@ -116,6 +112,10 @@ class SysMsgHolder(cellHeight:Int): HolderBo(cellHeight) {
                         verticalMargin = kIntHeight(0.02f)
                     }
                 }.lparams(MATCH_PARENT, MATCH_PARENT)
+                timeView = textView("2017年10月22日 13:22:12") {
+                    textColor = context.getResColor(R.color.text_light_black)
+                    textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
+                }.lparams(WRAP_CONTENT, WRAP_CONTENT) { verticalMargin = kIntHeight(0.01f) }
             }
         }
     }

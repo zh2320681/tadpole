@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.v4.app.FragmentTransaction
 import android.widget.ImageView
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.getResColor
@@ -109,5 +110,16 @@ class MainActivity : TadpoleActivity() {
                 }
             }
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                .setContentText("您确认退出程序吗?")
+                .setConfirmText(" 退 出 ")
+                .setConfirmClickListener {
+                    finish()
+                    it.dismissWithAnimation()
+                }.setCancelText(" 取 消 ").show()
     }
 }

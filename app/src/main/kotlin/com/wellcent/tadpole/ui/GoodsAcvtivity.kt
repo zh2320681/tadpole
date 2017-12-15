@@ -46,6 +46,7 @@ class GoodsAcvtivity : TadpoleActivity(), AppOperable {
     lateinit var unitnNameView: TextView
     lateinit var priceView: TextView
     lateinit var payLayout: View
+    lateinit var payPriceView:TextView
     var payTypeViews = arrayListOf<ImageView>()
     var selectUnit: DetectUnit? = null
 
@@ -152,7 +153,7 @@ class GoodsAcvtivity : TadpoleActivity(), AppOperable {
                     }
                     payTypeViews.add(addPayLayout("  支付宝", R.drawable.icon_alipay, true).invoke(this))
                     payTypeViews.add(addPayLayout("  微信", R.drawable.icon_tenpay).invoke(this))
-                    textView() {
+                    payPriceView = textView() {
                         setText("应付金额".style { foregroundColor(getResColor(R.color.text_color)) } +
                                 "￥2037".style { foregroundColor(Color.RED) })
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
@@ -240,6 +241,8 @@ class GoodsAcvtivity : TadpoleActivity(), AppOperable {
                 topBgImageView._urlImg(it!!.image_path.serPicPath())
                 goodsNameView.text = it.name
                 markView.text = Html.fromHtml(it!!.remark)
+                payPriceView.setText("应付金额".style { foregroundColor(getResColor(R.color.text_color)) } +
+                        "￥${it!!.price}".style { foregroundColor(Color.RED) })
             }
         }
     }
