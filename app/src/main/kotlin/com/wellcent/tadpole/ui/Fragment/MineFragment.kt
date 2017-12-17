@@ -33,18 +33,19 @@ import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.startActivity
 import java.io.File
 
-class MineFragment : KFragment(),VerifyOperable,AppOperable {
-    lateinit var nameView:TextView
-    lateinit var timeView:TextView
-    lateinit var msgNoticeView:TextView
-    lateinit var loginBtn:TextView
-    lateinit var faceView:ImageView
-    lateinit var userInfoLayout :LinearLayout
-    
-    lateinit var rootView:View
-    
-//    var msgTemp:List<SysMessage> = arrayListOf<SysMessage>()
-    var photoChoosePop:PhotoChoosePop? = null
+class MineFragment : KFragment(), VerifyOperable, AppOperable {
+    lateinit var nameView: TextView
+    lateinit var timeView: TextView
+    lateinit var msgNoticeView: TextView
+    lateinit var loginBtn: TextView
+    lateinit var faceView: ImageView
+    lateinit var userInfoLayout: LinearLayout
+
+    lateinit var rootView: View
+
+    //    var msgTemp:List<SysMessage> = arrayListOf<SysMessage>()
+    var photoChoosePop: PhotoChoosePop? = null
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return UI {
             rootView = verticalLayout {
@@ -54,31 +55,34 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
                         imageResource = R.drawable.icon_headshot
                         borderColor = Color.WHITE
                         borderWidth = kIntWidth(0.01f)
-                        onMyClick { verifyOpt.user()?.apply {
-                            photoChoosePop = PhotoChoosePop(hostAct,faceView,true){
-                                verifyOpt.modifyUserFace(File(it)).handler(KDefaultRestHandler(hostAct,"正在修改头像,请稍等...")).success {
-                                    faceView._urlImg(it.avatarImage.serPicPath())
-                                }.excute(hostAct)
-                            }
-                            hostAct.requestPermissionsWithCallBack(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                                hostAct.requestPermissionsWithCallBack(arrayOf(Manifest.permission.CAMERA)) {
-                                    photoChoosePop?.show(rootView)
+                        onMyClick {
+                            verifyOpt.user()?.apply {
+                                photoChoosePop = PhotoChoosePop(hostAct, faceView, true) {
+                                    verifyOpt.modifyUserFace(File(it)).handler(KDefaultRestHandler(hostAct, "正在修改头像,请稍等...")).success {
+                                        faceView._urlImg(it.avatarImage.serPicPath())
+                                    }.excute(hostAct)
+                                }
+                                hostAct.requestPermissionsWithCallBack(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                                    hostAct.requestPermissionsWithCallBack(arrayOf(Manifest.permission.CAMERA)) {
+                                        photoChoosePop?.show(rootView)
+                                    }
                                 }
                             }
-                        } }
-                    }.lparams(kIntWidth(0.18f),kIntWidth(0.18f)) { centerVertically() }
+                        }
+                    }.lparams(kIntWidth(0.18f), kIntWidth(0.18f)) { centerVertically() }
 
                     userInfoLayout = verticalLayout {
                         visibility = View.GONE
                         nameView = textView("张三") {
                             textColor = hostAct.getResColor(R.color.text_black)
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.MID_BIG)
-                        }.lparams(WRAP_CONTENT, WRAP_CONTENT) {  }
+                        }.lparams(WRAP_CONTENT, WRAP_CONTENT) { }
                         timeView = textView("17周+10天") {
                             textColor = hostAct.getResColor(R.color.text_little_black)
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                         }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-                    }.lparams{ rightOf( faceView) 
+                    }.lparams {
+                        rightOf(faceView)
                         leftMargin = kIntWidth(0.03f)
                         centerVertically()
                     }
@@ -87,7 +91,7 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
                         visibility = View.GONE
                         textColor = hostAct.getResColor(R.color.text_little_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
-                    }.lparams(WRAP_CONTENT, WRAP_CONTENT) { 
+                    }.lparams(WRAP_CONTENT, WRAP_CONTENT) {
                         alignParentRight()
                         topMargin = kIntHeight(0.05f)
                     }
@@ -120,9 +124,9 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
                     horizontalMargin = kIntWidth(0.05f)
                     bottomMargin = kIntHeight(0.01f)
                 }
-                addBottomCell("在线客服", "09:00-17:00"){ startActivity<AdvisoryActivity>(ROUTINE_DATA_BINDLE to false) }.invoke(this)
-                addBottomCell("意见反馈"){ startActivity<FeedbackActivity>() }.invoke(this)
-                addBottomCell("设置"){ startActivity<SettingActivity>() }.invoke(this)
+                addBottomCell("在线客服", "09:00-17:00") { startActivity<AdvisoryActivity>(ROUTINE_DATA_BINDLE to false) }.invoke(this)
+                addBottomCell("意见反馈") { startActivity<FeedbackActivity>() }.invoke(this)
+                addBottomCell("设置") { startActivity<SettingActivity>() }.invoke(this)
             }
         }.view
     }
@@ -137,8 +141,12 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
                 val paddingVal = kIntWidth(0.02f)
                 setContentPadding(paddingVal, paddingVal, paddingVal, paddingVal)
                 setCardBackgroundColor(Color.parseColor("#ffffffff"))
-                onMyClick { 
-                    if(verifyOpt.user() == null){ startActivity<AccountActivity>() } else { process() }
+                onMyClick {
+                    if (verifyOpt.user() == null) {
+                        startActivity<AccountActivity>()
+                    } else {
+                        process()
+                    }
                 }
                 verticalLayout {
                     imageView(icon) {}.lparams { }
@@ -148,7 +156,11 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
                     }.lparams { leftMargin = kIntWidth(0.01f) }
                 }.lparams { }
             }.lparams(MATCH_PARENT, WRAP_CONTENT, 1f) {
-                if (isHasChild) { leftMargin = kIntWidth(0.01f) } else { rightMargin = kIntWidth(0.01f) }
+                if (isHasChild) {
+                    leftMargin = kIntWidth(0.01f)
+                } else {
+                    rightMargin = kIntWidth(0.01f)
+                }
             }
         }
     }
@@ -157,7 +169,15 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
     fun addBottomCell(title: String, rightTitle: String? = null, process: (() -> Unit)? = null): _LinearLayout.() -> Unit {
         return {
             relativeLayout {
-                process?.apply { onMyClick { if(verifyOpt.user() == null){ startActivity<AccountActivity>() } else { this() } } }
+                process?.apply {
+                    onMyClick {
+                        if (verifyOpt.user() == null) {
+                            startActivity<AccountActivity>()
+                        } else {
+                            this()
+                        }
+                    }
+                }
                 textView(title) {
                     textColor = hostAct.getResColor(R.color.text_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
@@ -191,30 +211,40 @@ class MineFragment : KFragment(),VerifyOperable,AppOperable {
             msgNoticeView.visibility = View.GONE
             loginBtn.visibility = View.VISIBLE
             faceView.imageResource = R.drawable.icon_headshot
-        } else if(user != null && userInfoLayout.visibility != View.VISIBLE){
+        } else if (user != null && userInfoLayout.visibility != View.VISIBLE) {
             userInfoLayout.visibility = View.VISIBLE
             msgNoticeView.visibility = View.VISIBLE
             loginBtn.visibility = View.GONE
+        }
 
+        if (user != null) {
             faceView._urlImg(user!!.avatarImage.serPicPath())
             nameView.text = user!!.name
-            timeView.text = if(user!!.pregnant_week == null ){ "暂未设置" } else { "${user!!.pregnant_week!!.replace("+","周 + ")}天"}
+            timeView.text = if (user!!.pregnant_week == null) {
+                "暂未设置"
+            } else {
+                "${user!!.pregnant_week!!.replace("+", "周 + ")}天"
+            }
             reqMsgCount()
         }
     }
-    
+
     fun reqMsgCount() {
         val process = hostAct.kDefaultRestHandler<ReqMapping<SysMessage>>(" 正在获取消息列表,请稍等... ")
-        appOpt.messages(false,hostAct,process){
+        appOpt.messages(false, hostAct, process) {
             var unReadNum = 0
-            it.forEach { if(!it.isRead()){ unReadNum++ } }
+            it.forEach {
+                if (!it.isRead()) {
+                    unReadNum++
+                }
+            }
             msgNoticeView.text = "您有${unReadNum}条新消息"
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        photoChoosePop?.onActivityResult(requestCode,resultCode,data)
+        photoChoosePop?.onActivityResult(requestCode, resultCode, data)
     }
 
 }

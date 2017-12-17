@@ -19,6 +19,7 @@ class SelectorWheelAdapter<T>(val allData: ArrayList<T>,val converter:(T)->Strin
     }
 
     override fun getItem(index: Int): String {
+        if(allData.size == 0){ return "" }
         return converter.invoke(allData[index])
     }
 

@@ -52,7 +52,9 @@ class UnitChoosePop(var hostAct: TadpoleActivity, var process: ((DetectUnit?) ->
                             gravity = Gravity.CENTER
                             verticalPadding = kIntHeight(0.02f)
                             onMyClick {
-                                if(unitAdapter.itemsCount > 0 ){ process?.invoke(unitAdapter.allData[unitChooseView.currentItem]) } else {
+                                if (unitAdapter.itemsCount > 0) {
+                                    process?.invoke(unitAdapter.allData[unitChooseView.currentItem])
+                                } else {
                                     hostAct.showAlertCrouton("未选择检测机构!")
                                 }
                                 dismiss()
@@ -63,15 +65,15 @@ class UnitChoosePop(var hostAct: TadpoleActivity, var process: ((DetectUnit?) ->
                     }
                     linearLayout {
                         provinceChooseView = wheelView {
-//                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.MID_SMALL).toInt())
+                            //                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.MID_SMALL).toInt())
                             addChangingListener { wheel, oldValue, newValue -> getCitys() }
                         }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { }
                         cityChooseView = wheelView {
-//                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.MID_SMALL).toInt())
+                            //                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.MID_SMALL).toInt())
                             addChangingListener { wheel, oldValue, newValue -> getUnits() }
                         }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { }
                         unitChooseView = wheelView {
-//                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.MID_SMALL).toInt())
+                            //                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.MID_SMALL).toInt())
                         }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { }
                     }.lparams(MATCH_PARENT, kIntHeight(0.4f)) {
                         bottomMargin = kIntHeight(0.1f)
@@ -95,11 +97,11 @@ class UnitChoosePop(var hostAct: TadpoleActivity, var process: ((DetectUnit?) ->
     fun getProvinces() {
         val restHandler = hostAct.kDefaultRestHandler<ReqMapping<Province>>("正在请求省份信息,请稍等...")
         appOpt.provinces(hostAct, restHandler) {
-            if (it.size > 0) {
-                provinceAdapter = SelectorWheelAdapter<Province>(ArrayList(it)) { it.name }
-                provinceChooseView.adapter = provinceAdapter
-                uiThread(100) { getCitys() }
-            }
+            //            if (it.size > 0) {
+            provinceAdapter = SelectorWheelAdapter<Province>(ArrayList(it)) { it.name }
+            provinceChooseView.adapter = provinceAdapter
+            uiThread(100) { getCitys() }
+//            }
         }
     }
 
@@ -107,22 +109,23 @@ class UnitChoosePop(var hostAct: TadpoleActivity, var process: ((DetectUnit?) ->
         val restHandler = hostAct.kDefaultRestHandler<ReqMapping<City>>("正在请求城市信息,请稍等...")
         val currProvince = provinceAdapter.allData[provinceChooseView.currentItem]
         appOpt.cities(hostAct, currProvince.province_id, restHandler) {
-            if (it.size > 0) {
-                cityAdapter = SelectorWheelAdapter<City>(ArrayList(it)) { it.name }
-                cityChooseView.adapter = cityAdapter
-                uiThread(1100) { getUnits() }
-            }
+            //            if (it.size > 0) {
+            cityAdapter = SelectorWheelAdapter<City>(ArrayList(it)) { it.name }
+            cityChooseView.adapter = cityAdapter
+            uiThread(1100) { getUnits() }
+//            }
         }
     }
 
     fun getUnits() {
         val restHandler = hostAct.kDefaultRestHandler<ReqMapping<DetectUnit>>("正在请求机构信息,请稍等...")
+        if(cityAdapter.allData.size == 0){ return }
         val currCity = cityAdapter.allData[cityChooseView.currentItem]
         appOpt.units(hostAct, currCity.name, restHandler) {
-            if (it.size > 0) {
-                unitAdapter = SelectorWheelAdapter(ArrayList(it)) { it.name }
-                unitChooseView.adapter = unitAdapter
-            }
+            //            if (it.size > 0) {
+            unitAdapter = SelectorWheelAdapter(ArrayList(it)) { it.name }
+            unitChooseView.adapter = unitAdapter
+//            }
         }
     }
 

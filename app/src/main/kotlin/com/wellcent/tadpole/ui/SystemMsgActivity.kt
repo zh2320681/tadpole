@@ -5,13 +5,13 @@ import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.Gravity
 import android.widget.TextView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.getResColor
 import com.shrek.klib.extension.kIntHeight
 import com.shrek.klib.extension.kIntWidth
+import com.shrek.klib.extension.kRandomId
 import com.shrek.klib.ui.adapter.HolderBo
 import com.shrek.klib.ui.adapter.KAdapter
 import com.shrek.klib.ui.kDefaultRestHandler
@@ -47,7 +47,14 @@ class SystemMsgActivity : TadpoleActivity(),AppOperable {
     override fun onResume() {
         super.onResume()
         val process = kDefaultRestHandler<ReqMapping<SysMessage>>(" 正在获取消息列表,请稍等... ")
-        appOpt.messages(processMsg!= null,this,process){
+        val isForcibly = processMsg != null  && !processMsg!!.isRead()
+        if(isForcibly){
+            appOpt.setReaded(processMsg!!.id).handler(kDefaultRestHandler(" 正在获取报告列表,请稍等... ")).success{
+                showComfirmCrouton("该消息已经置为已读状态!")
+                processMsg = null
+            }.excute(this)
+        }
+        appOpt.messages(isForcibly,this,process){
             recyclerView.adapter = KAdapter<SysMessage, SysMsgHolder>(it) {
                 itemConstructor { SysMsgHolder(kIntHeight(0.17f)) }
                 itemClickDoing { bo, i ->  itemClick(bo) }
@@ -58,14 +65,6 @@ class SystemMsgActivity : TadpoleActivity(),AppOperable {
                 }
             }
         }
-        
-        if(processMsg != null){
-            appOpt.setReaded(processMsg!!.id).handler(kDefaultRestHandler(" 正在获取报告列表,请稍等... ")).success{
-                showComfirmCrouton("该消息已经值为已读状态!")
-                processMsg = null
-            }.excute(this)
-        }
-        
     }
     
     fun itemClick(msg:SysMessage){
@@ -93,8 +92,15 @@ class SysMsgHolder(cellHeight:Int): HolderBo(cellHeight) {
     lateinit var titleView: TextView
     override fun rootViewInit(): AnkoContext<Context>.() -> Unit {
         return {
-            verticalLayout { 
-                gravity = Gravity.CENTER
+            relativeLayout { 
+                timeView = textView("2017年10月22日 13:22:12") {
+                    kRandomId()
+                    textColor = context.getResColor(R.color.text_light_black)
+                    textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
+                }.lparams(WRAP_CONTENT, WRAP_CONTENT) { verticalMargin = kIntHeight(0.01f) 
+                    alignParentBottom()
+                    centerHorizontally()
+                }
                 verticalLayout { 
                     backgroundColor = Color.WHITE
                     horizontalPadding = kIntWidth(0.04f)
@@ -111,11 +117,9 @@ class SysMsgHolder(cellHeight:Int): HolderBo(cellHeight) {
                     }.lparams(WRAP_CONTENT, WRAP_CONTENT) {
                         verticalMargin = kIntHeight(0.02f)
                     }
-                }.lparams(MATCH_PARENT, MATCH_PARENT)
-                timeView = textView("2017年10月22日 13:22:12") {
-                    textColor = context.getResColor(R.color.text_light_black)
-                    textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
-                }.lparams(WRAP_CONTENT, WRAP_CONTENT) { verticalMargin = kIntHeight(0.01f) }
+                }.lparams(MATCH_PARENT, MATCH_PARENT){ above(timeView)
+                    centerHorizontally()}
+                
             }
         }
     }

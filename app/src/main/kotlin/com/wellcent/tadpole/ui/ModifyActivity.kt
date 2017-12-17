@@ -66,13 +66,13 @@ class ModifyActivity : KActivity(),VerifyOperable {
                     kRandomId()
                     textColor = getResColor(R.color.text_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
-                }.lparams(WRAP_CONTENT, WRAP_CONTENT) { centerVertically() }
+                }.lparams(kIntWidth(0.2f), WRAP_CONTENT) { centerVertically() }
 
                 if(isDate){
                     inputView = textView {
                         textColor = getResColor(R.color.text_little_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
-                        gravity = Gravity.RIGHT
+//                        gravity = Gravity.RIGHT
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) { centerVertically()
                         rightOf(titleView!!)
                         leftMargin = kIntWidth(0.02f)
@@ -94,7 +94,7 @@ class ModifyActivity : KActivity(),VerifyOperable {
                         if(currType == ModifyType.PASSWORD){ 
                             inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD 
                         } else {
-                            gravity = Gravity.RIGHT
+//                            gravity = Gravity.RIGHT
                         }
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) { centerVertically()
                         rightOf(titleView!!)

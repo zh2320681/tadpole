@@ -112,9 +112,16 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                 }.lparams(MATCH_PARENT, 0, 1f)
 
                 relativeLayout {
+                    accountInfo = textView("注册帐号可以第一时间获知报告结果") {
+                        kRandomId()
+                        textColor = hostAct.getResColor(R.color.cell_title)
+                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
+                    }.lparams {
+                        bottomMargin = kIntHeight(0.02f)
+                        centerInParent()
+                    }
                     //登录注册按钮
                     accoutOptLayout = linearLayout {
-                        kRandomId()
                         textView("登  录") {
                             textColor = Color.WHITE
                             backgroundResource = R.drawable.icon_btn_nor
@@ -131,15 +138,11 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                             onMyClick { startActivityForResult<AccountActivity>(USER_REGISTER, ROUTINE_DATA_BINDLE to AccountProcess.REGISTER.code) }
                         }.lparams(kIntWidth(0.33f), kIntHeight(0.09f)) { leftMargin = kIntWidth(0.03f) }
 
-                    }.lparams { centerInParent() }
-                    accountInfo = textView("注册帐号可以第一时间获知报告结果") {
-                        textColor = hostAct.getResColor(R.color.cell_title)
-                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
-                    }.lparams {
-                        above(accoutOptLayout)
-                        bottomMargin = kIntHeight(0.02f)
-                        centerInParent()
+                    }.lparams { 
+                        centerHorizontally()
+                        below(accountInfo)
                     }
+                    
                     recyclerView = recyclerView {
                         layoutManager = LinearLayoutManager(context)
                         visibility = View.GONE
@@ -154,49 +157,64 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.BIGGER)
                         }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
                     }.lparams(MATCH_PARENT, MATCH_PARENT) { topMargin = kIntHeight(0.02f) }
-                }.lparams(MATCH_PARENT, 0, 1.5f)
+                }.lparams(MATCH_PARENT, 0, 1.4f)
             }
         }.view
     }
 
     override fun onShow() {
         val user = verifyOpt.user()
-        if (user == null && recyclerView.visibility == View.VISIBLE) {
+        if (user == null && (recyclerView.visibility == View.VISIBLE || emptyLayout.visibility == View.VISIBLE )) {
             recyclerView.visibility = View.GONE
             emptyLayout.visibility = View.GONE
             accoutOptLayout.visibility = View.VISIBLE
             accountInfo.visibility = View.VISIBLE
-        } else if (user != null && recyclerView.visibility != View.VISIBLE) {
+
+            (recyclerView.adapter as? KAdapter<Report, OrderHolder>)?.also {
+                it.sourceData = arrayListOf<Report>()
+                it.notifyDataSetChanged()
+            }
+            
+        } else if (user != null && (recyclerView.visibility != View.VISIBLE || recyclerView.adapter.itemCount == 0 )) {
             recyclerView.visibility = View.VISIBLE
             emptyLayout.visibility = View.VISIBLE
             accoutOptLayout.visibility = View.GONE
             accountInfo.visibility = View.GONE
+            
             appOpt.reports().handler(hostAct.kDefaultRestHandler(" 正在获取报告列表,请稍等... ")).listSuccess {
-                if (it.size > 0) {
-                    emptyLayout.visibility = View.GONE
-                    recyclerView.adapter = KAdapter<Report, OrderHolder>(it) {
-                        itemConstructor { OrderHolder(kIntHeight(0.18f)) }
-                        itemClickDoing { bo, i -> startActivity<ReportActivity>(ROUTINE_DATA_BINDLE to bo) }
-                        bindData { holder, bo, i ->
-                            if (i % 2 == 0) {
-                                holder.adornView.setImageResource(R.drawable.list_card_stroke_r)
-                                holder.titleView.textColor = hostAct.getResColor(R.color.colorPrimary)
-                                holder.stateView.textColor = hostAct.getResColor(R.color.colorPrimary)
-                                holder.stateView.rightDrawable(R.drawable.icon_circle_pink, kIntWidth(0.01f))
-                            } else {
-                                holder.adornView.setImageResource(R.drawable.list_card_stroke_b)
-                                holder.titleView.textColor = hostAct.getResColor(R.color.colorPrimary_blue)
-                                holder.stateView.textColor = hostAct.getResColor(R.color.colorPrimary_blue)
-                                holder.stateView.rightDrawable(R.drawable.icon_circle_blue, kIntWidth(0.01f))
-                            }
-                            holder.timeView.text = "采集日期: ${bo.sampling_date}"
-                            holder.hosView.text = bo.detect_unit
-                            holder.stateView.text = bo.statusChineseName()
-                            holder.titleView.text = bo.detect_item
-                        }
-                    }
-                }
+                setAdapter(it)
             }.excute(hostAct)
+        }
+    }
+    
+    fun setAdapter(reports:List<Report>){
+        if (reports.size > 0) {
+            emptyLayout.visibility = View.GONE
+            recyclerView.visibility = View.VISIBLE
+            recyclerView.adapter = KAdapter<Report, OrderHolder>(reports) {
+                itemConstructor { OrderHolder(kIntHeight(0.18f)) }
+                itemClickDoing { bo, i -> startActivity<ReportActivity>(ROUTINE_DATA_BINDLE to bo) }
+                bindData { holder, bo, i ->
+                    if (i % 2 == 0) {
+                        holder.adornView.setImageResource(R.drawable.list_card_stroke_r)
+                        holder.titleView.textColor = hostAct.getResColor(R.color.colorPrimary)
+                        holder.stateView.textColor = hostAct.getResColor(R.color.colorPrimary)
+                        holder.stateView.rightDrawable(R.drawable.icon_circle_pink, kIntWidth(0.01f))
+                    } else {
+                        holder.adornView.setImageResource(R.drawable.list_card_stroke_b)
+                        holder.titleView.textColor = hostAct.getResColor(R.color.colorPrimary_blue)
+                        holder.stateView.textColor = hostAct.getResColor(R.color.colorPrimary_blue)
+                        holder.stateView.rightDrawable(R.drawable.icon_circle_blue, kIntWidth(0.01f))
+                    }
+                    holder.timeView.text = "采集日期: ${bo.sampling_date}"
+                    holder.hosView.text = bo.detect_unit
+                    holder.stateView.text = bo.statusChineseName()
+                    holder.titleView.text = bo.detect_item
+                }
+            }
+        } else {
+            emptyLayout.visibility = View.VISIBLE
+            recyclerView.visibility = View.GONE
         }
     }
     
@@ -216,7 +234,7 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
             return
         }
         appOpt.searchReport(idNum).handler(hostAct.kDefaultRestHandler(" 正在查找报告,请稍等... ")).listSuccess {
-            
+            setAdapter(it)
         }.excute(hostAct)
     }
 }
