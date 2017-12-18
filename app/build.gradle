@@ -11,19 +11,19 @@ android {
         }
     }
     compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.wellcent.tadpole"
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-
         multiDexEnabled true
+        signingConfig signingConfigs.config
     }
     dexOptions {
-        incremental true
         javaMaxHeapSize "4g"
+        incremental true
     }
     buildTypes {
         release {
@@ -37,6 +37,8 @@ android {
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+    }
+    productFlavors {
     }
 }
 

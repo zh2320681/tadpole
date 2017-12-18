@@ -79,7 +79,7 @@ class AccountActivity : KActivity() {
                         }
                     }
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-            }.lparams(MATCH_PARENT, 0, 2.5f) { horizontalMargin = kIntWidth(0.05f) }
+            }.lparams(MATCH_PARENT, 0, 2.5f) { horizontalMargin = kIntWidth(0.08f) }
         }
         if(intent.getIntExtra(ROUTINE_DATA_BINDLE,AccountProcess.LOGIN.code) == AccountProcess.LOGIN.code){ viewPage.setCurrentItem(1,false) }
     }

@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.graphics.drawable.LayerDrawable
+import android.view.Gravity
 import android.view.View
 import android.widget.ImageButton
 import android.widget.RelativeLayout
@@ -189,8 +190,6 @@ class NavigateBar(context: Context) : RelativeLayout(context) {
         var findLastLeftId = RIGHT_ID
 
         val rlp = relativeLP(height = matchParent) {
-            centerVertically()
-
             while (true) {
                 val view = findViewById(findLastLeftId)
                 if (view == null) {
@@ -205,6 +204,7 @@ class NavigateBar(context: Context) : RelativeLayout(context) {
                 }
                 findLastLeftId++
             }
+            centerVertically()
         }
 
         btn.setOnClickListener(listener)
@@ -218,6 +218,16 @@ class NavigateBar(context: Context) : RelativeLayout(context) {
         btn.setBackgroundResource(R.drawable.navigate_btn)
         btn.setImageResource(drawId)
         addRightBtn(btn, listener)
+    }
+
+    fun addRightTxt(text: String,textColor:Int,textSize:Float, listener: (View) -> Unit) {
+        val tv = TextView(context)
+        tv.gravity = Gravity.CENTER
+        tv.text = text
+        tv.textColor = textColor
+        tv.textSize = textSize
+//        tv.setBackgroundResource(R.drawable.navigate_btn)
+        addRightBtn(tv, listener)
     }
 
     /**

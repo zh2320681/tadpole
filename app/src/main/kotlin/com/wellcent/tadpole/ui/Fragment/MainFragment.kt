@@ -152,8 +152,8 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                         gravity = Gravity.CENTER
                         visibility = View.GONE
                         imageView(R.drawable.icon_empty) { }.lparams(WRAP_CONTENT, WRAP_CONTENT) { }
-                        textView("您没有报告结果") {
-                            textColor = hostAct.getResColor(R.color.text_black)
+                        textView("您目前没有新的报告") {
+                            textColor = Color.parseColor("#D7D7D7")
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.BIGGER)
                         }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
                     }.lparams(MATCH_PARENT, MATCH_PARENT) { topMargin = kIntHeight(0.02f) }
@@ -175,7 +175,8 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                 it.notifyDataSetChanged()
             }
             
-        } else if (user != null && (recyclerView.visibility != View.VISIBLE || recyclerView.adapter.itemCount == 0 )) {
+        } 
+        if (user != null ) {
             recyclerView.visibility = View.VISIBLE
             emptyLayout.visibility = View.VISIBLE
             accoutOptLayout.visibility = View.GONE
@@ -206,7 +207,7 @@ class MainFragment : KFragment(), VerifyOperable, AppOperable {
                         holder.stateView.textColor = hostAct.getResColor(R.color.colorPrimary_blue)
                         holder.stateView.rightDrawable(R.drawable.icon_circle_blue, kIntWidth(0.01f))
                     }
-                    holder.timeView.text = "采集日期: ${bo.sampling_date}"
+                    holder.timeView.text = "采样日期: ${bo.sampling_date}"
                     holder.hosView.text = bo.detect_unit
                     holder.stateView.text = bo.statusChineseName()
                     holder.titleView.text = bo.detect_item

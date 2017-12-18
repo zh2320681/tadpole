@@ -37,15 +37,26 @@ class LoginFragment : KFragment(), VerifyOperable {
             parentLayout = verticalLayout {
                 gravity = Gravity.CENTER_HORIZONTAL
 //                verifyOpt.getStoneUserName() 18012778237 abc123
-                accountView = lineInit(R.drawable.icon_user, "手机号码","18012778237").invoke(this)
-                pwView = lineInit(R.drawable.icon_password, "密码","abc123", true).invoke(this)
+                accountView = lineInit(R.drawable.icon_user, "手机号码", "", R.drawable.icon_login_delete) {imgView,inputView ->
+                    inputView.setText("")
+                }.invoke(this)
+                pwView = lineInit(R.drawable.icon_password, "密码", "", R.drawable.icon_word_hide) {imgView,inputView ->
+                    imgView.isSelected = !imgView.isSelected
+                    if (isSelected) {
+                        imgView.imageResource = R.drawable.icon_word_hide
+                        inputView.inputType = InputType.TYPE_CLASS_TEXT
+                    } else {
+                        imgView.imageResource = R.drawable.icon_word_show
+                        inputView.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+                    }
+                }.invoke(this)
                 textView("登  录") {
                     textColor = Color.WHITE
                     gravity = Gravity.CENTER
                     backgroundResource = R.drawable.primary_btn
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.MID_BIG)
                     onMyClick { login() }
-                }.lparams(kIntWidth(0.65f), kIntHeight(0.1f)) {
+                }.lparams(kIntWidth(0.85f), kIntHeight(0.1f)) {
                     topMargin = kIntHeight(0.025f)
                 }
 
@@ -58,28 +69,16 @@ class LoginFragment : KFragment(), VerifyOperable {
         }.view
     }
 
-    fun lineInit(@DrawableRes icon: Int, hitiTitle: String,defTxt : String, isPassword: Boolean = false): _LinearLayout.() -> EditText {
+    fun lineInit(@DrawableRes icon: Int, hitiTitle: String, defTxt: String, drawableRes: Int, clickProcess: (ImageView,EditText) -> Unit): _LinearLayout.() -> EditText {
         return {
             var editText: EditText? = null
             relativeLayout {
-                var rightView: ImageView? = null
-                if (isPassword) {
-                    rightView = imageView(R.drawable.icon_word_hide) {
-                        kRandomId()
-                        onMyClick {
-                            isSelected = !isSelected
-                            if (isSelected) {
-                                imageResource = R.drawable.icon_word_hide
-                                editText?.inputType = InputType.TYPE_CLASS_TEXT
-                            } else {
-                                imageResource = R.drawable.icon_word_show
-                                editText?.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-                            }
-                        }
-                    }.lparams {
-                        alignParentRight()
-                        centerVertically()
-                    }
+                val rightView = imageView(drawableRes) {
+                    kRandomId()
+                    onMyClick { clickProcess.invoke(this,editText!!) }
+                }.lparams {
+                    alignParentRight()
+                    centerVertically()
                 }
                 editText = editText(defTxt) {
                     hint = hitiTitle
@@ -88,10 +87,10 @@ class LoginFragment : KFragment(), VerifyOperable {
                     textColor = hostAct.getResColor(R.color.text_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                     backgroundColor = Color.TRANSPARENT
-                    if (isPassword) {
+                    if (drawableRes != R.drawable.icon_login_delete) {
                         inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
                     }
-                }.lparams(MATCH_PARENT, WRAP_CONTENT) { rightView?.apply { leftOf(this) } }
+                }.lparams(MATCH_PARENT, WRAP_CONTENT) { leftOf(rightView) }
             }.lparams(MATCH_PARENT, WRAP_CONTENT) { verticalMargin = kIntHeight(0.012f) }
             textView { backgroundColor = hostAct.getResColor(R.color.gap_line) }.lparams(MATCH_PARENT, DimensAdapter.dip1.toInt())
             editText!!
@@ -114,8 +113,8 @@ class LoginFragment : KFragment(), VerifyOperable {
             return
         }
         verifyOpt.userLogin(phone, pw).handler(hostAct.kDefaultRestHandler(" 正在验证帐号信息,请稍等... ")).success {
-            hostAct.showComfirmCrouton("登录成功!", parentLayout) 
-            uiThread(1000){
+            hostAct.showComfirmCrouton("登录成功!", parentLayout)
+            uiThread(1000) {
                 hostAct.setResult(Activity.RESULT_OK)
                 hostAct.finish()
             }

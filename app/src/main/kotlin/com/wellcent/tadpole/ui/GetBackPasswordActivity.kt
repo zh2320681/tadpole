@@ -53,6 +53,9 @@ class GetBackPasswordActivity : TadpoleActivity(), VerifyOperable {
                 setTitleColor(Color.BLACK)
                 setNavBg(R.drawable.tabbar_bg)
                 addLeftDefaultBtn(R.drawable.icon_back_p) { finish() }
+                addRightTxt("完成",getResColor(R.drawable.primary_btn),DimensAdapter.textSpSize(CustomTSDimens.BIG)){
+                    getBack()
+                }
             }.lparams(MATCH_PARENT, DimensAdapter.nav_height) { bottomMargin = kIntHeight(0.015f) }
             contentLayout = verticalLayout {
                 backgroundColor = Color.WHITE
@@ -61,13 +64,13 @@ class GetBackPasswordActivity : TadpoleActivity(), VerifyOperable {
                 pwView = addContentCell( "新密码").invoke(this)
                 pwAgainView = addContentCell( "重复新密码").invoke(this)
             }.lparams(MATCH_PARENT, WRAP_CONTENT){ topMargin = kIntHeight(0.01f) }
-            textView("提  交") {
-                textColor = Color.WHITE
-                backgroundResource = R.drawable.primary_btn
-                textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
-                gravity = Gravity.CENTER
-                onMyClick { getBack() }
-            }.lparams(kIntWidth(0.9f),kIntHeight(0.1f))
+//            textView("提  交") {
+//                textColor = Color.WHITE
+//                backgroundResource = R.drawable.primary_btn
+//                textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
+//                gravity = Gravity.CENTER
+//                onMyClick { getBack() }
+//            }.lparams(kIntWidth(0.9f),kIntHeight(0.1f))
         }  
     }
 

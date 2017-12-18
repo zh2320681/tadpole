@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import com.gcl.dsm.ui.custom.indicator.RectangleIndicatorView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
@@ -29,6 +30,7 @@ import com.wellcent.tadpole.presenter.AppOperable
 import com.wellcent.tadpole.presenter.ROUTINE_DATA_BINDLE
 import com.wellcent.tadpole.presenter.listSuccess
 import com.wellcent.tadpole.presenter.success
+import com.wellcent.tadpole.ui.custom.rectangleIndicatorView
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.startActivityForResult
@@ -37,6 +39,7 @@ import java.lang.ref.WeakReference
 
 class ReportActivity : KActivity(), AppOperable {
     lateinit var viewPage: ViewPager
+    lateinit var indicatorView: RectangleIndicatorView
     override fun initialize(savedInstanceState: Bundle?) {
         val report = intent.getSerializableExtra(ROUTINE_DATA_BINDLE) as? Report
         relativeLayout {
@@ -48,15 +51,32 @@ class ReportActivity : KActivity(), AppOperable {
                 addLeftDefaultBtn(R.drawable.icon_back_g) { finish() }
             }.lparams(MATCH_PARENT, DimensAdapter.nav_height) { bottomMargin = kIntHeight(0.015f) }
             viewPage = viewPager { kRandomId() }.lparams(MATCH_PARENT, MATCH_PARENT) { below(nav) }
+            //底部的指示器
+            indicatorView = rectangleIndicatorView(getResColor(R.color.colorPrimary_blue)) {
+                kRandomId()
+            }.lparams(MATCH_PARENT, WRAP_CONTENT) {
+                verticalMargin = kIntHeight(0.03f)
+                alignParentBottom()
+            }
         }
         getReport(report)
     }
 
     fun initAdapter(reports: List<Report>) {
+        if(reports.size == 0){return}
+        if(reports.size <= 1){
+            indicatorView.visibility = View.GONE
+        } else {
+            indicatorView.visibility = View.VISIBLE
+            indicatorView.totalNumber = reports.size
+            indicatorView.selectIndex = 0
+            indicatorView.invalidate()
+        }
         val listTemp = arrayListOf<ReportHolder>()
         reports.forEach { listTemp.add(ReportHolder(it)) }
         val holderList = listTemp.toTypedArray()
-        viewPage.adapter = KFragmentPagerAdapter<ReportHolder>(this, WeakReference(viewPage), holderList) { positon, oldFragment, newFragment ->
+        viewPage.adapter = KFragmentPagerAdapter<ReportHolder>(this, WeakReference(viewPage), holderList) { position, oldFragment, newFragment ->
+            indicatorView.selectIndex = position
             newFragment.showDetail()
         }
         if (holderList.size > 0) {
@@ -86,6 +106,8 @@ class ReportActivity : KActivity(), AppOperable {
 
 
 class ReportHolder() : KFragment(), AppOperable {
+    val textColor1 = Color.parseColor("#D5D5D5")
+    val textColor2 = Color.parseColor("#696969")
     val APPLY_INSURE = 0x98
     lateinit var report: Report
     lateinit var checkIngView: TextView
@@ -121,7 +143,7 @@ class ReportHolder() : KFragment(), AppOperable {
                             topDrawable(R.drawable.icon_progress, 0)
                         }.lparams { }
                         imageView(R.drawable.dotted_line) { }.lparams { topMargin = kIntHeight(0.035f) }
-                        checkedView = textView("检测完成") {
+                        checkedView = textView("检测完毕") {
                             gravity = Gravity.CENTER_HORIZONTAL
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                             textColor = context.getResColor(R.color.colorPrimary_blue)
@@ -133,13 +155,15 @@ class ReportHolder() : KFragment(), AppOperable {
                         unitNameView = addInfoCell("送检单位", report.detect_unit, 1f).invoke(this)
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
                     textView("检测项目") {
-                        textColor = hostAct.getResColor(R.color.text_light_black)
+//                        textColor = hostAct.getResColor(R.color.text_light_black)
+                        textColor = textColor1
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
                     itemView = textView(report.detect_item) {
-                        textColor = hostAct.getResColor(R.color.text_black)
+//                        textColor = hostAct.getResColor(R.color.text_black)
+                        textColor = textColor2
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
-                        lines = 3
+                        lines = 2
                     }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
                     //内容
                     relativeLayout {
@@ -210,11 +234,13 @@ class ReportHolder() : KFragment(), AppOperable {
             var valTextView: TextView? = null
             verticalLayout {
                 textView(title) {
-                    textColor = hostAct.getResColor(R.color.text_light_black)
+//                    textColor = hostAct.getResColor(R.color.text_light_black)
+                    textColor = textColor1
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                 }.lparams {}
                 valTextView = textView(content) {
-                    textColor = hostAct.getResColor(R.color.text_black)
+//                    textColor = hostAct.getResColor(R.color.text_black)
+                    textColor = textColor2
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                 }.lparams {}
             }.lparams(0, WRAP_CONTENT, weight)
@@ -226,12 +252,12 @@ class ReportHolder() : KFragment(), AppOperable {
         return {
             var valTextView: TextView? = null
             textView(title) {
-                textColor = hostAct.getResColor(R.color.text_light_black)
+                textColor = textColor1
                 textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
             }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
 
             valTextView = textView(content) {
-                textColor = hostAct.getResColor(R.color.text_light_black)
+                textColor = textColor2
                 textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
             }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
             valTextView!!
@@ -277,7 +303,7 @@ class ReportHolder() : KFragment(), AppOperable {
             noReportLayout.visibility = View.GONE
             resultScrollView.visibility = View.VISIBLE
             insuranceBtn.visibility = View.VISIBLE
-            if( report.claimId?.isNotEmpty()?:false ){ insuranceBtn.text = "查看保险" } else { insuranceBtn.text = "申请保险" }
+//            if( report.claimId?.isNotEmpty()?:false ){ insuranceBtn.text = "查看保险" } else { insuranceBtn.text = "申请保险" }
         }
     }
 

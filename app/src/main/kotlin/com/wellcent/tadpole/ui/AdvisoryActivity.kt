@@ -64,6 +64,19 @@ class AdvisoryActivity : TadpoleActivity(), VerifyOperable, AppOperable {
                     kRandomId()
                     onMyClick { sendImg() }
                 }.lparams {
+                    centerVertically()
+                    horizontalMargin = kIntWidth(0.02f)
+                }
+                
+                val sendTxtBtn = textView("发送"){
+                    kRandomId()
+                    onMyClick {
+                        val inputString = inputView.text.toString()
+                        if(inputString.isEmpty()){ showAlertCrouton("您还没有输入内容") } else {
+                            sendMessage(inputString, null)
+                        }
+                    }
+                }.lparams {
                     alignParentRight()
                     centerVertically()
                     horizontalMargin = kIntWidth(0.02f)
@@ -74,24 +87,26 @@ class AdvisoryActivity : TadpoleActivity(), VerifyOperable, AppOperable {
                     textColor = getResColor(R.color.text_black)
                     horizontalPadding = kIntWidth(0.02f)
                     verticalPadding = kIntHeight(0.01f)
+                    hint = "您想咨询的内容"
                     gravity = Gravity.CENTER_VERTICAL
                     inputType = EditorInfo.TYPE_CLASS_TEXT
                     imeOptions = EditorInfo.IME_ACTION_SEND
-                    setOnEditorActionListener { v, actionId, event ->
-                        if (actionId == KeyEvent.KEYCODE_ENTER || actionId == KeyEvent.KEYCODE_BACK) {
-                            val inputString = inputView.text.toString()
-                            if(inputString.isEmpty()){ showAlertCrouton("您还没有输入内容") } else {
-                                sendMessage(inputString, null)
-                            }
-                            true
-                        }
-                        false
-                    }
+//                    setOnEditorActionListener { v, actionId, event ->
+//                        if (actionId == KeyEvent.KEYCODE_ENTER || actionId == KeyEvent.KEYCODE_BACK) {
+//                            val inputString = inputView.text.toString()
+//                            if(inputString.isEmpty()){ showAlertCrouton("您还没有输入内容") } else {
+//                                sendMessage(inputString, null)
+//                            }
+//                            true
+//                        }
+//                        false
+//                    }
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) {
                     centerVertically()
                     leftMargin = kIntWidth(0.01f)
                     verticalMargin = kIntHeight(0.01f)
-                    leftOf(addBtn)
+                    leftOf(sendTxtBtn)
+                    rightOf(addBtn)
                 }
             }.lparams(MATCH_PARENT, WRAP_CONTENT) {
                 alignParentBottom()
@@ -401,5 +416,7 @@ class ChartHolder() : HolderBo(0) {
                 addRule(RelativeLayout.LEFT_OF, contentLayout.id)
             }
         }
+
+        timeView.visibility = View.GONE
     }
 }

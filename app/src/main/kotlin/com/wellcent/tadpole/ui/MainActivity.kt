@@ -11,6 +11,7 @@ import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.getResColor
 import com.shrek.klib.extension.kRandomId
 import com.shrek.klib.extension.onMyClick
+import com.shrek.klib.extension.uiThread
 import com.shrek.klib.view.KFragment
 import com.wellcent.tadpole.R
 import com.wellcent.tadpole.ui.Fragment.MainFragment
@@ -112,14 +113,16 @@ class MainActivity : TadpoleActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
+    override fun activityBackDoing(): Boolean {
         SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
                 .setContentText("您确认退出程序吗?")
                 .setConfirmText(" 退 出 ")
                 .setConfirmClickListener {
                     finish()
-                    it.dismissWithAnimation()
+//                    it.dismissWithAnimation()
+                    uiThread(500){ System.exit(0) }
                 }.setCancelText(" 取 消 ").show()
+        return true
     }
+    
 }

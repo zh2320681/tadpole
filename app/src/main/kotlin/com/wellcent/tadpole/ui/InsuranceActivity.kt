@@ -17,6 +17,7 @@ import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import cn.pedant.SweetAlert.SweetAlertDialog
+import com.gcl.dsm.ui.custom.indicator.RectangleIndicatorView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
@@ -36,6 +37,7 @@ import com.wellcent.tadpole.bo.Insurance
 import com.wellcent.tadpole.bo.Report
 import com.wellcent.tadpole.presenter.*
 import com.wellcent.tadpole.ui.custom.InsuranceIntroPop
+import com.wellcent.tadpole.ui.custom.rectangleIndicatorView
 import com.yqritc.recyclerviewflexibledivider.HorizontalDividerItemDecoration
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -47,6 +49,7 @@ class InsuranceActivity : KActivity(), AppOperable {
     lateinit var viewPage: ViewPager
     lateinit var rootView: RelativeLayout
     var photoChoosePop: PhotoChoosePop? = null
+    lateinit var indicatorView: RectangleIndicatorView
     override fun initialize(savedInstanceState: Bundle?) {
         val insurance = intent.getSerializableExtra(ROUTINE_DATA_BINDLE) as? Insurance
         rootView = relativeLayout {
@@ -58,15 +61,34 @@ class InsuranceActivity : KActivity(), AppOperable {
                 addLeftDefaultBtn(R.drawable.icon_back_g) { finish() }
             }.lparams(MATCH_PARENT, DimensAdapter.nav_height) { bottomMargin = kIntHeight(0.015f) }
             viewPage = viewPager { kRandomId() }.lparams(MATCH_PARENT, MATCH_PARENT) { below(nav) }
+            //底部的指示器
+            indicatorView = rectangleIndicatorView(getResColor(R.color.colorPrimary_orange)) {
+                kRandomId()
+            }.lparams(MATCH_PARENT, WRAP_CONTENT) {
+                verticalMargin = kIntHeight(0.03f)
+                alignParentBottom()
+            }
         }
         getInsurances(insurance)
     }
 
     fun initAdapter(insurances: List<Insurance>) {
+        if(insurances.size == 0){return}
+        if(insurances.size <= 1){
+            indicatorView.visibility = View.GONE
+        } else {
+            indicatorView.visibility = View.VISIBLE
+            indicatorView.totalNumber = insurances.size
+            indicatorView.selectIndex = 0
+            indicatorView.invalidate()
+        }
+        
         val listTemp = arrayListOf<InsuranceHolder>()
         insurances.forEach { listTemp.add(InsuranceHolder(it)) }
         val holderList = listTemp.toTypedArray()
-        viewPage.adapter = KFragmentPagerAdapter(this, WeakReference(viewPage), holderList)
+        viewPage.adapter = KFragmentPagerAdapter(this, WeakReference(viewPage), holderList){ position, oldFragment, newFragment ->
+            indicatorView.selectIndex = position
+        }
     }
 
     fun getInsurances(insurance: Insurance?) {
@@ -278,14 +300,14 @@ class InsuranceHolder() : KFragment(), AppOperable {
                     topDrawable(R.drawable.icon_bx_upload, 0)
                 }.lparams { }
                 imageView(R.drawable.bx_dotted_line) { }.lparams { topMargin = kIntHeight(0.035f) }
-                checkIngView = textView("检测中") {
+                checkIngView = textView("审核中") {
                     gravity = Gravity.CENTER_HORIZONTAL
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                     textColor = context.getResColor(R.color.colorPrimary_orange)
                     topDrawable(R.drawable.icon_bx_progress, 0)
                 }.lparams { }
                 imageView(R.drawable.bx_dotted_line) { }.lparams { topMargin = kIntHeight(0.035f) }
-                checkedView = textView("检测完成") {
+                checkedView = textView("已受理") {
                     gravity = Gravity.CENTER_HORIZONTAL
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                     textColor = context.getResColor(R.color.colorPrimary_orange)
@@ -299,7 +321,7 @@ class InsuranceHolder() : KFragment(), AppOperable {
         return {
             verticalLayout {
                 gravity = Gravity.CENTER_HORIZONTAL
-                textView("保险项目") {
+                textView("保险项目:") {
                     textColor = hostAct.getResColor(R.color.text_light_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
@@ -308,7 +330,7 @@ class InsuranceHolder() : KFragment(), AppOperable {
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                     lines = 2
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-                textView("收款银行卡号&开户行信息") {
+                textView("收款银行卡号&开户行信息:") {
                     textColor = hostAct.getResColor(R.color.text_light_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }

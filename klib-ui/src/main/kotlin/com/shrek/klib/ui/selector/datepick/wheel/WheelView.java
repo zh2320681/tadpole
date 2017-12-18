@@ -184,7 +184,7 @@ public class WheelView extends View {
 
         scroller = new Scroller(context);
 
-        TEXT_SIZE = (int) DimenUtils.dpToPx(15, getContext());
+        TEXT_SIZE = (int) DimenUtils.dpToPx(11.5f, getContext());
     }
 
     public void setTextSize(int textSize) {

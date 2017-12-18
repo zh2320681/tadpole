@@ -30,10 +30,15 @@ class UnitChoosePop(var hostAct: TadpoleActivity, var process: ((DetectUnit?) ->
     lateinit var cityChooseView: WheelView
     lateinit var unitChooseView: WheelView
 
-    var provinceAdapter = SelectorWheelAdapter(arrayListOf<Province>()) { it.name }
-    var cityAdapter = SelectorWheelAdapter(arrayListOf<City>()) { it.name }
-    var unitAdapter = SelectorWheelAdapter(arrayListOf<DetectUnit>()) { it.name }
+    var provinceAdapter = SelectorWheelAdapter(arrayListOf<Province>()) { formatStr(it.name) }
+    var cityAdapter = SelectorWheelAdapter(arrayListOf<City>()) { formatStr(it.name) }
+    var unitAdapter = SelectorWheelAdapter(arrayListOf<DetectUnit>()) { formatStr(it.name) }
 
+    fun formatStr(str:String):String{ 
+        return str.replace("（","(")
+                .replace("）",")").replace(" ","")
+    }
+    
     init {
         val rootView = kApplication.UI {
             relativeLayout {
@@ -44,10 +49,23 @@ class UnitChoosePop(var hostAct: TadpoleActivity, var process: ((DetectUnit?) ->
                     backgroundColor = Color.WHITE
                     gravity = Gravity.BOTTOM
 
-                    linearLayout {
-                        gravity = Gravity.RIGHT
-                        textView("确定选择") {
-                            textColor = hostAct.getResColor(R.color.colorPrimary)
+                    relativeLayout {
+                        val color = Color.parseColor("#7AB4F6")
+                        textView("取消") {
+                            textColor = color
+                            textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
+                            gravity = Gravity.CENTER
+                            verticalPadding = kIntHeight(0.02f)
+                            onMyClick {
+                                dismiss()
+                            }
+                        }.lparams(WRAP_CONTENT, WRAP_CONTENT) {
+                            horizontalMargin = kIntWidth(0.04f)
+                            centerVertically()
+                        }
+                        
+                        textView("完成") {
+                            textColor = color
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
                             gravity = Gravity.CENTER
                             verticalPadding = kIntHeight(0.02f)
@@ -61,21 +79,36 @@ class UnitChoosePop(var hostAct: TadpoleActivity, var process: ((DetectUnit?) ->
                             }
                         }.lparams(WRAP_CONTENT, WRAP_CONTENT) {
                             horizontalMargin = kIntWidth(0.04f)
+                            alignParentRight()
+                            centerVertically()
+                        }
+
+                        textView("选择机构") {
+                            textColor = hostAct.getResColor(R.color.text_color)
+                            textSize = DimensAdapter.textSpSize(CustomTSDimens.BIGGER)
+                            gravity = Gravity.CENTER
+                            verticalPadding = kIntHeight(0.02f)
+                            onMyClick {
+                                dismiss()
+                            }
+                        }.lparams(WRAP_CONTENT, WRAP_CONTENT) {
+                            horizontalMargin = kIntWidth(0.04f)
+                            centerInParent()
                         }
                     }
                     linearLayout {
                         provinceChooseView = wheelView {
                             //                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.MID_SMALL).toInt())
                             addChangingListener { wheel, oldValue, newValue -> getCitys() }
-                        }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { }
+                        }.lparams(MATCH_PARENT, MATCH_PARENT, 1.6f) { }
                         cityChooseView = wheelView {
                             //                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.MID_SMALL).toInt())
                             addChangingListener { wheel, oldValue, newValue -> getUnits() }
-                        }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { }
+                        }.lparams(MATCH_PARENT, MATCH_PARENT, 1.8f) { }
                         unitChooseView = wheelView {
                             //                            setTextSize(DimensAdapter.textPxSize(CustomTSDimens.MID_SMALL).toInt())
                         }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { }
-                    }.lparams(MATCH_PARENT, kIntHeight(0.4f)) {
+                    }.lparams(MATCH_PARENT, kIntHeight(0.25f)) {
                         bottomMargin = kIntHeight(0.1f)
                     }
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) { alignParentBottom() }
@@ -120,6 +153,7 @@ class UnitChoosePop(var hostAct: TadpoleActivity, var process: ((DetectUnit?) ->
     fun getUnits() {
         val restHandler = hostAct.kDefaultRestHandler<ReqMapping<DetectUnit>>("正在请求机构信息,请稍等...")
         if(cityAdapter.allData.size == 0){ return }
+        if(cityChooseView.currentItem >= cityAdapter.allData.size){ return }
         val currCity = cityAdapter.allData[cityChooseView.currentItem]
         appOpt.units(hostAct, currCity.name, restHandler) {
             //            if (it.size > 0) {

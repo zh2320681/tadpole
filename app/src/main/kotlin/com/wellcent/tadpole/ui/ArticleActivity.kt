@@ -8,10 +8,7 @@ import android.webkit.WebView
 import android.widget.ImageView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
-import com.shrek.klib.extension.getResColor
-import com.shrek.klib.extension.kIntHeight
-import com.shrek.klib.extension.kIntWidth
-import com.shrek.klib.extension.onMyClick
+import com.shrek.klib.extension.*
 import com.shrek.klib.ui.kDefaultRestHandler
 import com.shrek.klib.ui.navigateBar
 import com.shrek.klib.ui.showAlertCrouton
@@ -85,7 +82,10 @@ class ArticleActivity : TadpoleActivity(),AppOperable{
                     override fun onStart(p0: SHARE_MEDIA?) { }
                     override fun onCancel(p0: SHARE_MEDIA?) { showInfoCrouton("您取消了分享!") }
                     override fun onError(p0: SHARE_MEDIA?, p1: Throwable?) { showAlertCrouton("未找到微信客户端") }
-                    override fun onResult(p0: SHARE_MEDIA?) { showInfoCrouton("分享成功") }
+                    override fun onResult(p0: SHARE_MEDIA?) { 
+                        showInfoCrouton("分享成功") 
+                        toastLongShow("分享成功")
+                    }
                 }).share()
     }
 }

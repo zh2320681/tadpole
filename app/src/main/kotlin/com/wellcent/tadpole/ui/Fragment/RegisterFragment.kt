@@ -65,7 +65,7 @@ class RegisterFragment : KFragment(),VerifyOperable {
                 }.lparams(kIntWidth(0.65f), kIntHeight(0.1f)) {
                     topMargin = kIntHeight(0.025f)
                 }
-                textView("点击上面的'注册'按钮，即表示您同意") {
+                textView("点击上面的'注册'按钮，即表示你同意") {
                     textColor = hostAct.getResColor(R.color.text_light_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                 }.lparams {  }

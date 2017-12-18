@@ -43,7 +43,7 @@ class InsuranceIntroPop(var hostAct: Activity) : PopupWindow(hostAct) {
                                 scaleType = ImageView.ScaleType.FIT_XY
                             }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { leftMargin = kIntWidth(0.01f) }
                         }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-                        textView("2. 收款银行卡，开户行信息") {
+                        textView("2. 收款银行卡、开户行信息") {
                             textColor = hostAct.getResColor(R.color.text_color)
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
                         }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
@@ -51,29 +51,29 @@ class InsuranceIntroPop(var hostAct: Activity) : PopupWindow(hostAct) {
                             imageResource = R.drawable.bank_card
                             scaleType = ImageView.ScaleType.FIT_XY
                         }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-                        textView("3. 产前诊断报告，在医院接受产前诊断所产生的原始收费发票原件，费用明细原件，费用清单原件") {
+                        textView("3. 产前诊断报告、在医院接受产前诊断所产生的原始收费发票原件、费用明细原件、费用清单原件") {
                             textColor = hostAct.getResColor(R.color.text_color)
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
                         }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
                         linearLayout {
                             imageView {
+                                imageResource = R.drawable.diagnosis
+                                scaleType = ImageView.ScaleType.FIT_XY
+                            }.lparams(WRAP_CONTENT, MATCH_PARENT) { rightMargin = kIntWidth(0.02f) }
+
+                            imageView {
                                 imageResource = R.drawable.cost_details
                                 scaleType = ImageView.ScaleType.FIT_XY
-                            }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { rightMargin = kIntWidth(0.01f) }
+                            }.lparams(WRAP_CONTENT, MATCH_PARENT) { rightMargin = kIntWidth(0.02f) }
 
                             imageView {
                                 imageResource = R.drawable.cost_list
                                 scaleType = ImageView.ScaleType.FIT_XY
-                            }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { rightMargin = kIntWidth(0.01f) }
-
-                            imageView {
-                                imageResource = R.drawable.diagnosis
-                                scaleType = ImageView.ScaleType.FIT_XY
-                            }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { rightMargin = kIntWidth(0.01f) }
+                            }.lparams(WRAP_CONTENT, MATCH_PARENT) { rightMargin = kIntWidth(0.02f) }
                         }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
                         imageView {
                             imageResource = R.drawable.invoice
-                        }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
+                        }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
                     }.lparams(MATCH_PARENT, MATCH_PARENT)
                 }.lparams(kIntWidth(0.9f), kIntHeight(0.8f)) { centerInParent() }
             }

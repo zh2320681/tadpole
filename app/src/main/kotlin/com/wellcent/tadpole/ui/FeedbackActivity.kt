@@ -5,9 +5,13 @@ import android.os.Bundle
 import android.view.Gravity
 import android.widget.EditText
 import android.widget.LinearLayout
+import cn.pedant.SweetAlert.SweetAlertDialog
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
-import com.shrek.klib.extension.*
+import com.shrek.klib.extension.getResColor
+import com.shrek.klib.extension.isEmpty
+import com.shrek.klib.extension.kIntHeight
+import com.shrek.klib.extension.kIntWidth
 import com.shrek.klib.ui.kDefaultRestHandler
 import com.shrek.klib.ui.navigateBar
 import com.shrek.klib.ui.showAlertCrouton
@@ -30,6 +34,9 @@ class FeedbackActivity : KActivity(),AppOperable{
                 setTitleColor(Color.BLACK)
                 setNavBg(R.drawable.tabbar_bg)
                 addLeftDefaultBtn(R.drawable.icon_back_p) { finish() }
+                addRightTxt("提交",getResColor(R.drawable.primary_btn),DimensAdapter.textSpSize(CustomTSDimens.BIG)){
+                    feedback()
+                }
             }.lparams(MATCH_PARENT, DimensAdapter.nav_height) { bottomMargin = kIntHeight(0.015f) }
             contentLayout = linearLayout { 
                 backgroundColor  = Color.WHITE
@@ -42,14 +49,13 @@ class FeedbackActivity : KActivity(),AppOperable{
                     backgroundColor = Color.TRANSPARENT
                 }.lparams(MATCH_PARENT,kIntHeight(0.35f)) { horizontalMargin = kIntWidth(0.02f) }
             }.lparams(MATCH_PARENT, WRAP_CONTENT)
-
-            textView("提 交") {
-                textColor = Color.WHITE
-                backgroundResource = R.drawable.primary_btn
-                textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
-                gravity = Gravity.CENTER
-                onMyClick { feedback() }
-            }.lparams(kIntWidth(0.9f),kIntHeight(0.1f))
+//            textView("提 交") {
+//                textColor = Color.WHITE
+//                backgroundResource = R.drawable.primary_btn
+//                textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
+//                gravity = Gravity.CENTER
+//                onMyClick { feedback() }
+//            }.lparams(kIntWidth(0.9f),kIntHeight(0.1f))
         }
     }
     
@@ -60,8 +66,12 @@ class FeedbackActivity : KActivity(),AppOperable{
             return
         }
         appOpt.feedback(content).handler(kDefaultRestHandler(" 正在提交您的意见内容,请稍等... ")).success {
-            toastLongShow("意见提交成功")
-            finish()
+            SweetAlertDialog(this, SweetAlertDialog.SUCCESS_TYPE)
+                    .setContentText("您的意见反馈我们已经收到,感谢您的参与")
+                    .setConfirmText(" 返回个人中心 ")
+                    .setConfirmClickListener {
+                        finish()
+                    }.show()
         }.excute(this)
     }
 }

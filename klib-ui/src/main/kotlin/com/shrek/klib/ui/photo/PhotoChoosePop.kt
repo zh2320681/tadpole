@@ -21,7 +21,6 @@ import android.widget.Toast
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
-import com.shrek.klib.ui.R
 import com.shrek.klib.view.adaptation.CustomTSDimens
 import com.shrek.klib.view.adaptation.DimensAdapter
 import org.jetbrains.anko.*
@@ -72,11 +71,13 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView?, var i
                 verticalLayout {
                     backgroundColor = Color.WHITE
                     gravity = Gravity.BOTTOM
-
+                    
+                    val textColor1 = Color.parseColor("#939393")
+                    val textColor2 = Color.parseColor("#f5f5f5")
                     takePhotoBtn = textView("拍照") {
-                        backgroundResource = R.drawable.comm_photo_btn_bg
-                        textColor = Color.BLACK
-                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
+//                        backgroundResource = R.drawable.comm_photo_btn_bg
+                        textColor = textColor1
+                        textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                         gravity = Gravity.CENTER
                         verticalPadding = kIntHeight(0.015f)
                         onMyClick { doHandlerPhoto(PIC_FROM_CAMERA) }
@@ -84,11 +85,11 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView?, var i
                         horizontalMargin = kIntWidth(0.04f)
                         topMargin = kIntHeight(0.02f)
                     }
-
+                    view{ backgroundColor = textColor2 }.lparams(MATCH_PARENT,1)
                     galleryBtn = textView("从手机相册选择") {
-                        backgroundResource = R.drawable.comm_photo_btn_bg
-                        textColor = Color.BLACK
-                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
+//                        backgroundResource = R.drawable.comm_photo_btn_bg
+                        textColor = textColor1
+                        textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                         gravity = Gravity.CENTER
                         verticalPadding = kIntHeight(0.015f)
                         onMyClick { doHandlerPhoto(PIC_FROM_LOCALPHOTO) }
@@ -96,11 +97,11 @@ class PhotoChoosePop(var hostAct: Activity, var showImageView: ImageView?, var i
                         horizontalMargin = kIntWidth(0.04f)
                         topMargin = kIntHeight(0.02f)
                     }
-
+                    view{ backgroundColor = textColor2 }.lparams(MATCH_PARENT,kIntHeight(0.01f))
                     cancelBtn = textView("取消") {
-                        backgroundResource = R.drawable.comm_yellow_btn
-                        textColor = Color.parseColor("#6b450a")
-                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
+//                        backgroundResource = R.drawable.comm_yellow_btn
+                        textColor = textColor1
+                        textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                         gravity = Gravity.CENTER
                         verticalPadding = kIntHeight(0.015f)
                         onMyClick { dismiss() }

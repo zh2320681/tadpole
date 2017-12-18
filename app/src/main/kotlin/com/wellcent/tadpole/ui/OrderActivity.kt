@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import com.gcl.dsm.ui.custom.indicator.RectangleIndicatorView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
@@ -25,6 +26,7 @@ import com.wellcent.tadpole.bo.Order
 import com.wellcent.tadpole.presenter.AppOperable
 import com.wellcent.tadpole.presenter.listSuccess
 import com.wellcent.tadpole.presenter.serPicPath
+import com.wellcent.tadpole.ui.custom.rectangleIndicatorView
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.viewPager
@@ -32,6 +34,7 @@ import java.lang.ref.WeakReference
 
 class OrderActivity : KActivity(), AppOperable {
     lateinit var viewPage: ViewPager
+    lateinit var indicatorView: RectangleIndicatorView
     override fun initialize(savedInstanceState: Bundle?) {
         relativeLayout {
             backgroundColor = Color.WHITE
@@ -44,12 +47,30 @@ class OrderActivity : KActivity(), AppOperable {
             viewPage = viewPager {
                 kRandomId()
             }.lparams(MATCH_PARENT, MATCH_PARENT) { below(nav) }
+            //底部的指示器
+            indicatorView = rectangleIndicatorView(getResColor(R.color.colorPrimary_purple)) {
+                kRandomId()
+            }.lparams(MATCH_PARENT, WRAP_CONTENT) {
+                verticalMargin = kIntHeight(0.03f)
+                alignParentBottom()
+            }
         }
 
         appOpt.orders().handler(kDefaultRestHandler(" 正在请求订单列表,请稍等... ")).listSuccess {
+            if(it.size == 0){ return@listSuccess }
+            if(it.size <= 1){
+                indicatorView.visibility = View.GONE
+            } else {
+                indicatorView.visibility = View.VISIBLE
+                indicatorView.totalNumber = it.size
+                indicatorView.selectIndex = 0
+                indicatorView.invalidate()
+            }
             val orderFragments = arrayListOf<OrderHolder>()
             it.forEach { orderFragments.add(OrderHolder(it)) }
-            viewPage.adapter = KFragmentPagerAdapter<OrderHolder>(this@OrderActivity, WeakReference(viewPage), orderFragments.toTypedArray())
+            viewPage.adapter = KFragmentPagerAdapter<OrderHolder>(this@OrderActivity, WeakReference(viewPage), orderFragments.toTypedArray()){ position, oldFragment, newFragment ->
+                indicatorView.selectIndex = position
+            }
         }.excute(this)
     }
 }
@@ -124,7 +145,7 @@ class OrderHolder() : KFragment() {
                         below(gapLine)
                         horizontalMargin = hMargin
                     }
-                    val orderPayView = textView("订单支付时间:  ${ order.pay_time}") {
+                    val orderPayView = textView("订单付款时间:  ${ order.pay_time}") {
                         kRandomId()
                         textColor = hostAct.getResColor(R.color.text_light_black)
                         textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
