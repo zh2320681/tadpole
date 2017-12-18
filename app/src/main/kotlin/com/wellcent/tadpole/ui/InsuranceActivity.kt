@@ -330,7 +330,7 @@ class InsuranceHolder() : KFragment(), AppOperable {
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                     lines = 2
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-                textView("收款银行卡号&开户行信息:") {
+                textView("收款银行卡开户行信息:") {
                     textColor = hostAct.getResColor(R.color.text_light_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }

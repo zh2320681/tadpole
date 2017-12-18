@@ -62,7 +62,7 @@ class RegisterFragment : KFragment(),VerifyOperable {
                     backgroundResource = R.drawable.primary_btn
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.MID_BIG)
                     onMyClick { register() }
-                }.lparams(kIntWidth(0.65f), kIntHeight(0.1f)) {
+                }.lparams(kIntWidth(0.85f), kIntHeight(0.1f)) {
                     topMargin = kIntHeight(0.025f)
                 }
                 textView("点击上面的'注册'按钮，即表示你同意") {

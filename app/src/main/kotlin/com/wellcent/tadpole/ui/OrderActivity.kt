@@ -162,7 +162,7 @@ class OrderHolder() : KFragment() {
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                         }.lparams(WRAP_CONTENT, WRAP_CONTENT) { }
                         textView(order.code) {
-                            textSize = DimensAdapter.textSpSize(CustomTSDimens.BIGGER)
+                            textSize = DimensAdapter.textSpSize(CustomTSDimens.NAV_TITLE)
                             if(order.isUsed){  
                                 getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG)
                                 textColor = Color.GRAY
