@@ -39,7 +39,7 @@ class KDefaultRestHandler<Bo>(val context: Context, val msg:String
 
     var indicator: Indicator = BallTrianglePathIndicator()
 
-    override fun pre() {
+    override public fun pre() {
         var avWidth = 0
         var avHeight = 0
         

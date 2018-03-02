@@ -3,6 +3,8 @@ package com.shrek.klib.colligate.download;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Toast;
 
 import com.shrek.klib.colligate.BaseUtils;
@@ -270,7 +272,7 @@ public class Downloader {
     /**
      * 任务完成后 做什么
      */
-    private void postTaskDoing(DLTask mDLTask) {
+    private void postTaskDoing(final DLTask mDLTask) {
         long deffTime = mDLTask.createTime - new Date().getTime();
         ZLog.i(Downloader.class, "下载任务" + mDLTask.downLoadUrl
                 + "都完成了 \n 耗时:" + (deffTime / 1000L) + "s  实际记录耗时间："
@@ -286,9 +288,14 @@ public class Downloader {
                 context);
         // showNotify(intent, mDLTask.fileName);
 
-        DLHandler task = getTaskHandler(mDLTask);
+        final DLHandler task = getTaskHandler(mDLTask);
         if (task != null) {
-            task.postDownLoadingOnUIThread(mDLTask);
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    task.postDownLoadingOnUIThread(mDLTask);
+                }
+            });
         }
 
         if (mDLTask.isAutoOpen) {
@@ -522,7 +529,7 @@ public class Downloader {
             conn.setRequestMethod("GET");
             conn.setRequestProperty(
                     "Accept",
-                    "image/gif, image/jpeg, image/pjpeg, image/pjpeg, application/x-shockwave-flash, application/xaml+xml, application/vnd.ms-xpsdocument, application/x-ms-xbap, application/x-ms-application, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, */*");
+                    "image/gif, image/jpeg, image/pjpeg, image/pjpeg, application/x-shockwave-flash, application/xaml+xml, application/vnd.ms-xpsdocument, application/x-ms-xbap, application/x-ms-application, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/pdf, application/msword, */*");
             conn.setRequestProperty("Accept-Language", "zh-CN");
             conn.setRequestProperty("Referer", mDLTask.downLoadUrl);
             conn.setRequestProperty("Charset", "UTF-8");

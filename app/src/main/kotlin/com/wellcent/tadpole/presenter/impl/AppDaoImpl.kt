@@ -23,6 +23,7 @@ import kotlin.reflect.KClass
 class AppDaoImpl(restClazz: KClass<RestDao>) : ZPresenter<RestDao>(restClazz.java), VerifyDao, AppDao {
     val operator = kApplication.getSharedPreferences("tadpole", AppCompatActivity.MODE_PRIVATE)
     override var isFirstUse: Boolean by BooleanPreDelegate(operator,true)
+    override var isShowMainGuide: Boolean by BooleanPreDelegate(operator,true)
     
     var userName:String by StringPreDelegate(operator,"")
     var password:String by StringPreDelegate(operator,"")

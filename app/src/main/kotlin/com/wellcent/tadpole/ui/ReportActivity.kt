@@ -5,13 +5,13 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.view.ViewPager
+import android.text.Html
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import com.gcl.dsm.ui.custom.indicator.RectangleIndicatorView
 import com.shrek.klib.colligate.MATCH_PARENT
@@ -63,8 +63,10 @@ class ReportActivity : KActivity(), AppOperable {
     }
 
     fun initAdapter(reports: List<Report>) {
-        if(reports.size == 0){return}
-        if(reports.size <= 1){
+        if (reports.size == 0) {
+            return
+        }
+        if (reports.size <= 1) {
             indicatorView.visibility = View.GONE
         } else {
             indicatorView.visibility = View.VISIBLE
@@ -112,17 +114,21 @@ class ReportHolder() : KFragment(), AppOperable {
     lateinit var report: Report
     lateinit var checkIngView: TextView
     lateinit var checkedView: TextView
+    lateinit var detectNameView: TextView
     lateinit var timeView: TextView
     lateinit var unitNameView: TextView
     lateinit var itemView: TextView
 
-    lateinit var resultView: TextView
+    lateinit var detectLayout: LinearLayout
+
+//    lateinit var resultView: TextView
     lateinit var introView: TextView
     lateinit var remarkView: TextView
 
     lateinit var noReportLayout: LinearLayout
-    lateinit var resultScrollView: ScrollView
+    lateinit var resultScrollView: View
     lateinit var insuranceBtn: TextView
+    lateinit var pdfBtn: TextView
 
     constructor(report: Report) : this() {
         this.report = report
@@ -131,67 +137,83 @@ class ReportHolder() : KFragment(), AppOperable {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val parentView = UI {
             relativeLayout {
-                val contentLayout = verticalLayout {
+                val contentLayout = scrollView {
                     kRandomId()
-                    gravity = Gravity.CENTER_HORIZONTAL
+                    isVerticalScrollBarEnabled = false
                     backgroundResource = R.drawable.report_bg
-                    linearLayout {
-                        checkIngView = textView("检测中") {
-                            gravity = Gravity.CENTER_HORIZONTAL
+                    
+                   verticalLayout {
+                        gravity = Gravity.CENTER_HORIZONTAL
+                        linearLayout {
+                            checkIngView = textView("检测中") {
+                                gravity = Gravity.CENTER_HORIZONTAL
+                                textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
+                                textColor = context.getResColor(R.color.colorPrimary_blue)
+                                topDrawable(R.drawable.icon_progress, 0)
+                            }.lparams { }
+                            imageView(R.drawable.dotted_line) { }.lparams { topMargin = kIntHeight(0.035f) }
+                            checkedView = textView("检测完毕") {
+                                gravity = Gravity.CENTER_HORIZONTAL
+                                textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
+                                textColor = context.getResColor(R.color.colorPrimary_blue)
+                                topDrawable(R.drawable.icon_finish, 0)
+                            }.lparams { }
+                        }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
+                        linearLayout {
+                            detectNameView = addInfoCell("受检者姓名", report.detect_name ?: "", 1.7f).invoke(this)
+                            timeView = addInfoCell("接收日期", report.detect_unit, 1f).invoke(this)
+                        }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
+                        textView("送检单位/科室") {
+                            textColor = textColor1
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
-                            textColor = context.getResColor(R.color.colorPrimary_blue)
-                            topDrawable(R.drawable.icon_progress, 0)
-                        }.lparams { }
-                        imageView(R.drawable.dotted_line) { }.lparams { topMargin = kIntHeight(0.035f) }
-                        checkedView = textView("检测完毕") {
-                            gravity = Gravity.CENTER_HORIZONTAL
+                        }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
+                        unitNameView = textView(report.detect_item) {
+                            textColor = textColor2
+                            textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
+                            lines = 2
+                        }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
+                        textView("检测项目") {
+                            textColor = textColor1
                             textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
-                            textColor = context.getResColor(R.color.colorPrimary_blue)
-                            topDrawable(R.drawable.icon_finish, 0)
-                        }.lparams { }
-                    }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-                    linearLayout {
-                        timeView = addInfoCell("接收日期", report.receive_date, 1.7f).invoke(this)
-                        unitNameView = addInfoCell("送检单位", report.detect_unit, 1f).invoke(this)
-                    }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
-                    textView("检测项目") {
-//                        textColor = hostAct.getResColor(R.color.text_light_black)
-                        textColor = textColor1
-                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
-                    }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
-                    itemView = textView(report.detect_item) {
-//                        textColor = hostAct.getResColor(R.color.text_black)
-                        textColor = textColor2
-                        textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
-                        lines = 2
-                    }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-                    //内容
-                    relativeLayout {
-                        noReportLayout = verticalLayout {
-                            gravity = Gravity.CENTER
-                            imageView(R.drawable.icon_wait) { }.lparams { }
-                            textView("报告未出结果,请耐心等待") {
-                                textColor = hostAct.getResColor(R.color.colorPrimary_blue)
-                                textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
-                            }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-                        }.lparams { centerInParent() }
+                        }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
+                        itemView = textView(report.detect_item) {
+                            //                        textColor = hostAct.getResColor(R.color.text_black)
+                            textColor = textColor2
+                            textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
+                            lines = 2
+                        }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
+                        //内容
+                        relativeLayout {
+                            noReportLayout = verticalLayout {
+                                gravity = Gravity.CENTER
+                                imageView(R.drawable.icon_wait) { }.lparams { }
+                                textView("报告未出结果,请耐心等待") {
+                                    textColor = hostAct.getResColor(R.color.colorPrimary_blue)
+                                    textSize = DimensAdapter.textSpSize(CustomTSDimens.BIG)
+                                }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
+                            }.lparams { centerInParent() }
 
-                        resultScrollView = scrollView {
-                            isVerticalScrollBarEnabled = false
-                            verticalLayout {
-                                resultView = addResultCell("检测结果", report.detect_result).invoke(this)
-                                introView = addResultCell("结果说明", report.detect_introduction).invoke(this)
+                            resultScrollView = verticalLayout {
+                                textView("检出突变结果") {
+                                    textColor = textColor1
+                                    textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
+                                }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
+                                detectLayout = verticalLayout { }.lparams(MATCH_PARENT, WRAP_CONTENT) {
+                                    topMargin = kIntHeight(0.01f)
+                                }
+//                                resultView = addResultCell("检测结果", report.detect_result).invoke(this)
+                                introView = addResultCell("结果解释", report.result_explain).invoke(this)
                                 remarkView = addResultCell("备注", report.remark).invoke(this)
-                            }.lparams(MATCH_PARENT, WRAP_CONTENT)
-                        }.lparams(MATCH_PARENT, MATCH_PARENT)
-                    }.lparams(MATCH_PARENT, MATCH_PARENT)
+                            }.lparams(MATCH_PARENT, WRAP_CONTENT) 
+//                        }.lparams(MATCH_PARENT, MATCH_PARENT)
+                        }.lparams(MATCH_PARENT, MATCH_PARENT){ bottomMargin = kIntHeight(0.05f) }
 
+                    }.lparams(MATCH_PARENT,MATCH_PARENT)
                 }.lparams(kIntWidth(0.9f), kIntHeight(0.7f)) {
                     topMargin = kIntHeight(0.04f)
                     centerHorizontally()
                     horizontalMargin = kIntWidth(0.05f)
                 }
-
                 imageView(R.drawable.report_topline) { }.lparams(kIntWidth(0.89f), WRAP_CONTENT) {
                     centerHorizontally()
                     topMargin = kIntHeight(0.039f)
@@ -202,22 +224,33 @@ class ReportHolder() : KFragment(), AppOperable {
                     textView("咨询医生") {
                         textColor = Color.WHITE
                         backgroundResource = R.drawable.primary_btn
-                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
+                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                         gravity = Gravity.CENTER
                         onMyClick { startActivity<AdvisoryActivity>(ROUTINE_DATA_BINDLE to true) }
-                    }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) {
-                        verticalMargin = kIntWidth(0.01f)
-                    }
-                    insuranceBtn = textView("申请保险") {
+                    }.lparams(MATCH_PARENT, MATCH_PARENT, 1f)
+                    
+                    insuranceBtn = textView("申请售后") {
                         textColor = Color.WHITE
                         backgroundResource = R.drawable.primary_btn
-                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_BIG)
+                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                         gravity = Gravity.CENTER
-                        onMyClick { 
-                            startActivityForResult<InsuranceActivity>(APPLY_INSURE ,ROUTINE_DATA_BINDLE to report.converInsurance()) }
-                    }.lparams(MATCH_PARENT, MATCH_PARENT, 1f) { 
-                        verticalMargin = kIntWidth(0.01f)
-                    }
+                        onMyClick {
+                            startActivityForResult<InsuranceActivity>(APPLY_INSURE, ROUTINE_DATA_BINDLE to report.converInsurance())
+                        }
+                    }.lparams(MATCH_PARENT, MATCH_PARENT, 1f)
+                    pdfBtn = textView("查看PDF") {
+                        textColor = Color.WHITE
+                        backgroundResource = R.drawable.primary_btn
+                        textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
+                        gravity = Gravity.CENTER
+                        isEnabled = report.pdf != null
+                        onMyClick {
+                            report.pdf?.apply {
+                                startActivity<PDFActivity>(ROUTINE_DATA_BINDLE to report.pdf)
+                            }
+                        }
+                    }.lparams(MATCH_PARENT, MATCH_PARENT, 1f)
+
                 }.lparams(kIntWidth(0.9f), kIntHeight(0.1f)) {
                     centerHorizontally()
                     topMargin = kIntHeight(0.69f)
@@ -234,12 +267,12 @@ class ReportHolder() : KFragment(), AppOperable {
             var valTextView: TextView? = null
             verticalLayout {
                 textView(title) {
-//                    textColor = hostAct.getResColor(R.color.text_light_black)
+                    //                    textColor = hostAct.getResColor(R.color.text_light_black)
                     textColor = textColor1
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                 }.lparams {}
                 valTextView = textView(content) {
-//                    textColor = hostAct.getResColor(R.color.text_black)
+                    //                    textColor = hostAct.getResColor(R.color.text_black)
                     textColor = textColor2
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                 }.lparams {}
@@ -281,10 +314,24 @@ class ReportHolder() : KFragment(), AppOperable {
         timeView.text = report.receive_date
         unitNameView.text = report.detect_unit
         itemView.text = report.detect_item
-
-        resultView.text = report.detect_result
-        introView.text = report.detect_introduction
+        detectNameView.text = report.detect_name
+//        resultView.text = report.detect_result
+        introView.text = report.result_explain
         remarkView.text = report.remark
+        pdfBtn.isEnabled = report.pdf != null
+        //初始化突变结果
+        detectLayout.removeAllViews()
+//        val arrayTemp = report.results?.replace("[", "")?.replace("]", "") ?: ""
+//        arrayTemp.split(",").forEach { }
+
+        val txtView = TextView(hostAct).apply {
+            text = Html.fromHtml(report.results?:"")
+            textColor = Color.RED
+            textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
+        }
+        val llp = linearLP(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
+        detectLayout.addView(txtView, llp)
+        
         if (report.report_status == 0) {
             checkIngView.alpha = 0.5f
             checkedView.alpha = 0.5f
@@ -305,10 +352,13 @@ class ReportHolder() : KFragment(), AppOperable {
             insuranceBtn.visibility = View.VISIBLE
 //            if( report.claimId?.isNotEmpty()?:false ){ insuranceBtn.text = "查看保险" } else { insuranceBtn.text = "申请保险" }
         }
+        insuranceBtn.isEnabled = report.canApply == 1
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == APPLY_INSURE && resultCode == Activity.RESULT_OK){  showDetail() }
+        if (requestCode == APPLY_INSURE && resultCode == Activity.RESULT_OK) {
+            showDetail()
+        }
     }
 }

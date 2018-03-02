@@ -36,7 +36,7 @@ class LoginFragment : KFragment(), VerifyOperable {
         return UI {
             parentLayout = verticalLayout {
                 gravity = Gravity.CENTER_HORIZONTAL
-//                verifyOpt.getStoneUserName() 18012778237 abc123
+//                verifyOpt.getStoneUserName() 18012778237 abc123  13962113937  123456
                 accountView = lineInit(R.drawable.icon_user, "手机号码", "", R.drawable.icon_login_delete) {imgView,inputView ->
                     inputView.setText("")
                 }.invoke(this)

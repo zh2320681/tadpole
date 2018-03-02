@@ -69,7 +69,7 @@ class RegisterFragment : KFragment(),VerifyOperable {
                     textColor = hostAct.getResColor(R.color.text_light_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                 }.lparams {  }
-                textView("小蝌蚪服务协议") {
+                textView("蝌蚪报告服务协议") {
                     textColor = Color.parseColor("#8586c7")
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                 }.lparams {  }

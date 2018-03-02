@@ -55,7 +55,7 @@ class InsuranceActivity : KActivity(), AppOperable {
         rootView = relativeLayout {
             backgroundColor = Color.WHITE
             imageView(R.drawable.bx_top_bg) { scaleType = ImageView.ScaleType.FIT_XY }.lparams(MATCH_PARENT, kIntHeight(0.3f))
-            val nav = navigateBar("我的保险") {
+            val nav = navigateBar("我的资料") {
                 setTitleColor(Color.WHITE)
                 setNavBgColor(Color.TRANSPARENT, false)
                 addLeftDefaultBtn(R.drawable.icon_back_g) { finish() }
@@ -92,7 +92,7 @@ class InsuranceActivity : KActivity(), AppOperable {
     }
 
     fun getInsurances(insurance: Insurance?) {
-        if (insurance != null) {
+        if (insurance != null && insurance.id != null && insurance.id.isNotEmpty()) {
             appOpt.insuranceDetail(insurance!!.id).handler(kDefaultRestHandler(" 正在请求保险详情,请稍等... ")).success {
                 var insurances = arrayListOf(insurance!!)
                 initAdapter(insurances)
@@ -284,8 +284,8 @@ class InsuranceHolder() : KFragment(), AppOperable {
             }
         }
         appOpt.insuranceSaveImgs(insurance.detect_item_id, insurance.reportId, urls, localFiles).handler(
-                hostAct.kDefaultRestHandler(" 正在上传保险资料,请稍等... ")).success {
-            hostAct.toastLongShow("保险资料上传成功!")
+                hostAct.kDefaultRestHandler(" 正在上传资料,请稍等... ")).success {
+            hostAct.toastLongShow("资料上传成功!")
             submit()
         }.excute(hostAct)
     }
@@ -321,7 +321,7 @@ class InsuranceHolder() : KFragment(), AppOperable {
         return {
             verticalLayout {
                 gravity = Gravity.CENTER_HORIZONTAL
-                textView("保险项目:") {
+                textView("申请项目:") {
                     textColor = hostAct.getResColor(R.color.text_light_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.02f) }
@@ -390,7 +390,7 @@ class InsuranceHolder() : KFragment(), AppOperable {
             verticalLayout {
                 gravity = Gravity.CENTER_HORIZONTAL
                 imageView(R.drawable.icon_bx_accept) {}.lparams { topMargin = kIntHeight(0.02f) }
-                textView("您的保险已成功受理!") {
+                textView("您的资料已成功受理!") {
                     textColor = hostAct.getResColor(R.color.colorPrimary_orange)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.BIGGER)
                 }.lparams { topMargin = kIntHeight(0.01f) }
@@ -399,7 +399,7 @@ class InsuranceHolder() : KFragment(), AppOperable {
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.NORMAL)
                     lines = 2
                 }.lparams(WRAP_CONTENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
-                textView("保险款项将于15个工作日内汇入您所提供的银行卡中,如有任何疑问,请及时联系平安保险客服电话") {
+                textView("资料款项将于15个工作日内汇入您所提供的银行卡中,如有任何疑问,请及时联系平安资料客服电话") {
                     textColor = hostAct.getResColor(R.color.text_light_black)
                     textSize = DimensAdapter.textSpSize(CustomTSDimens.SLIGHTLY_SMALL)
                     lines = 2

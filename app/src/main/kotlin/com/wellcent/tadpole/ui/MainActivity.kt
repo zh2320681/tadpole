@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.v4.app.FragmentTransaction
+import android.view.View
 import android.widget.ImageView
 import cn.pedant.SweetAlert.SweetAlertDialog
 import com.shrek.klib.colligate.MATCH_PARENT
@@ -14,19 +15,21 @@ import com.shrek.klib.extension.onMyClick
 import com.shrek.klib.extension.uiThread
 import com.shrek.klib.view.KFragment
 import com.wellcent.tadpole.R
+import com.wellcent.tadpole.presenter.VerifyOperable
 import com.wellcent.tadpole.ui.Fragment.MainFragment
 import com.wellcent.tadpole.ui.Fragment.MineFragment
 import com.wellcent.tadpole.ui.Fragment.NewsFragment
 import org.jetbrains.anko.*
 
-class MainActivity : TadpoleActivity() {
+class MainActivity : TadpoleActivity(),VerifyOperable {
     lateinit var currFragmentRelation: FragmentRelation
 
     private val clickProcess:(FragmentRelation)->Unit = { switchFragment(it) }
     val report by lazy { FragmentRelation(0, R.drawable.icon_report_nor, R.drawable.icon_report_nor, R.drawable.icon_report_pre, MainFragment(),clickProcess) }
     val news by lazy { FragmentRelation(1, R.drawable.icon_news_nor_left, R.drawable.icon_news_nor_right, R.drawable.icon_news_pre, NewsFragment(),clickProcess) }
     val mine by lazy { FragmentRelation(2, R.drawable.icon_me_nor, R.drawable.icon_report_nor, R.drawable.icon_me_pre, MineFragment(),clickProcess) }
-
+    val guideResArray = arrayOf(R.drawable.main_guide1,R.drawable.main_guide2,R.drawable.main_guide3)
+    var currGuideIndex = -1
     override fun initialize(savedInstanceState: Bundle?) {
         relativeLayout {
             backgroundColor = getResColor(R.color.window_background)
@@ -37,6 +40,22 @@ class MainActivity : TadpoleActivity() {
             }.lparams(MATCH_PARENT, WRAP_CONTENT) { alignParentBottom() }
             val contentLayout = relativeLayout { kRandomId()  }.lparams(MATCH_PARENT, MATCH_PARENT) { above(tabLayout)}
             fragmentOpt {opt-> arrayOf(report,news,mine).forEach { opt.add(contentLayout.id,it.content)}  }
+            if(verifyOpt.isShowMainGuide){
+                currGuideIndex = 0
+                imageView(guideResArray[currGuideIndex]){
+                    scaleType = ImageView.ScaleType.FIT_XY
+                    onMyClick {
+                        currGuideIndex++
+                        if(currGuideIndex < guideResArray.size){
+                            imageResource = guideResArray[currGuideIndex]
+                        } else {
+                            currGuideIndex = -1
+                            visibility = View.GONE
+                            verifyOpt.isShowMainGuide = false
+                        }
+                    }
+                }.lparams(MATCH_PARENT, MATCH_PARENT)
+            }
         }
         currFragmentRelation = report
         showFragment(report,news,mine)

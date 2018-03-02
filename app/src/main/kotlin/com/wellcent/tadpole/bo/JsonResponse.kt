@@ -49,13 +49,13 @@ class Report: Serializable {
     var detect_item = ""        //检测项目名称
     var id_number = ""        //身份证号码
     var create_time = ""        //创建时间
-    var detect_result = ""        //检测结果
-    var sampling_date = ""        //采样日期
-    var detect_value1 = ""        //检测值1(T21)
-    var detect_value2 = ""        //检测值2(T18)
-    var detect_value3 = ""        //检测值3(T13)
-    var detect_introduction = ""        //说明
-    var normal_value = ""        //正常值
+    var detect_result:String? = null        //检测结果
+    var sampling_date:String? = null        //采样日期
+    var detect_value1:String? = null    //检测值1(T21)
+    var detect_value2:String? = null       //检测值2(T18)
+    var detect_value3:String? = null        //检测值3(T13)
+    var detect_introduction:String? = null       //说明
+    var normal_value:String? = null        //正常值
     var receive_date = ""        //接收日期
     var update_time = ""        //更新日期
     var phone = ""        //手机号码
@@ -70,7 +70,12 @@ class Report: Serializable {
     var id = ""        //报告id
     var remark:String? = null        //报告备注
     var claimId:String? = null      //保险id
-    
+    var pdf:String? = null      //报告地址
+    var canApply = 0
+    var results:String? = null
+    var detect_name : String? = null
+    var result_explain:String? = null
+
     fun statusChineseName():String {
         if(report_status == 0){ return "未检测" }
         if(report_status == 1){ return "检测中" }

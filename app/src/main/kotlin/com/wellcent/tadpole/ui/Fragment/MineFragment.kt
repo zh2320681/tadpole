@@ -118,7 +118,7 @@ class MineFragment : KFragment(), VerifyOperable, AppOperable {
                     bottomMargin = kIntHeight(0.01f)
                 }
                 linearLayout {
-                    addMidFuntionCell("我的保险", R.drawable.icon_my_claims) { startActivity<InsuranceActivity>() }.invoke(this)
+                    addMidFuntionCell("我的资料", R.drawable.icon_my_claims) { startActivity<InsuranceActivity>() }.invoke(this)
                     addMidFuntionCell("我的订单", R.drawable.icon_my_order) { startActivity<OrderActivity>() }.invoke(this)
                 }.lparams(MATCH_PARENT, WRAP_CONTENT) {
                     horizontalMargin = kIntWidth(0.05f)

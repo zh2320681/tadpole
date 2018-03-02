@@ -13,6 +13,7 @@ interface VerifyDao {
     fun getStoneUserName():String
     
     var isFirstUse:Boolean
+    var isShowMainGuide:Boolean
     //查询的用户
     fun user(): User?
     fun userLogin(phone:String,password:String): RestExcuter<ReqMapping<User>>

@@ -12,8 +12,6 @@ import com.shrek.klib.logger.ZLog;
 import com.shrek.klib.thread.HandlerEnforcer;
 import com.shrek.klib.thread.ZThreadEnforcer;
 
-import java.io.File;
-
 /**
  * 默认的 弹出框 处理器
  *
@@ -64,17 +62,17 @@ public abstract class DialogDLHandler implements DLHandler {
 		}
 
 		if (!task.isAutoOpen) {
-			showNormalError(true, "下载完成", "文件" + task.fileName + "下载完成!",
-					new Runnable() {
-
-						@Override
-						public void run() {
-							ZLog.i(DialogDLHandler.this,
-									"打开文件,任务路径：" + task.downLoadUrl);
-							BaseUtils.openFile(new File(new File(task.savePath),
-									task.fileName), ctx);
-						}
-					});
+//			showNormalError(true, "下载完成", "文件" + task.fileName + "下载完成!",
+//					new Runnable() {
+//
+//						@Override
+//						public void run() {
+//							ZLog.i(DialogDLHandler.this,
+//									"打开文件,任务路径：" + task.downLoadUrl);
+//							BaseUtils.openFile(new File(new File(task.savePath),
+//									task.fileName), ctx);
+//						}
+//					});
 		}
 	}
 

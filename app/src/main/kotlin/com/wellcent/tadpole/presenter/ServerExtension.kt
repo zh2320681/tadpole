@@ -22,6 +22,10 @@ fun String.serPicPath():String {
     return "${ServerPath}${this}"
 }
 
+fun String.serPdfPath():String {
+    return "${ServerPath}${this}"
+}
+
 fun String.serArticlePath():String {
     return "${ServerPath}/h5/article?type=out&id=${this}"
 }

@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewManager
 import android.widget.FrameLayout
 import com.gcl.dsm.ui.custom.indicator.RectangleIndicatorView
+import com.github.barteksc.pdfviewer.PDFView
 import com.liaoinstan.springview.widget.SpringView
 import com.shrek.klib.ui.nonTheme
 import com.wellcent.tadpole.R
@@ -70,3 +71,5 @@ inline fun ViewManager.circleImageView(init: CircleImageView.() -> Unit) = ankoV
  */
 inline fun ViewManager.rectangleIndicatorView(color:Int) = rectangleIndicatorView(color) {}
 inline fun ViewManager.rectangleIndicatorView(color:Int,init: RectangleIndicatorView.() -> Unit) = ankoView({ RectangleIndicatorView(it,color) },nonTheme, init)
+
+inline fun ViewManager.pdfView(init: PDFView.() -> Unit) = ankoView({ PDFView(it,null) },nonTheme, init)
