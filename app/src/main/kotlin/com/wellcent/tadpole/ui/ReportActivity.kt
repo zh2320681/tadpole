@@ -10,6 +10,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -17,6 +18,7 @@ import com.gcl.dsm.ui.custom.indicator.RectangleIndicatorView
 import com.shrek.klib.colligate.MATCH_PARENT
 import com.shrek.klib.colligate.WRAP_CONTENT
 import com.shrek.klib.extension.*
+import com.shrek.klib.ui.CommonUiSetup.textSize
 import com.shrek.klib.ui.adapter.KFragmentPagerAdapter
 import com.shrek.klib.ui.kDefaultRestHandler
 import com.shrek.klib.ui.navigateBar
@@ -323,12 +325,12 @@ class ReportHolder() : KFragment(), AppOperable {
         detectLayout.removeAllViews()
 //        val arrayTemp = report.results?.replace("[", "")?.replace("]", "") ?: ""
 //        arrayTemp.split(",").forEach { }
-
-        val txtView = TextView(hostAct).apply {
-            text = Html.fromHtml(report.results?:"")
-            textColor = Color.RED
-            textSize = DimensAdapter.textSpSize(CustomTSDimens.SMALL)
+        val txtView = WebView(hostAct).apply {
+            loadData(report.results?:"", "text/html; charset=UTF-8", null)
         }
+//        val txtView = TextView(hostAct).apply {
+//            text = Html.fromHtml(report.results?:"")
+//        }
         val llp = linearLP(MATCH_PARENT, WRAP_CONTENT) { topMargin = kIntHeight(0.01f) }
         detectLayout.addView(txtView, llp)
         
